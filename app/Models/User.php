@@ -48,4 +48,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function agence() {
         return $this->belongsTo(Agence::class);
     }
+
+    // Les trajets où cet utilisateur est le CONDUCTEUR
+    public function reservationsAsDriver()
+    {
+        return $this->hasMany(Reservation::class, 'user_id');
+    }
+
+    // Les trajets où cet utilisateur est PASSAGER
+    public function reservationsAsPassenger()
+    {
+        return $this->hasMany(Passenger::class);
+    }
 }

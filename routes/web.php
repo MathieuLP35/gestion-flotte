@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\VehicleController;
@@ -31,7 +32,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('vehicles', VehicleController::class);
     Route::resource('reservations', ReservationController::class);
     Route::resource('maintenances', MaintenanceController::class);
-    Route::get('/dashboard', fn() => inertia('Dashboard'))->name('dashboard');
+    Route::resource('passengers', PassengerController::class);
+    Route::get('/dashboard', [ReservationController::class, 'dashboard'])->name('dashboard');
+
+    // Route pour VÉRIFIER les trajets disponibles
+    Route::post('reservations/check-carpool', [ReservationController::class, 'checkCarpool'])
+        ->name('reservations.checkCarpool');
 });
 
 require __DIR__.'/auth.php';
