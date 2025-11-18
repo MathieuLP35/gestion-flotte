@@ -20,7 +20,7 @@ class CheckVehicleMaintenance extends Command
         foreach ($vehicles as $vehicle) {
             foreach ($vehicle->maintenances as $maintenance) {
                 if ($vehicle->km_initial >= $maintenance->km_alert_threshold) {
-                    Mail::to(config('app.admin_email'))->send(new MaintenanceAlert($vehicle));
+                    Mail::to(config('app.admin_email'))->send(new MaintenanceAlert($vehicle, $maintenance));
                 }
             }
         }
