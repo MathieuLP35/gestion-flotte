@@ -1,0 +1,18 @@
+{
+    "permissions.roles.view": "Consulter les rôles",
+    "permissions.roles.create": "Créer des rôles",
+    "permissions.roles.edit": "Modifier les rôles",
+    "permissions.roles.delete": "Supprimer les rôles",
+    "permissions.users.view": "Consulter les utilisateurs",
+    "permissions.users.create": "Créer des utilisateurs",
+    "permissions.users.edit": "Modifier les utilisateurs",
+    "permissions.users.delete": "Supprimer les utilisateurs",
+    "permissions.vehicles.view": "Consulter les véhicules",
+    "permissions.vehicles.create": "Créer des véhicules",
+    "permissions.vehicles.edit": "Modifier les véhicules",
+    "permissions.vehicles.delete": "Supprimer les véhicules",
+    "permissions.reservations.view": "Consulter les réservations",
+    "permissions.reservations.create": "Créer des réservations",
+    "permissions.reservations.edit": "Modifier les réservations",
+    "permissions.reservations.delete": "Supprimer les réservations"
+}
