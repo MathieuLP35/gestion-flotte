@@ -107,7 +107,7 @@ class ReservationController extends Controller
         // Optionnel: envoyer notification par mail
         Mail::to(Auth::user()->email)->queue(new ReservationStatusChanged($reservation));
 
-        return redirect()->route('reservations.index')->with('success', 'Réservation créée en attente de validation');
+        return redirect()->route('dashboard')->with('success', 'Réservation créée en attente de validation');
     }
 
     public function edit(Reservation $reservation)
