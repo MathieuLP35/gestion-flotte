@@ -47,6 +47,13 @@ const deleteRole = (roleId) => {
 
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
             <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="text-left p-3 font-medium">Nom du Rôle</th>
+                        <th class="text-left p-3 font-medium">Permissions</th>
+                        <th class="text-right p-3 font-medium">Actions</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr v-for="role in roles" :key="role.id" class="border-b">
                         <td class="p-3 font-medium">{{ role.name }}</td>

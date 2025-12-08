@@ -17,10 +17,10 @@ class AdminUserController extends Controller
      */
     public function index()
     {
-        $this->authorize('roles.view');
+        $this->authorize('users.view');
 
-        return view('admin.users.index', [
-            'users' => User::with('agence')->paginate(10)->get('id, name, email')
+        return inertia('Admin/Users/Index', [
+            'users' => User::with('agence', 'roles')->get(),
         ]);
     }
 
@@ -45,7 +45,7 @@ class AdminUserController extends Controller
      */
     public function show(User $user)
     {
-        return view('admin.users.show', compact('user'));
+        return inertia('Admin/Users/Show', compact('user'));
     }
 
     /**
@@ -69,6 +69,9 @@ class AdminUserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $this->authorize('users.delete');
+
+        $user->delete();
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé.');
     }
 }
