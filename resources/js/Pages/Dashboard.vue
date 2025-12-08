@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 // 1. Récupérer les props envoyées par le contrôleur
@@ -8,12 +8,6 @@ const props = defineProps({
     reservationsAsDriver: Array,
     reservationsAsPassenger: Array,
 });
-
-// Variables pour les champs de recherche
-const departure = ref('');
-const destination = ref('');
-const departureDate = ref('');
-const arrivalDate = ref('');
 
 // 2. Fonction pour annuler sa propre place de passager
 const cancelPassenger = (passengerId) => {
@@ -43,6 +37,22 @@ function deleteReservation(id) {
   }
 }
 
+const form = useForm({
+    departure: '',
+    destination: '',
+    departureDate: '',
+    arrivalDate: '',
+});
+
+const searchCarpooling = () => {
+    form.post(route('carpooling.search'), {
+        preserveState: true,
+        onSuccess: () => {
+            // Vous pouvez ajouter une logique après la recherche si nécessaire
+        },
+    });
+};
+
 </script>
 
 <template>
@@ -55,19 +65,31 @@ function deleteReservation(id) {
                 <form @submit.prevent="searchCarpooling" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                     <div>
                         <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
-                        <input type="text" id="departure" v-model="departure" placeholder="Ex: Paris" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <input type="text" id="departure" v-model="form.departure" placeholder="Ex: Paris" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <div v-if="form.errors.departure" class="mt-2 text-sm text-red-600">
+                            {{ form.errors.departure }}
+                        </div>
                     </div>
                     <div>
                         <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
-                        <input type="text" id="destination" v-model="destination" placeholder="Ex: Lyon" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <input type="text" id="destination" v-model="form.destination" placeholder="Ex: Lyon" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
+                            {{ form.errors.destination }}
+                        </div>
                     </div>
                     <div>
                         <label for="departureDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de départ</label>
-                        <input type="date" id="departureDate" v-model="departureDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <input type="date" id="departureDate" v-model="form.departureDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <div v-if="form.errors.departureDate" class="mt-2 text-sm text-red-600">
+                            {{ form.errors.departureDate }}
+                        </div>
                     </div>
                     <div>
                         <label for="arrivalDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de retour</label>
-                        <input type="date" id="arrivalDate" v-model="arrivalDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <input type="date" id="arrivalDate" v-model="form.arrivalDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                        <div v-if="form.errors.arrivalDate" class="mt-2 text-sm text-red-600">
+                            {{ form.errors.arrivalDate }}
+                        </div>
                     </div>
                     <div>
                         <button type="submit" class="w-full px-6 py-3 bg-indigo-600 border border-transparent rounded-xl font-bold text-white uppercase hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition">Rechercher</button>

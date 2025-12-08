@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Reservation extends Model
 {
@@ -34,5 +35,12 @@ class Reservation extends Model
     public function messages()
     {
         return $this->hasMany(Message::class)->orderBy('created_at', 'asc');
+    }
+
+    public static function searchCarpoolings(string $departure, string $destination, string $departureDate, ?string $arrivalDate = null)
+    {
+        $query = self::where('covoiturage', 1);
+
+        return $query->with('driver', 'passengers', 'vehicle')->get();
     }
 }
