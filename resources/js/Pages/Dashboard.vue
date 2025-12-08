@@ -1,12 +1,19 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 // 1. Récupérer les props envoyées par le contrôleur
 const props = defineProps({
     reservationsAsDriver: Array,
     reservationsAsPassenger: Array,
 });
+
+// Variables pour les champs de recherche
+const departure = ref('');
+const destination = ref('');
+const departureDate = ref('');
+const arrivalDate = ref('');
 
 // 2. Fonction pour annuler sa propre place de passager
 const cancelPassenger = (passengerId) => {
