@@ -71,6 +71,8 @@ class AdminUserController extends Controller
     {
         $this->authorize('users.delete');
 
+        // TODO: Notifier les personnes (conducteur de trajet, etc.) concernées par la suppression de cet utilisateur.
+
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé.');
     }
