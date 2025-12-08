@@ -52,6 +52,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route pour ENVOYER un nouveau message dans une réservation
     Route::post('/reservations/{reservation}/messages', [MessageController::class, 'store'])
         ->name('messages.store');
+
+    // Route pour la recherche de covoiturage
+    Route::post('/carpooling/search', [App\Http\Controllers\CarpoolingController::class, 'search'])
+        ->name('carpooling.search');
 });
 
 
