@@ -87,6 +87,13 @@ onMounted(() => {
     fetchMessages();
 });
 
+const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('fr-FR', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    });
+};
+
 </script>
 
 <template>
@@ -106,54 +113,27 @@ onMounted(() => {
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             
-                            <div class="space-y-6">
+                            <div class="space-y-6 mb-4">
                                 <h2 class="text-2xl font-bold text-gray-800 mb-6">
                                     Détails du Trajet
                                 </h2>
-                                <form @submit.prevent="submit" class="space-y-6">
-                                
+                                <div class="space-y-6">
                                     <div>
-                                        <label for="destination" class="block text-sm font-medium text-gray-700">Destination</label>
-                                        <input type="text" v-model="form.destination" id="destination" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
-                                        <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
-                                            {{ form.errors.destination }}
-                                        </div>
+                                        <strong>Conducteur:</strong> {{ reservation.driver.name }}
                                     </div>
 
                                     <div>
-                                        <label for="vehicle" class="block text-sm font-medium text-gray-700">Véhicule</label>
-                                        <select v-model="form.vehicle_id" id="vehicle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                                            <option v-for="v in vehicles" :key="v.id" :value="v.id">
-                                            {{ v.modele }} ({{ v.immatriculation }})
-                                            </option>
-                                        </select>
-                                        <div v-if="form.errors.vehicle_id" class="mt-2 text-sm text-red-600">
-                                            {{ form.errors.vehicle_id }}
-                                        </div>
+                                        <strong>Véhicule:</strong> {{ reservation.vehicle.modele }}
                                     </div>
 
                                     <div>
-                                        <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                                        <input type="datetime-local" v-model="form.date_debut" id="date_debut" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
-                                        <div v-if="form.errors.date_debut" class="mt-2 text-sm text-red-600">
-                                            {{ form.errors.date_debut }}
-                                        </div>
+                                        <strong>Départ:</strong> {{ formatDate(reservation.date_debut) }}
                                     </div>
 
                                     <div>
-                                        <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
-                                        <input type="datetime-local" v-model="form.date_fin" id="date_fin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
-                                        <div v-if="form.errors.date_fin" class="mt-2 text-sm text-red-600">
-                                            {{ form.errors.date_fin }}
-                                        </div>
+                                        <strong>Fin:</strong> {{ formatDate(reservation.date_fin) }}
                                     </div>
-
-                                    <div class="flex items-center justify-end pt-4 border-t border-gray-200">
-                                        <button type="submit" :disabled="form.processing" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150" :class="{ 'opacity-50 cursor-not-allowed': form.processing }">
-                                            {{ form.processing ? 'Sauvegarde...' : 'Mettre à jour' }}
-                                        </button>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
 
                             <div class="space-y-6 md:border-l md:border-gray-200 md:pl-8">
