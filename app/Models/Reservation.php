@@ -30,4 +30,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class)->orderBy('created_at', 'asc');
+    }
 }

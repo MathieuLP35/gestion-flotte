@@ -107,7 +107,7 @@ const formatDate = (dateString) => {
                         </div>
 
                         <ul v-else class="space-y-4">
-                            <li v-for="pass in reservationsAsPassenger" :key="pass.id" class="p-4 border border-gray-200 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <Link v-for="pass in reservationsAsPassenger" :key="pass.id" :href="route('reservations.show', pass.reservation.id)" class="p-4 border border-gray-200 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                 <div>
                                     <h3 class="text-lg font-semibold text-indigo-700">
                                         {{ pass.reservation.destination }}
@@ -136,7 +136,7 @@ const formatDate = (dateString) => {
                                         Annuler ma place
                                     </button>
                                 </div>
-                            </li>
+                            </Link>
                         </ul>
                     </div>
                 </div>

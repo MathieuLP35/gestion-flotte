@@ -112,6 +112,9 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reservation)
     {
+
+        $this->authorize('update', $reservation);
+
         // NOUVEAU : On charge les passagers et leurs utilisateurs
         $reservation->load(['vehicle', 'passengers.user']);
 
@@ -123,6 +126,8 @@ class ReservationController extends Controller
 
     public function update(Request $request, Reservation $reservation)
     {
+
+        $this->authorize('update', $reservation);
 
         $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
@@ -142,9 +147,29 @@ class ReservationController extends Controller
 
     public function destroy(Reservation $reservation)
     {
+        $this->authorize('delete', $reservation);
+
         $reservation->delete();
 
         return redirect()->route('reservations.index')->with('success', 'Réservation supprimée');
+    }
+
+    public function show(Reservation $reservation)
+    {
+
+        $this->authorize('view', $reservation);
+
+        // On charge TOUT ce dont la page aura besoin
+        $reservation->load([
+            'vehicle',          // Le véhicule
+            'driver',           // Le conducteur
+            'passengers.user',  // Les passagers (avec leurs noms)
+            'messages.user'     // Les messages (avec leurs expéditeurs)
+        ]);
+
+        return inertia('Reservations/Show', [
+            'reservation' => $reservation
+        ]);
     }
 
     public function checkCarpool(Request $request)

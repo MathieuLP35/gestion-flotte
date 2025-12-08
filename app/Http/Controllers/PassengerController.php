@@ -43,6 +43,9 @@ class PassengerController extends Controller
 
     public function update(Request $request, Passenger $passenger)
     {
+
+        $this->authorize('update', $passenger);
+
         $request->validate([
             'statut' => 'required|in:confirme,refuse'
         ]);
@@ -58,6 +61,9 @@ class PassengerController extends Controller
     // NOUVEAU : Retirer un passager (ou annuler sa propre place)
     public function destroy(Passenger $passenger)
     {
+
+        $this->authorize('delete', $passenger);
+
         $passenger->delete();
 
         return back()->with('success', 'Passager retiré du trajet.');

@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
 
 // 1. Récupérer les props du contrôleur
 const props = defineProps({
@@ -45,13 +46,47 @@ const removePassenger = (passengerId) => {
     }
 };
 
-// Fonction simple pour formater la date
-const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('fr-FR', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    });
-};
+// ------------------------------------------
+// NOUVEAU : LOGIQUE DE CHAT
+// ------------------------------------------
+const messages = ref([]); // La liste des messages
+const newMessage = ref(''); // Le contenu du champ de texte
+const authUser = usePage().props.auth.user; // L'utilisateur connecté
+
+// Fonction pour charger les messages au démarrage
+async function fetchMessages() {
+    try {
+        const response = await axios.get(route('messages.index', props.reservation.id));
+        messages.value = response.data;
+    } catch (error) {
+        console.error("Erreur lors du chargement des messages:", error);
+    }
+}
+
+// Fonction pour envoyer un nouveau message
+async function sendMessage() {
+    if (newMessage.value.trim() === '') return; // Ne pas envoyer de message vide
+
+    try {
+        const response = await axios.post(route('messages.store', props.reservation.id), {
+            body: newMessage.value
+        });
+        
+        // Ajouter le nouveau message (renvoyé par le serveur) à la liste
+        messages.value.push(response.data);
+        
+        // Vider le champ de texte
+        newMessage.value = '';
+    } catch (error) {
+        console.error("Erreur lors de l'envoi du message:", error);
+    }
+}
+
+// Charger les messages quand le composant est monté
+onMounted(() => {
+    fetchMessages();
+});
+
 </script>
 
 <template>
@@ -125,7 +160,7 @@ const formatDate = (dateString) => {
                                 <h2 class="text-2xl font-bold text-gray-800 mb-6">
                                     Gestion des Passagers
                                 </h2>
-
+                                
                                 <div v-if="reservation.passengers.length === 0" class="text-center text-gray-500 p-4 border border-dashed rounded-md">
                                     Aucune demande de passager pour ce trajet.
                                 </div>
@@ -162,7 +197,43 @@ const formatDate = (dateString) => {
                                 </ul>
                             </div>
                         </div>
+                        <div class="mt-3 space-y-6 pt-6 border-t border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                                Messagerie du Trajet
+                            </h2>
 
+                            <div class="h-64 overflow-y-auto border border-gray-200 rounded-md p-4 space-y-4">
+                                <div v-if="messages.length === 0" class="text-gray-500 text-center">
+                                    Aucun message pour l'instant.
+                                </div>
+                                <div v-for="message in messages" :key="message.id">
+                                    <div v-if="message.user.id !== authUser.id" class="flex justify-start">
+                                        <div class="bg-gray-100 rounded-lg px-4 py-2 max-w-xs">
+                                            <p class="font-semibold text-sm">{{ message.user.name }}</p>
+                                            <p>{{ message.body }}</p>
+                                        </div>
+                                    </div>
+                                    <div v-else class="flex justify-end">
+                                        <div class="bg-indigo-500 text-white rounded-lg px-4 py-2 max-w-xs">
+                                            <p class="font-semibold text-sm">Moi</p>
+                                            <p>{{ message.body }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form @submit.prevent="sendMessage" class="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    v-model="newMessage"
+                                    placeholder="Écrivez votre message..."
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md">
+                                    Envoyer
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'block.login' => \App\Http\Middleware\BlockLoginAttempts::class,
+            'admin' => \App\Http\Middleware\EnsureUserHasAdminAccess::class,
         ]);
 
     })
