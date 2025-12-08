@@ -33,15 +33,8 @@ const formatDate = (dateString) => {
     <Head title="Mes Trajets" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Mes Trajets
-            </h2>
-        </template>
-
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 md:p-8 text-gray-900">
                         <h2 class="text-2xl font-bold text-gray-800 mb-6">
@@ -106,7 +99,7 @@ const formatDate = (dateString) => {
                             Vous n'êtes encore passager d'aucun trajet.
                         </div>
 
-                        <ul v-else class="space-y-4">
+                        <ul v-else class="space-y-6">
                             <Link v-for="pass in reservationsAsPassenger" :key="pass.id" :href="route('reservations.show', pass.reservation.id)" class="p-4 border border-gray-200 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                 <div>
                                     <h3 class="text-lg font-semibold text-indigo-700">
@@ -123,7 +116,7 @@ const formatDate = (dateString) => {
                                         <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
                                               :class="{ 
                                                 'bg-green-100 text-green-800': pass.statut === 'confirme', 
-                                                'bg-yellow-100 text-yellow-800': pass.statut === 'en_attente', 
+                                                'bg-yellow-100 text-yellow-800': pass.statut === 'en_attente',
                                                 'bg-red-100 text-red-800': pass.statut === 'refuse' 
                                               }">
                                             {{ pass.statut }}
