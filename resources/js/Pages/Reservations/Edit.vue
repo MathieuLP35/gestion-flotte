@@ -119,10 +119,6 @@ const formatDate = (dateString) => {
                                 </h2>
                                 <div class="space-y-6">
                                     <div>
-                                        <strong>Conducteur:</strong> {{ reservation.driver.name }}
-                                    </div>
-
-                                    <div>
                                         <strong>Véhicule:</strong> {{ reservation.vehicle.modele }}
                                     </div>
 

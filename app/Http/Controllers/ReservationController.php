@@ -126,7 +126,6 @@ class ReservationController extends Controller
 
     public function update(Request $request, Reservation $reservation)
     {
-
         $this->authorize('update', $reservation);
 
         $request->validate([
@@ -151,7 +150,7 @@ class ReservationController extends Controller
 
         $reservation->delete();
 
-        return redirect()->route('reservations.index')->with('success', 'Réservation supprimée');
+        return redirect()->route('dashboard')->with('success', 'Réservation supprimée');
     }
 
     public function show(Reservation $reservation)
