@@ -21,6 +21,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
-        "lodash.debounce": "^4.0.8"
+        "lodash.debounce": "^4.0.8",
+        "or": "^0.2.0"
     }
 }
