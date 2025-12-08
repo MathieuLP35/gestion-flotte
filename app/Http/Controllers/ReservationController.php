@@ -116,7 +116,7 @@ class ReservationController extends Controller
         $this->authorize('update', $reservation);
 
         // NOUVEAU : On charge les passagers et leurs utilisateurs
-        $reservation->load(['vehicle', 'passengers.user']);
+        $reservation->load(['vehicle', 'driver', 'passengers.user']);
 
         return inertia('Reservations/Edit', [
             'reservation' => $reservation,

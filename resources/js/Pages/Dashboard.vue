@@ -27,6 +27,7 @@ const formatDate = (dateString) => {
         timeStyle: 'short',
     });
 };
+
 </script>
 
 <template>
@@ -34,12 +35,41 @@ const formatDate = (dateString) => {
 
     <AuthenticatedLayout>
         <div class="py-12">
+            <div class="max-w-7xl mx-auto mb-6 bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Recherche de Covoiturage</h2>
+                <form @submit.prevent="searchCarpooling" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                    <div>
+                        <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
+                        <input type="text" id="departure" v-model="departure" placeholder="Ex: Paris" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                    </div>
+                    <div>
+                        <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
+                        <input type="text" id="destination" v-model="destination" placeholder="Ex: Lyon" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                    </div>
+                    <div>
+                        <label for="departureDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de départ</label>
+                        <input type="date" id="departureDate" v-model="departureDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                    </div>
+                    <div>
+                        <label for="arrivalDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de retour</label>
+                        <input type="date" id="arrivalDate" v-model="arrivalDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full px-6 py-3 bg-indigo-600 border border-transparent rounded-xl font-bold text-white uppercase hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition">Rechercher</button>
+                    </div>
+                </form>
+            </div>
             <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 md:p-8 text-gray-900">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            Mes Trajets (Conducteur)
-                        </h2>
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                Mes Trajets (Conducteur)
+                            </h2>
+                            <Link :href="route('reservations.create')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition ease-in-out duration-150">
+                                Nouveau trajet
+                            </Link>
+                        </div>
 
                         <div v-if="reservationsAsDriver.length === 0" class="text-center text-gray-500 p-4">
                             Vous n'avez encore aucun trajet planifié en tant que conducteur.
@@ -57,6 +87,18 @@ const formatDate = (dateString) => {
                                         </p>
                                         <p class="text-sm text-gray-500">
                                             Véhicule: {{ resa.vehicle.modele }} ({{ resa.vehicle.immatriculation }})
+                                        </p>
+                                        <p class="text-sm text-gray-500">
+                                            Statut:
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                                    :class="{
+                                                    'bg-yellow-100 text-yellow-800': resa.statut === 'en attente',
+                                                    'bg-green-100 text-green-800': resa.statut === 'validé',
+                                                    'bg-red-100 text-red-800': resa.statut === 'annulé',
+                                                    'bg-gray-100 text-gray-800': !['en attente', 'validé', 'annulé'].includes(resa.statut)
+                                                    }">
+                                                {{ resa.statut }}
+                                            </span>
                                         </p>
                                     </div>
                                     <div class="mt-4 sm:mt-0 sm:ml-4 sm:flex-shrink-0">
