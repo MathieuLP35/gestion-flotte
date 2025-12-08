@@ -95,7 +95,6 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-
         $this->authorize('roles.delete');
 
         $role->delete();

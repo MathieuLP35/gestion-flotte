@@ -31,26 +31,37 @@ const deleteUser = (userId) => {
 </script>
 
 <template>
-    <Head title="Gérer les Rôles" />
+    <Head title="Gérer les Utilisateurs" />
 
     <div class="p-4 sm:p-6 md:p-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">Gestion des Rôles</h1>
+            <h1 class="text-2xl font-bold">Gestion des Utilisateurs</h1>
             
             <Link 
-                v-if="page.props.auth.permissions.includes('roles.create')"
-                :href="route('admin.roles.create')" 
+                v-if="page.props.auth.permissions.includes('users.create')"
+                :href="route('admin.users.create')" 
                 class="px-4 py-2 bg-indigo-600 text-white rounded-md">
-                Créer un Rôle
+                Créer un utilisateur
             </Link>
         </div>
 
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
             <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="text-left p-3 font-medium">Nom</th>
+                        <th class="text-left p-3 font-medium">Email</th>
+                        <th class="text-left p-3 font-medium">Agence</th>
+                        <th class="text-left p-3 font-medium">Rôles</th>
+                        <th class="text-right p-3 font-medium">Actions</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr v-for="user in users" :key="user.id" class="border-b">
                         <td class="p-3 font-medium">{{ user.name }}</td>
                         <td class="p-3 font-medium"> {{ user.email }}</td>
+                        <td class="p-3 font-medium"> {{ user.agence.nom }}</td>
+                        <td>{{ user.roles.map(role => role.name).join(', ') }}</td>
                         <td class="p-3 text-right whitespace-nowrap">
                             <Link 
                                 v-if="page.props.auth.permissions.includes('users.edit')"
