@@ -39,7 +39,15 @@ class Reservation extends Model
 
     public static function searchCarpoolings(string $departure, string $destination, string $departureDate, ?string $arrivalDate = null)
     {
-        $query = self::where('covoiturage', 1);
+        $query = self::where('covoiturage', 1)
+            ->where('destination', $destination);
+
+        if ($arrivalDate) {
+            $query->where('date_debut', '<=', $arrivalDate)
+                ->where('date_fin', '>=', $departureDate);
+        } else {
+            $query->where('date_debut', '>=', $departureDate);
+        }
 
         return $query->with('driver', 'passengers', 'vehicle')->get();
     }
