@@ -18,6 +18,14 @@
                   <form @submit.prevent="submitVehicleReservation" class="space-y-6">
                     
                     <div>
+                      <label for="departure" class="block text-sm font-medium text-gray-700">Lieu de départ</label>
+                      <input type="text" v-model="form.departure" id="departure" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                      <div v-if="form.errors.departure" class="mt-2 text-sm text-red-600">
+                        {{ form.errors.departure }}
+                      </div>
+                    </div>
+
+                    <div>
                       <label for="destination" class="block text-sm font-medium text-gray-700">Destination</label>
                       <input type="text" v-model="form.destination" id="destination" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
                       <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
@@ -27,7 +35,7 @@
 
                     <div>
                       <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                      <input type="datetime-local" v-model="form.date_debut" id="date_debut" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                      <input type="date" v-model="form.date_debut" id="date_debut" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
                       <div v-if="form.errors.date_debut" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_debut }}
                       </div>
@@ -35,7 +43,7 @@
 
                     <div>
                       <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
-                      <input type="datetime-local" v-model="form.date_fin" id="date_fin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                      <input type="date" v-model="form.date_fin" id="date_fin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
                       <div v-if="form.errors.date_fin" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_fin }}
                       </div>
@@ -86,9 +94,11 @@
 
                   <ul v-if="matchingCarpools.length > 0" class="space-y-4">
                     <li v-for="resa in matchingCarpools" :key="resa.id" class="p-4 border rounded-lg shadow-sm">
+                      <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ resa.depart }} → {{ resa.destination }} </h2>
                       <h3 class="font-semibold text-gray-800">{{ resa.vehicle.modele }} - {{ resa.vehicle.immatriculation }}</h3>
                       <p class="text-sm text-gray-600"><strong>Conducteur:</strong> {{ resa.driver.name }}</p>
-                      <p class="text-sm text-gray-600"><strong>Départ:</strong> {{ new Date(resa.date_debut).toLocaleString('fr-FR') }}</p>
+                      <p class="text-sm text-gray-600"><strong>Départ:</strong> {{ formatDate(resa.date_debut) }}</p>
+                      <p class="text-sm text-gray-600"><strong>Retour:</strong> {{ formatDate(resa.date_fin) }}</p>
                       <button @click="joinCarpool(resa.id)" class="mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-md shadow-md transition ease-in-out duration-150">
                         Rejoindre ce trajet
                       </button>
@@ -117,6 +127,7 @@ const { vehicles } = usePage().props
 // NOUVEAU : ajout de `destination` au formulaire
 const form = useForm({
   vehicle_id: null, // Modifié pour démarrer à null
+  departure: '', // NOUVEAU
   destination: '', // NOUVEAU
   date_debut: '',
   date_fin: '',
@@ -151,6 +162,8 @@ const fetchMatchingCarpools = async () => {
     // CORRECTION 1 : Utiliser "await axios.post" au lieu de "router.post"
     const response = await axios.post(route('reservations.checkCarpool'), {
       date_debut: form.date_debut,
+      date_fin: form.date_fin,
+      departure: form.departure,
       destination: form.destination,
     });
 
@@ -184,7 +197,7 @@ const fetchMatchingCarpools = async () => {
 
 // Watcher "intelligent" avec debounce
 watch(
-  [() => form.destination, () => form.date_debut],
+  [() => form.departure, () => form.destination, () => form.date_debut, () => form.date_fin],
   debounce(fetchMatchingCarpools, 500) // 500ms après que l'utilisateur ait fini de taper
 );
 
@@ -197,9 +210,30 @@ const joinCarpool = (reservationId) => {
     // vers le tableau de bord avec un message flash.
     onError: (errors) => {
       console.error(errors);
-      // Ici, vous pourriez afficher une notification d'erreur
-      // ex: "Vous êtes déjà passager sur ce trajet"
     }
   });
 };
+
+
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    // Format UTC (date)
+    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
+        dateStyle: 'medium',
+        timeZone: 'UTC',
+    });
+
+    // Format local (heure)
+    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
+        timeStyle: 'short',
+        timeZone: 'UTC',
+    });
+
+    const datePart = utcFormatter.format(date);
+    const timePart = localFormatter.format(date);
+
+    return `${datePart} à ${timePart}`;
+};
+
 </script>

@@ -45,10 +45,24 @@ onMounted(() => {
 
 // Helper pour formater les dates
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('fr-FR', {
+    const date = new Date(dateString);
+
+    // Format UTC (date)
+    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
         dateStyle: 'medium',
-        timeStyle: 'short',
+        timeZone: 'UTC',
     });
+
+    // Format local (heure)
+    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
+        timeStyle: 'short',
+        timeZone: 'UTC',
+    });
+
+    const datePart = utcFormatter.format(date);
+    const timePart = localFormatter.format(date);
+
+    return `${datePart} à ${timePart}`;
 };
 </script>
 

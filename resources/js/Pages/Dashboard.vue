@@ -29,10 +29,24 @@ const cancelPassenger = (passengerId) => {
 
 // Fonction simple pour formater la date
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('fr-FR', {
+    const date = new Date(dateString);
+
+    // Format UTC (date)
+    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
         dateStyle: 'medium',
-        timeStyle: 'short',
+        timeZone: 'UTC',
     });
+
+    // Format local (heure)
+    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
+        timeStyle: 'short',
+        timeZone: 'UTC',
+    });
+
+    const datePart = utcFormatter.format(date);
+    const timePart = localFormatter.format(date);
+
+    return `${datePart} à ${timePart}`;
 };
 
 function deleteReservation(id) {
@@ -277,8 +291,8 @@ const fetchSuggestions = async (query, type) => {
                             <li v-for="resa in reservationsAsDriver" :key="resa.id" class="p-4 border border-gray-200 rounded-lg shadow-sm">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                     <div class="flex-grow">
-                                        <h3 class="text-lg font-semibold text-indigo-700">
-                                            {{ resa.destination }}
+                                        <h3 class="text-lg font-semibold text-indigo-700 mb-2">
+                                            {{ resa.depart }} → {{ resa.destination }} 
                                         </h3>
                                         <p class="text-sm text-gray-600">
                                             Départ: {{ formatDate(resa.date_debut) }}

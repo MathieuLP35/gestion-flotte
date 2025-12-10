@@ -10,6 +10,9 @@ Bonjour {{ $reservation->driver->name }},
 Votre réservation pour le véhicule **{{ $reservation->vehicle->modele }}** ({{ $reservation->vehicle->immatriculation }}) a bien été enregistrée.
 
 **Détails du trajet :**
+
+* **Départ :** {{ $reservation->depart }}
+
 * **Destination :** {{ $reservation->destination }}
 
 {{-- CORRECTION ICI --}}
