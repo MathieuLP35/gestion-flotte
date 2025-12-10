@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class VehicleController extends Controller
     {
         $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)->get();
 
-        return Inertia::render('Vehicles/Index', [
+        return Inertia::render('Admin/Vehicles/Index', [
             'vehicles' => $vehicles
         ]);
     }
@@ -22,13 +23,13 @@ class VehicleController extends Controller
     // Formulaire de création
     public function create()
     {
-        return Inertia::render('Vehicles/Create');
+        return Inertia::render('Admin/Vehicles/Create');
     }
 
     public function show(Vehicle $vehicle)
     {
 
-        return Inertia::render('Vehicles/Show', [
+        return Inertia::render('Admin/Vehicles/Show', [
             'vehicle' => $vehicle
         ]);
     }
@@ -49,7 +50,7 @@ class VehicleController extends Controller
 
         Vehicle::create($validated);
 
-        return redirect()->route('vehicles.index')->with('success', 'Véhicule créé avec succès');
+        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule créé avec succès');
     }
 
     // Formulaire d’édition d’un véhicule
@@ -60,7 +61,7 @@ class VehicleController extends Controller
             abort(403);
         }
 
-        return Inertia::render('Vehicles/Edit', [
+        return Inertia::render('Admin/Vehicles/Edit', [
             'vehicle' => $vehicle
         ]);
     }
@@ -83,7 +84,7 @@ class VehicleController extends Controller
 
         $vehicle->update($validated);
 
-        return redirect()->route('vehicles.index')->with('success', 'Véhicule mis à jour');
+        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule mis à jour');
     }
 
     // Supprime un véhicule
@@ -95,6 +96,6 @@ class VehicleController extends Controller
 
         $vehicle->delete();
 
-        return redirect()->route('vehicles.index')->with('success', 'Véhicule supprimé');
+        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule supprimé');
     }
 }

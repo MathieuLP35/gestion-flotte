@@ -1,7 +1,7 @@
 <template>
     <Head title="Edition de véhicule" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
       <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
           <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -11,7 +11,6 @@
               </h1>
 
               <form @submit.prevent="submit" class="space-y-6">
-                
                 <div>
                   <label for="modele" class="block text-sm font-medium text-gray-700">Modèle</label>
                   <input v-model="form.modele" type="text" id="modele" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
@@ -70,13 +69,13 @@
           </div>
         </div>
       </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>
 
 <script setup>
 // 1. Plus besoin de 'reactive'. On importe 'useForm'.
 import { usePage, useForm, Head  } from '@inertiajs/vue3'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 // On peut déstructurer 'vehicle' directement des props
 const { vehicle } = usePage().props
@@ -89,12 +88,12 @@ const form = useForm({
   km_initial: vehicle.km_initial || 0,
   emplacement: vehicle.emplacement || '',
   nbr_places: vehicle.nbr_places || 1,
-  en_maintenance: vehicle.en_maintenance || false,
+  en_maintenance: vehicle.en_maintenance == 1 ? true : false || false,
 })
 
 function submit() {
   // 3. 'form' a ses propres méthodes .post(), .put(), .patch()
   // Il envoie automatiquement ses propres données.
-  form.put(route('vehicles.update', vehicle.id))
+  form.put(route('admin.vehicles.update', vehicle.id))
 }
 </script>

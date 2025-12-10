@@ -1,14 +1,14 @@
 <template>
   <Head title="Liste des Véhicules" />
 
-  <AuthenticatedLayout>
+  <AdminLayout>
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
           
           <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Liste des Véhicules</h1>
-            <Link :href="route('vehicles.create')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition ease-in-out duration-150">
+            <h1 class="text-2xl font-bold text-gray-800">Liste des Véhicules</h1>
+            <Link :href="route('admin.vehicles.create')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-md transition ease-in-out duration-150">
               Ajouter un véhicule
             </Link>
           </div>
@@ -39,7 +39,7 @@
                     </span>
                   </td>
                   <td class="py-4 px-6 text-center whitespace-nowrap">
-                    <Link :href="route('vehicles.edit', vehicle.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
+                    <Link :href="route('admin.vehicles.edit', vehicle.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
                     <button @click="deleteVehicle(vehicle.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
                   </td>
                 </tr>
@@ -54,19 +54,19 @@
         </div>
       </div>
     </div>
-  </AuthenticatedLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
 import { router, Link, usePage, Head } from '@inertiajs/vue3' 
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 const { vehicles } = usePage().props
 
 function deleteVehicle(id) {
   if (confirm('Confirmer la suppression ?')) {
     // Correction : On utilise 'router.delete'
-    router.delete(route('vehicles.destroy', id))
+    router.delete(route('admin.vehicles.destroy', id))
   }
 }
 </script>
