@@ -71,6 +71,7 @@ class ReservationController extends Controller
     {
         $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
+            'departure' => 'required',
             'destination' => 'required',
             'date_debut' => 'required|date|after:now',
             'date_fin' => 'required|date|after:date_debut',
@@ -102,6 +103,7 @@ class ReservationController extends Controller
         $reservation = Reservation::create([
             'vehicle_id' => $vehicle->id,
             'user_id' => Auth::id(),
+            'depart' => $request->departure,
             'destination' => $request->destination,
             'date_debut' => $request->date_debut,
             'date_fin' => $request->date_fin,
@@ -135,13 +137,14 @@ class ReservationController extends Controller
 
         $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
+            'departure' => 'required',
             'destination' => 'required',
             'date_debut' => 'required|date|after:now',
             'date_fin' => 'required|date|after:date_debut',
             'statut' => 'required|in:en attente,validé,annulé',
         ]);
 
-        $reservation->update($request->only(['vehicle_id', 'destination', 'date_debut', 'date_fin', 'statut', 'covoiturage']));
+        $reservation->update($request->only(['vehicle_id', 'departure', 'destination', 'date_debut', 'date_fin', 'statut']));
 
         // Envoyer mail si changement statut
         Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
@@ -180,10 +183,13 @@ class ReservationController extends Controller
     {
         $request->validate([
             'date_debut' => 'required|date',
+            'date_fin' => 'sometimes|date|after:date_debut',
+            'departure' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
         ]);
 
         $dateDebut = Carbon::parse($request->date_debut);
+        $departure = strtolower(trim($request->departure));
         $destination = strtolower(trim($request->destination));
 
         // On cherche des trajets validés, qui partent +/- 1 heure
@@ -191,8 +197,10 @@ class ReservationController extends Controller
         $reservations = Reservation::with(['driver', 'vehicle', 'passengers'])
             ->where('statut', 'validé')
             ->whereRaw('LOWER(destination) = ?', [$destination])
-            ->whereDate('date_debut', $dateDebut)
-            ->where('user_id', '!=', Auth::id()) // On ne veut pas ses propres trajets
+            ->whereRaw('LOWER(depart) = ?', [$departure])
+            ->whereDate('date_debut', $dateDebut->toDateString())
+            ->where('date_fin', '>=', $dateDebut)
+            ->where('user_id', '!=', Auth::id())
             ->get();
 
         // On filtre pour ne garder que ceux qui ont des places libres

@@ -88,10 +88,24 @@ onMounted(() => {
 });
 
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('fr-FR', {
+    const date = new Date(dateString);
+
+    // Format UTC (date)
+    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
         dateStyle: 'medium',
-        timeStyle: 'short',
+        timeZone: 'UTC',
     });
+
+    // Format local (heure)
+    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
+        timeStyle: 'short',
+        timeZone: 'UTC',
+    });
+
+    const datePart = utcFormatter.format(date);
+    const timePart = localFormatter.format(date);
+
+    return `${datePart} à ${timePart}`;
 };
 
 </script>
@@ -102,7 +116,7 @@ const formatDate = (dateString) => {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Gérer le trajet : {{ reservation.destination }}
+                Gérer le trajet : {{ reservation.depart }} → {{ reservation.destination }} 
             </h2>
         </template>
 

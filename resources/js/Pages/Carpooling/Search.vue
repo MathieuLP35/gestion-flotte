@@ -15,10 +15,24 @@ function joinCarpooling(carpoolingId) {
 }
 
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('fr-FR', {
+    const date = new Date(dateString);
+
+    // Format UTC (date)
+    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
         dateStyle: 'medium',
-        timeStyle: 'short',
+        timeZone: 'UTC',
     });
+
+    // Format local (heure)
+    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
+        timeStyle: 'short',
+        timeZone: 'UTC',
+    });
+
+    const datePart = utcFormatter.format(date);
+    const timePart = localFormatter.format(date);
+
+    return `${datePart} à ${timePart}`;
 };
 
 </script>
@@ -42,7 +56,7 @@ const formatDate = (dateString) => {
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                             <div class="flex-grow">
                                 <h3 class="text-lg font-semibold text-indigo-700 mb-2">
-                                    Départ -> {{ carpooling.destination }}
+                                    {{ carpooling.depart }} → {{ carpooling.destination }} 
                                 </h3>
                                 <p class="text-sm text-gray-600">
                                     Départ: {{ formatDate(carpooling.date_debut) }}

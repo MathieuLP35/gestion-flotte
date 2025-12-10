@@ -17,10 +17,8 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
-});
+})->middleware('guest');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -33,10 +31,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/dashboard', [ReservationController::class, 'dashboard'])->name('dashboard');
+
     Route::resource('reservations', ReservationController::class);
     Route::resource('maintenances', MaintenanceController::class);
     Route::resource('passengers', PassengerController::class);
-    Route::get('/dashboard', [ReservationController::class, 'dashboard'])->name('dashboard');
 
     Route::get('reservations/{reservation}', [ReservationController::class, 'show'])
         ->name('reservations.show');

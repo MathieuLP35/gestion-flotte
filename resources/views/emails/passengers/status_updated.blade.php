@@ -13,6 +13,8 @@ Bonjour {{ $passenger->user->name }},
 
 Bonne nouvelle ! Le conducteur a accepté votre demande pour rejoindre le trajet suivant :
 
+**Départ :** {{ $passenger->reservation->depart }}
+
 **Destination :** {{ $passenger->reservation->destination }}
 
 **Conducteur :** {{ $passenger->reservation->driver->name }}
@@ -33,6 +35,8 @@ Voir mes trajets
 Bonjour {{ $passenger->user->name }},
 
 Malheureusement, le conducteur n'a pas pu accepter votre demande pour le trajet suivant :
+
+**Départ :** {{ $passenger->reservation->depart }}
 
 **Destination :** {{ $passenger->reservation->destination }}
 
