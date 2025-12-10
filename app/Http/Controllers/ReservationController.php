@@ -51,6 +51,9 @@ class ReservationController extends Controller
         return inertia('Dashboard', [
             'reservationsAsDriver' => $reservationsAsDriver,
             'reservationsAsPassenger' => $reservationsAsPassenger,
+            'geocoding' => [
+                'nominatimEnabled' => config('geocoding.nominatim_enabled'),
+            ],
         ]);
     }
 

@@ -7,6 +7,12 @@ import { ref } from 'vue';
 const props = defineProps({
     reservationsAsDriver: Array,
     reservationsAsPassenger: Array,
+    geocoding: {
+        type: Object,
+        default: () => ({
+            nominatimEnabled: false,
+        }),
+    },
 });
 
 // 2. Fonction pour annuler sa propre place de passager
@@ -38,19 +44,118 @@ function deleteReservation(id) {
 }
 
 const form = useForm({
-    departure: '',
-    destination: '',
+    departure: '',        // saisie libre
+    destination: '',      // saisie libre
+    departureSelected: null,   // sélectionnée
+    destinationSelected: null, // sélectionnée
     departureDate: '',
     arrivalDate: '',
 });
 
 const searchCarpooling = () => {
+    if (!form.departureSelected) {
+        return;
+    }
+    if (!form.destinationSelected) {
+        return;
+    }
+
     form.post(route('carpooling.search'), {
         preserveState: true,
         onSuccess: () => {
-            // Vous pouvez ajouter une logique après la recherche si nécessaire
+            // Réinitialiser les sélections si tu veux
+            // form.departureSelected = null;
+            // form.destinationSelected = null;
         },
     });
+};
+
+const suggestionsDeparture = ref([]);
+const suggestionsDestination = ref([]);
+const isLoadingDeparture = ref(false);
+const isLoadingDestination = ref(false);
+const cache = {};
+
+const fetchSuggestions = async (query, type) => {
+    if (!query || query.length < 4) {
+        if (type === 'departure') suggestionsDeparture.value = [];
+        if (type === 'destination') suggestionsDestination.value = [];
+        return;
+    }
+
+    const cacheKey = `${query}_${type}`;
+    if (cache[cacheKey] && Date.now() - cache[cacheKey].timestamp < 5 * 60 * 1000) { // 5 min
+        if (type === 'departure') suggestionsDeparture.value = cache[cacheKey].data;
+        if (type === 'destination') suggestionsDestination.value = cache[cacheKey].data;
+        return;
+    }
+
+
+    try {
+        if (type === 'departure') isLoadingDeparture.value = true;
+        if (type === 'destination') isLoadingDestination.value = true;
+
+        let suggestions = [];
+
+        // 🔍 1. Essayer d'abord avec API Adresse.gouv.fr
+        const adresseResponse = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=3`);
+        const adresseData = await adresseResponse.json();
+
+        suggestions = adresseData.features.map(f => ({
+            label: f.properties.label,
+            citycode: f.properties.citycode,
+            city: f.properties.city,
+            postcode: f.properties.postcode,
+            street: f.properties.street || '',
+            type: f.properties.type,
+            lat: f.geometry.coordinates[1],
+            lng: f.geometry.coordinates[0],
+            source: 'adresse_gouv',
+        }));
+
+        // 🔍 2. Si peu de résultats (moins de 2) ET Nominatim activé → essayer avec Nominatim
+        if (suggestions.length < 2 && props.geocoding.nominatimEnabled) {
+            const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=3&countrycodes=FR&addressdetails=1`;
+
+            const nominatimResponse = await fetch(nominatimUrl);
+            const nominatimData = await nominatimResponse.json();
+
+            const nominatimSuggestions = nominatimData.map(f => ({
+                label: `${f.address.office ? f.address.office + ' ' : ''}, ${f.address.house_number ? f.address.house_number + ' ' : ''}${f.address.road ? f.address.road + ', ' : ''}${f.address.postcode ? f.address.postcode + ' ' : ''}${f.address.city || f.address.town || f.address.village || ''}`.trim().replace(/^,|,$/g, ''),
+                city: f.address?.city || f.address?.town || f.address?.village || '',
+                postcode: f.address?.postcode || '',
+                street: f.address?.road || '',
+                type: f.type || '',
+                lat: parseFloat(f.lat),
+                lng: parseFloat(f.lon),
+                source: 'nominatim',
+            }));
+
+            suggestions = [...suggestions, ...nominatimSuggestions];
+        }
+
+        if (type === 'departure') {
+            suggestionsDeparture.value = suggestions;
+        } else {
+            suggestionsDestination.value = suggestions;
+        }
+
+        // Enregistrer dans le cache
+        cache[cacheKey] = {
+            data: suggestions,
+            timestamp: Date.now(),
+        };
+
+        // Sauvegarder dans localStorage (optionnel)
+        localStorage.setItem('geocodingCache', JSON.stringify(cache));
+    } catch (error) {
+        console.error('Erreur lors de la recherche d’adresses :', error);
+        if (type === 'departure') suggestionsDeparture.value = [];
+        if (type === 'destination') suggestionsDestination.value = [];
+    } finally {
+        if (type === 'departure') isLoadingDeparture.value = false;
+        if (type === 'destination') isLoadingDestination.value = false;
+    }
 };
 
 </script>
@@ -63,16 +168,72 @@ const searchCarpooling = () => {
             <div class="max-w-7xl mx-auto mb-6 bg-white p-6 rounded-lg shadow-sm">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Recherche de Covoiturage</h2>
                 <form @submit.prevent="searchCarpooling" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-                    <div>
+                    <div class="relative">
                         <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
-                        <input type="text" id="departure" v-model="form.departure" placeholder="Ex: Paris" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <input
+                            type="text"
+                            id="departure"
+                            v-model="form.departure"
+                            @input="fetchSuggestions(form.departure, 'departure')"
+                            placeholder="Ex: Rennes, Bruz, 35000..."
+                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                            required
+                        />
+                        <div v-if="isLoadingDeparture" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
+                            Recherche en cours...
+                        </div>
+                        <ul v-if="suggestionsDeparture.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
+                            <li
+                                v-for="suggestion in suggestionsDeparture"
+                                :key="suggestion.label"
+                                @click="form.departureSelected = suggestion; form.departure = suggestion.label; suggestionsDeparture = []"
+                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
+                            >
+                                <span>{{ suggestion.label }}</span>
+                                <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                </svg>
+                            </li>
+                        </ul>
                         <div v-if="form.errors.departure" class="mt-2 text-sm text-red-600">
                             {{ form.errors.departure }}
                         </div>
                     </div>
-                    <div>
+                    <div class="relative">
                         <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
-                        <input type="text" id="destination" v-model="form.destination" placeholder="Ex: Lyon" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <input
+                            type="text"
+                            id="destination"
+                            v-model="form.destination"
+                            @input="fetchSuggestions(form.destination, 'destination')"
+                            placeholder="Ex: Pontivy, Nantes, 56000..."
+                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                            required
+                        />
+                        <div v-if="isLoadingDestination" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
+                            Recherche en cours...
+                        </div>
+                        <ul v-if="suggestionsDestination.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
+                            <li
+                                v-for="suggestion in suggestionsDestination"
+                                :key="suggestion.label"
+                                @click="form.destinationSelected = suggestion; form.destination = suggestion.label; suggestionsDestination = []"
+                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                            >
+                                <span>{{ suggestion.label }}</span>
+                                <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                </svg>
+                            </li>
+                        </ul>
                         <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
                             {{ form.errors.destination }}
                         </div>
@@ -120,7 +281,10 @@ const searchCarpooling = () => {
                                             {{ resa.destination }}
                                         </h3>
                                         <p class="text-sm text-gray-600">
-                                            {{ formatDate(resa.date_debut) }}
+                                            Départ: {{ formatDate(resa.date_debut) }}
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            Retour : {{ formatDate(resa.date_fin) }}
                                         </p>
                                         <p class="text-sm text-gray-500">
                                             Véhicule: {{ resa.vehicle.modele }} ({{ resa.vehicle.immatriculation }})
