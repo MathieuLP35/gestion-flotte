@@ -30,6 +30,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
                                     Gérer les Rôles
                                 </NavLink>
+                                <NavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.*')">
+                                    Gérer les Véhicules
+                                </NavLink>
                                 <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                                     Gérer les Utilisateurs
                                 </NavLink>

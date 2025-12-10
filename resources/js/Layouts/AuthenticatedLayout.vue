@@ -41,13 +41,6 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
 
                                 <NavLink
-                                    :href="route('vehicles.index')"
-                                    :active="route().current('vehicles.*')"
-                                >
-                                    Véhicules
-                                </NavLink>
-
-                                <NavLink
                                     :href="route('maintenances.index')"
                                     :active="route().current('maintenances.*')"
                                 >

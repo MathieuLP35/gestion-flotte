@@ -1,7 +1,7 @@
 <template>
     <Head title="Ajout de véhicule" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
       <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
           <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -62,13 +62,13 @@
           </div>
         </div>
       </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>
 
 <script setup>
 // 1. Importer 'useForm' (au lieu de 'reactive') et 'Head'
 import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 // 2. Initialiser le formulaire avec useForm
 // Il remplace 'reactive' et gère l'état, les erreurs, etc.
@@ -83,7 +83,7 @@ const form = useForm({
 // 3. Définir la fonction de soumission
 function submit() {
   // Utilise form.post (de useForm) qui s'occupe de tout
-  form.post(route('vehicles.store'), {
+  form.post(route('admin.vehicles.store'), {
     // Bonus : Vider le formulaire après un succès
     onSuccess: () => form.reset(),
   });

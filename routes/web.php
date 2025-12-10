@@ -3,12 +3,12 @@
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\VehicleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,7 +33,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('vehicles', VehicleController::class);
     Route::resource('reservations', ReservationController::class);
     Route::resource('maintenances', MaintenanceController::class);
     Route::resource('passengers', PassengerController::class);
@@ -72,6 +71,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
 
     // /admin/roles
     Route::resource('roles', RoleController::class);
+
+    // /admin/vehicles
+    Route::resource('vehicles', VehicleController::class);
 
     // /admin/permissions
     // Route::resource('permissions', PermissionController::class);

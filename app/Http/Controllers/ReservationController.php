@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStatusChanged;
+use App\Models\Passenger;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -43,7 +44,7 @@ class ReservationController extends Controller
 
         // 2. Les trajets où je suis PASSAGER
         // On passe par le modèle Passenger pour récupérer les infos
-        $reservationsAsPassenger = \App\Models\Passenger::with(['reservation.driver', 'reservation.vehicle'])
+        $reservationsAsPassenger = Passenger::with(['reservation.driver', 'reservation.vehicle'])
             ->where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
