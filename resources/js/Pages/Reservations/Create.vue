@@ -54,6 +54,14 @@
                       </div>
                     </div>
 
+                    <div>
+                      <label class="inline-flex items-center me-5 cursor-pointer">
+                        <input type="checkbox" v-model="form.is_carpool" id="covoiturage" class="sr-only peer" checked>
+                        <div class="relative w-9 h-5 bg-neutral-quaternary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600 dark:peer-checked:bg-green-600"></div>
+                        <span class="select-none ms-3 text-sm font-medium text-heading">Je souhaite proposer ce trajet en covoiturage</span>
+                      </label>
+                    </div>
+
                     <div class="flex items-center justify-end pt-4 border-t border-gray-200">
                       <button type="submit" :disabled="form.processing" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150" :class="{ 'opacity-50 cursor-not-allowed': form.processing }">
                         {{ form.processing ? 'Réservation...' : 'Réserver ce véhicule' }}
@@ -112,6 +120,7 @@ const form = useForm({
   destination: '', // NOUVEAU
   date_debut: '',
   date_fin: '',
+  is_carpool: false, // NOUVEAU
 })
 
 // NOUVEAU : renommé `submit` en `submitVehicleReservation`

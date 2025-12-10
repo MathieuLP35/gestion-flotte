@@ -73,6 +73,7 @@ class ReservationController extends Controller
             'destination' => 'required',
             'date_debut' => 'required|date|after:now',
             'date_fin' => 'required|date|after:date_debut',
+            'is_carpool' => 'sometimes|boolean',
         ]);
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
@@ -103,8 +104,8 @@ class ReservationController extends Controller
             'destination' => $request->destination,
             'date_debut' => $request->date_debut,
             'date_fin' => $request->date_fin,
-            'statut' => 'en attente',
-            'covoiturage' => false,
+            'statut' => config('reservation.default_status', 'en attente'),
+            'covoiturage' => $request->has('is_carpool') ? $request->is_carpool : false,
         ]);
 
         // Optionnel: envoyer notification par mail
