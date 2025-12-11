@@ -4,19 +4,22 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <div
-        class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
-    >
-        <div>
+    <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-6">
+        <!-- Logo -->
+        <div class="mb-8">
             <Link href="/">
-                <ApplicationLogo class="w-[8rem] h-[8rem] mb-6 fill-current text-gray-500" />
+                <ApplicationLogo class="w-[8rem] h-[8rem] fill-current text-gray-600" />
             </Link>
         </div>
 
-        <div
-            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg"
-        >
+        <!-- Contenu principal -->
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
             <slot />
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 text-center text-sm text-gray-500">
+            © 2025 SparkOtto. Tous droits réservés.
         </div>
     </div>
 </template>
