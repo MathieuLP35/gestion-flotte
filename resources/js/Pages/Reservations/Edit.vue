@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, router, usePage } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
+import useDate from '@/Composables/useDate';
 
 // 1. Récupérer les props du contrôleur
 const props = defineProps({
@@ -9,8 +10,8 @@ const props = defineProps({
     vehicles: Array,
 });
 
-// 2. Initialiser le formulaire d'édition
-// On inclut le champ `destination`
+const { formatDate } = useDate();
+
 const form = useForm({
     vehicle_id: props.reservation.vehicle_id,
     destination: props.reservation.destination,
@@ -23,8 +24,8 @@ function submit() {
     form.put(route('reservations.update', props.reservation.id));
 }
 
+
 // 4. Fonction pour GÉRER les passagers (Accepter / Refuser)
-// Appelle la route `passengers.update`
 const updatePassengerStatus = (passengerId, newStatus) => {
     router.put(route('passengers.update', passengerId), {
         statut: newStatus
@@ -36,8 +37,8 @@ const updatePassengerStatus = (passengerId, newStatus) => {
     });
 };
 
+
 // 5. Fonction pour RETIRER un passager
-// Appelle la route `passengers.destroy`
 const removePassenger = (passengerId) => {
     if (confirm("Voulez-vous vraiment retirer ce passager du trajet ?")) {
         router.delete(route('passengers.destroy', passengerId), {
@@ -46,9 +47,7 @@ const removePassenger = (passengerId) => {
     }
 };
 
-// ------------------------------------------
-// NOUVEAU : LOGIQUE DE CHAT
-// ------------------------------------------
+// 6. Gestion de la messagerie du trajet
 const messages = ref([]); // La liste des messages
 const newMessage = ref(''); // Le contenu du champ de texte
 const authUser = usePage().props.auth.user; // L'utilisateur connecté
@@ -86,27 +85,6 @@ async function sendMessage() {
 onMounted(() => {
     fetchMessages();
 });
-
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-
-    // Format UTC (date)
-    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
-        dateStyle: 'medium',
-        timeZone: 'UTC',
-    });
-
-    // Format local (heure)
-    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
-        timeStyle: 'short',
-        timeZone: 'UTC',
-    });
-
-    const datePart = utcFormatter.format(date);
-    const timePart = localFormatter.format(date);
-
-    return `${datePart} à ${timePart}`;
-};
 
 </script>
 

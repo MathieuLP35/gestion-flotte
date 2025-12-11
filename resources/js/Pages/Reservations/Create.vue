@@ -121,8 +121,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ref, watch } from 'vue'; // NOUVEAU : import `ref` et `watch`
 import axios from 'axios'; // NOUVEAU
 import debounce from 'lodash.debounce'; // NOUVEAU
+import useDate from '@/Composables/useDate';
 
 const { vehicles } = usePage().props
+
+const { formatDate } = useDate();
 
 // NOUVEAU : ajout de `destination` au formulaire
 const form = useForm({
@@ -141,15 +144,10 @@ function submitVehicleReservation() {
   })
 }
 
-// ---------------------------------------------------
-// NOUVEAU : TOUTE LA LOGIQUE DE COVOITURAGE CI-DESSOUS
-// ---------------------------------------------------
-
 // État pour la liste des covoiturages
 const matchingCarpools = ref([]);
 const isLoadingCarpools = ref(false);
 
-// Fonction pour appeler l'API Laravel
 // Fonction pour appeler l'API Laravel
 const fetchMatchingCarpools = async () => {
   if (form.destination.length < 3 || !form.date_debut) {
@@ -159,7 +157,6 @@ const fetchMatchingCarpools = async () => {
 
   isLoadingCarpools.value = true;
   try {
-    // CORRECTION 1 : Utiliser "await axios.post" au lieu de "router.post"
     const response = await axios.post(route('reservations.checkCarpool'), {
       date_debut: form.date_debut,
       date_fin: form.date_fin,
@@ -167,25 +164,20 @@ const fetchMatchingCarpools = async () => {
       destination: form.destination,
     });
 
-    // CORRECTION 2 : Utiliser "carpool_available" (comme dans votre JSON)
     if (response.data.carpool_available) {
       matchingCarpools.value = response.data.reservations;
     } else {
       matchingCarpools.value = [];
     }
   } catch (error) {
-    // J'utilise le bloc 'catch' amélioré que je vous ai donné
     console.error("Erreur lors de la recherche de covoiturage. L'appel API a échoué.");
     
     if (error.response) {
-        // L'API a répondu avec un code d'erreur (404, 500, 422...)
         console.error("Statut HTTP:", error.response.status);
         console.error("Données de l'erreur:", error.response.data);
     } else if (error.request) {
-        // La requête a été faite, mais pas de réponse (ex: serveur éteint)
         console.error("Aucune réponse reçue:", error.request);
     } else {
-        // Une erreur s'est produite avant même de faire la requête
         console.error("Erreur de configuration Axios:", error.message);
     }
     
@@ -212,28 +204,6 @@ const joinCarpool = (reservationId) => {
       console.error(errors);
     }
   });
-};
-
-
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-
-    // Format UTC (date)
-    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
-        dateStyle: 'medium',
-        timeZone: 'UTC',
-    });
-
-    // Format local (heure)
-    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
-        timeStyle: 'short',
-        timeZone: 'UTC',
-    });
-
-    const datePart = utcFormatter.format(date);
-    const timePart = localFormatter.format(date);
-
-    return `${datePart} à ${timePart}`;
 };
 
 </script>

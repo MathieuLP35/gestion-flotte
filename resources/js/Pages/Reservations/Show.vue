@@ -3,15 +3,16 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue'; // Imports pour le chat
 import axios from 'axios'; // Import pour le chat
+import useDate from '@/Composables/useDate';
 
 // On reçoit la réservation du contrôleur
 const props = defineProps({
     reservation: Object,
 });
 
-// ------------------------------------------
-// LOGIQUE DE CHAT (identique à celle de Edit.vue)
-// ------------------------------------------
+const { formatDate } = useDate();
+
+// Logique pour le chat
 const messages = ref([]);
 const newMessage = ref('');
 const authUser = usePage().props.auth.user;
@@ -42,28 +43,6 @@ async function sendMessage() {
 onMounted(() => {
     fetchMessages();
 });
-
-// Helper pour formater les dates
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-
-    // Format UTC (date)
-    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
-        dateStyle: 'medium',
-        timeZone: 'UTC',
-    });
-
-    // Format local (heure)
-    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
-        timeStyle: 'short',
-        timeZone: 'UTC',
-    });
-
-    const datePart = utcFormatter.format(date);
-    const timePart = localFormatter.format(date);
-
-    return `${datePart} à ${timePart}`;
-};
 </script>
 
 <template>
