@@ -1,9 +1,12 @@
 <script setup>
-    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import useDate from '@/Composables/useDate';
 
 const props = defineProps({
     carpoolings: Array,
 });
+
+const { formatDate } = useDate();
 
 function joinCarpooling(carpoolingId) {
     Inertia.post(route('carpooling.join', { id: carpoolingId }),
@@ -14,26 +17,6 @@ function joinCarpooling(carpoolingId) {
     });
 }
 
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-
-    // Format UTC (date)
-    const utcFormatter = new Intl.DateTimeFormat('fr-FR', {
-        dateStyle: 'medium',
-        timeZone: 'UTC',
-    });
-
-    // Format local (heure)
-    const localFormatter = new Intl.DateTimeFormat('fr-FR', {
-        timeStyle: 'short',
-        timeZone: 'UTC',
-    });
-
-    const datePart = utcFormatter.format(date);
-    const timePart = localFormatter.format(date);
-
-    return `${datePart} à ${timePart}`;
-};
 
 </script>
 <template>
