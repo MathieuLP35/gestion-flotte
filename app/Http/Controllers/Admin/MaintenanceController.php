@@ -1,32 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Maintenance;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\In;
 use Inertia\Inertia;
 
 class MaintenanceController extends Controller
 {
-    public function index()
-    {
-        $maintenances = Maintenance::with('vehicle')
-            ->whereHas('vehicle', function ($q) {
-                $q->where('agence_id', Auth::user()->agence_id);
-            })->get();
-
-        return Inertia::render('Maintenances/Index', ['maintenances' => $maintenances]);
-    }
-
-    public function create()
-    {
-        $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)->get();
-
-        return Inertia::render('Maintenances/Create', ['vehicles' => $vehicles]);
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -43,7 +28,7 @@ class MaintenanceController extends Controller
 
         Maintenance::create($request->all());
 
-        return redirect()->route('maintenances.index')->with('success', 'Seuil de maintenance créé');
+        return back()->with('success', 'Seuil de maintenance ajouté');
     }
 
     public function edit(Maintenance $maintenance)
@@ -54,7 +39,7 @@ class MaintenanceController extends Controller
 
         $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)->get();
 
-        return Inertia::render('Maintenances/Edit', ['maintenance' => $maintenance, 'vehicles' => $vehicles]);
+        return Inertia::render('Admin/Maintenances/Edit', ['maintenance' => $maintenance, 'vehicles' => $vehicles]);
     }
 
     public function update(Request $request, Maintenance $maintenance)
@@ -71,7 +56,7 @@ class MaintenanceController extends Controller
 
         $maintenance->update($request->all());
 
-        return redirect()->route('maintenances.index')->with('success', 'Seuil de maintenance mis à jour');
+        return back()->with('success', 'Seuil de maintenance mis à jour');
     }
 
     public function destroy(Maintenance $maintenance)
@@ -82,6 +67,6 @@ class MaintenanceController extends Controller
 
         $maintenance->delete();
 
-        return redirect()->route('maintenances.index')->with('success', 'Seuil de maintenance supprimé');
+        return back()->with('success', 'Seuil de maintenance supprimé');
     }
 }

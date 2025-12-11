@@ -15,7 +15,7 @@ class Vehicle extends Model
         return $this->belongsTo(Agence::class);
     }
 
-    public function maintenances(): HasMany
+    public function maintenances()
     {
         return $this->hasMany(Maintenance::class);
     }
