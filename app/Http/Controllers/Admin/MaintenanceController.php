@@ -56,7 +56,7 @@ class MaintenanceController extends Controller
 
         $maintenance->update($request->all());
 
-        return back()->with('success', 'Seuil de maintenance mis à jour');
+        return redirect()->route('admin.vehicles.edit', $maintenance->vehicle_id)->with('success', 'Seuil de maintenance mis à jour');
     }
 
     public function destroy(Maintenance $maintenance)

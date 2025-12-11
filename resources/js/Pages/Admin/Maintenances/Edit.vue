@@ -67,6 +67,6 @@ const form = useForm({
 })
 
 function submit() {
-  form.put(route('maintenances.update', maintenance.id))
+  form.put(route('admin.maintenances.update', maintenance.id))
 }
 </script>
