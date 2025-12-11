@@ -2,14 +2,13 @@
 
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MaintenanceController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\VehicleController;
-use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -35,7 +34,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [ReservationController::class, 'dashboard'])->name('dashboard');
 
     Route::resource('reservations', ReservationController::class);
-    Route::resource('maintenances', MaintenanceController::class);
     Route::resource('passengers', PassengerController::class);
 
     Route::get('reservations/{reservation}', [ReservationController::class, 'show'])
@@ -74,6 +72,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
 
     // /admin/vehicles
     Route::resource('vehicles', VehicleController::class);
+
+    // /admin/maintenances
+    Route::resource('maintenances', MaintenanceController::class);
 
     // /admin/permissions
     // Route::resource('permissions', PermissionController::class);

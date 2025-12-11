@@ -67,7 +67,7 @@ const form = useForm({
 })
 
 function submit() {
-  form.post(route('maintenances.store'), {
+  form.post(route('admin.maintenances.store'), {
     onSuccess: () => form.reset('km_alert_threshold', 'date_dernier_entretien'),
   })
 }

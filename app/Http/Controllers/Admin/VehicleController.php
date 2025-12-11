@@ -61,8 +61,10 @@ class VehicleController extends Controller
             abort(403);
         }
 
+        $vehicle->load('maintenances');
+
         return Inertia::render('Admin/Vehicles/Edit', [
-            'vehicle' => $vehicle
+            'vehicle' => $vehicle,
         ]);
     }
 

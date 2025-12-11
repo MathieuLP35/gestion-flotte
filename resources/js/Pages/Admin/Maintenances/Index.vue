@@ -5,7 +5,6 @@
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-            
             <div class="flex justify-between items-center mb-6">
               <h1 class="text-3xl font-bold text-gray-800">Seuils de maintenance</h1>
               <Link :href="route('maintenances.create')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition ease-in-out duration-150">
@@ -29,7 +28,7 @@
                     <td class="py-4 px-6">{{ m.km_alert_threshold }}</td>
                     <td classs="py-4 px-6">{{ m.date_dernier_entretien ?? 'N/A' }}</td>
                     <td class="py-4 px-6 text-center whitespace-nowrap">
-                      <Link :href="route('maintenances.edit', m.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
+                      <Link :href="route('admin.maintenances.edit', m.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
                       <button @click="deleteMaintenance(m.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
                     </td>
                   </tr>
