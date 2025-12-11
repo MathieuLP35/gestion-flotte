@@ -12,7 +12,7 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen flex flex-col bg-gray-50">
             <nav class="bg-white border-b border-gray-100">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between">
@@ -99,7 +99,31 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <main>
-                <slot /> </main>
+                <slot /> 
+            </main>
+            <footer class="bg-white border-t border-gray-200 mt-auto">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            © 2025 SparkOtto. Tous droits réservés.
+                        </div>
+                        <div class="space-x-4">
+                            <Link
+                                href="/terms"
+                                class="text-sm text-gray-500 hover:text-gray-700"
+                            >
+                                Conditions d'utilisation
+                            </Link>
+                            <Link
+                                href="/privacy"
+                                class="text-sm text-gray-500 hover:text-gray-700"
+                            >
+                                Politique de confidentialité
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
 </template>

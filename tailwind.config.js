@@ -9,11 +9,15 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
     ],
-
+    
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                'sparkotto-purple': '#68308E', 
+                'sparkotto-yellow': '#FCCC2E',
             },
         },
     },
