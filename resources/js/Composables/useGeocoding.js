@@ -7,6 +7,8 @@ export default function useGeocoding() {
     const isLoadingDeparture = ref(false);
     const isLoadingDestination = ref(false);
     const cache = {};
+    const nominatimEnabled = import.meta.env.VITE_NOMINATIM_ENABLED;
+    let suggestions = ref([]);
 
     const fetchSuggestions = async (query, type, geocoding) => {
         if (!query || query.length < 4) {
@@ -26,13 +28,11 @@ export default function useGeocoding() {
             if (type === 'departure') isLoadingDeparture.value = true;
             if (type === 'destination') isLoadingDestination.value = true;
 
-            let suggestions = [];
-
             const adresseResponse = await fetch(`https://data.geopf.fr/geocodage/search/?q=${encodeURIComponent(query)}&limit=3&index=address,poi`);
             const adresseData = await adresseResponse.json();
 
             suggestions = adresseData.features.map(f => ({
-                label: f.properties._type === 'poi' ? `${f.properties.toponym}, ${f.properties.postcode} ${f.properties.city}` : f.properties.label,
+                label: f.properties._type === 'poi' ? `${f.properties.toponym}, ${f.properties.postcode ? f.properties.postcode : ""} ${f.properties.city ? f.properties.city : ""}` : f.properties.label,
                 citycode: f.properties.citycode,
                 city: f.properties.city,
                 postcode: f.properties.postcode,
@@ -43,7 +43,9 @@ export default function useGeocoding() {
                 source: 'adresse_gouv',
             }));
 
-            if (suggestions.length < 2 && geocoding.nominatimEnabled) {
+            console.log(nominatimEnabled);
+
+            if (suggestions.length < 2 && nominatimEnabled) {
                 const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=3&countrycodes=FR&addressdetails=1`;
 
                 const nominatimResponse = await fetch(nominatimUrl);

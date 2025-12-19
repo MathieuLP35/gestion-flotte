@@ -1,7 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import useGeocoding from '@/Composables/useGeocoding';
 import useDate from '@/Composables/useDate';
 import useReservation from '@/Composables/useReservation';
@@ -9,12 +8,6 @@ import useReservation from '@/Composables/useReservation';
 const props = defineProps({
     reservationsAsDriver: Array,
     reservationsAsPassenger: Array,
-    geocoding: {
-        type: Object,
-        default: () => ({
-            nominatimEnabled: false,
-        }),
-    },
 });
 
 const { formatDate } = useDate();
@@ -166,7 +159,7 @@ const searchCarpooling = () => {
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                     <div class="flex-grow">
                                         <h3 class="text-lg font-semibold text-indigo-700 mb-2">
-                                            {{ resa.depart }} → {{ resa.destination }} 
+                                            {{ resa.depart }} → {{ resa.destination }}
                                         </h3>
                                         <p class="text-sm text-gray-600">
                                             Départ: {{ formatDate(resa.date_debut) }}
@@ -204,7 +197,7 @@ const searchCarpooling = () => {
                                         </button>
                                     </div>
                                 </div>
-                                
+
                                 <div class="mt-4 border-t border-gray-200 pt-4">
                                     <h4 class="text-sm font-medium text-gray-700">
                                         Passagers ({{ resa.passengers.length }}/{{ resa.vehicle.nbr_places - 1 }})
@@ -214,10 +207,10 @@ const searchCarpooling = () => {
                                     </div>
                                     <div v-else class="flex flex-wrap gap-2 mt-2">
                                         <span v-for="p in resa.passengers" :key="p.id" class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                              :class="{ 
-                                                'bg-green-100 text-green-800': p.statut === 'confirme', 
-                                                'bg-yellow-100 text-yellow-800': p.statut === 'en_attente', 
-                                                'bg-red-100 text-red-800': p.statut === 'refuse' 
+                                              :class="{
+                                                'bg-green-100 text-green-800': p.statut === 'confirme',
+                                                'bg-yellow-100 text-yellow-800': p.statut === 'en_attente',
+                                                'bg-red-100 text-red-800': p.statut === 'refuse'
                                               }">
                                             {{ p.user.name }} ({{ p.statut }})
                                         </span>
@@ -253,16 +246,16 @@ const searchCarpooling = () => {
                                     <div class="mt-2">
                                         <span class="text-sm font-medium">Statut: </span>
                                         <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                              :class="{ 
-                                                'bg-green-100 text-green-800': pass.statut === 'confirme', 
+                                              :class="{
+                                                'bg-green-100 text-green-800': pass.statut === 'confirme',
                                                 'bg-yellow-100 text-yellow-800': pass.statut === 'en_attente',
-                                                'bg-red-100 text-red-800': pass.statut === 'refuse' 
+                                                'bg-red-100 text-red-800': pass.statut === 'refuse'
                                               }">
                                             {{ pass.statut }}
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="mt-4 sm:mt-0 sm:ml-4 sm:flex-shrink-0">
                                     <button @click="cancelPassenger(pass.id)" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                         Annuler ma place
