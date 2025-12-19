@@ -6,36 +6,96 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 md:p-8">
-              
+
               <h1 class="text-3xl font-bold text-gray-800 mb-6">
                 Nouvelle réservation
               </h1>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
+
                 <div class="space-y-6">
                   <h2 class="text-xl font-semibold text-gray-700">Option 1 : Réserver un véhicule</h2>
                   <form @submit.prevent="submitVehicleReservation" class="space-y-6">
-                    
-                    <div>
-                      <label for="departure" class="block text-sm font-medium text-gray-700">Lieu de départ</label>
-                      <input type="text" v-model="form.departure" id="departure" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
-                      <div v-if="form.errors.departure" class="mt-2 text-sm text-red-600">
-                        {{ form.errors.departure }}
-                      </div>
-                    </div>
 
                     <div>
-                      <label for="destination" class="block text-sm font-medium text-gray-700">Destination</label>
-                      <input type="text" v-model="form.destination" id="destination" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
-                      <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
-                        {{ form.errors.destination }}
-                      </div>
+                        <div class="relative">
+                            <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
+                            <input
+                                type="text"
+                                id="departure"
+                                v-model="form.departure"
+                                @input="fetchSuggestions(form.departure, 'departure')"
+                                placeholder="Ex: Rennes, Bruz, 35000..."
+                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                required
+                            />
+                            <div v-if="isLoadingDeparture" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
+                                Recherche en cours...
+                            </div>
+                            <ul v-if="suggestionsDeparture.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
+                                <li
+                                    v-for="suggestion in suggestionsDeparture"
+                                    :key="suggestion.label"
+                                    @click="form.departureSelected = suggestion; form.departure = suggestion.label; suggestionsDeparture = []"
+                                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
+                                >
+                                    <span>{{ suggestion.label }}</span>
+                                    <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    </svg>
+                                </li>
+                            </ul>
+                            <div v-if="form.errors.departure" class="mt-2 text-sm text-red-600">
+                                {{ form.errors.departure }}
+                            </div>
+                        </div>
                     </div>
+
+                  <div>
+                      <div class="relative">
+                        <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
+                        <input
+                            type="text"
+                            id="destination"
+                            v-model="form.destination"
+                            @input="fetchSuggestions(form.destination, 'destination')"
+                            placeholder="Ex: Pontivy, Nantes, 56000..."
+                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                            required
+                        />
+                        <div v-if="isLoadingDestination" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
+                            Recherche en cours...
+                        </div>
+                        <ul v-if="suggestionsDestination.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
+                            <li
+                                v-for="suggestion in suggestionsDestination"
+                                :key="suggestion.label"
+                                @click="form.destinationSelected = suggestion; form.destination = suggestion.label; suggestionsDestination = []"
+                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                            >
+                                <span>{{ suggestion.label }}</span>
+                                <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                </svg>
+                            </li>
+                        </ul>
+                        <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
+                            {{ form.errors.destination }}
+                        </div>
+                      </div>
+                  </div>
 
                     <div>
                       <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                      <input type="date" v-model="form.date_debut" id="date_debut" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                      <input type="date" v-model="form.date_debut" id="date_debut" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                       <div v-if="form.errors.date_debut" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_debut }}
                       </div>
@@ -43,7 +103,7 @@
 
                     <div>
                       <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
-                      <input type="date" v-model="form.date_fin" id="date_fin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                      <input type="date" v-model="form.date_fin" id="date_fin" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                       <div v-if="form.errors.date_fin" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_fin }}
                       </div>
@@ -51,7 +111,7 @@
 
                     <div>
                       <label for="vehicle" class="block text-sm font-medium text-gray-700">Véhicule</label>
-                      <select v-model="form.vehicle_id" id="vehicle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                      <select v-model="form.vehicle_id" id="vehicle" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
                         <option value="" disabled>Sélectionnez un véhicule</option>
                         <option v-for="v in vehicles" :key="v.id" :value="v.id">
                           {{ v.modele }} ({{ v.immatriculation }})
@@ -116,29 +176,45 @@
 </template>
 
 <script setup>
-import { useForm, usePage, Head, router } from '@inertiajs/vue3' // NOUVEAU : import `router`
+import { useForm, usePage, Head, router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref, watch } from 'vue'; // NOUVEAU : import `ref` et `watch`
-import axios from 'axios'; // NOUVEAU
-import debounce from 'lodash.debounce'; // NOUVEAU
+import { ref, watch } from 'vue';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 import useDate from '@/Composables/useDate';
+import useGeocoding from "@/Composables/useGeocoding.js";
 
 const { vehicles } = usePage().props
 
 const { formatDate } = useDate();
+const { suggestionsDeparture, suggestionsDestination, isLoadingDeparture, isLoadingDestination, fetchSuggestions } = useGeocoding();
 
-// NOUVEAU : ajout de `destination` au formulaire
+
 const form = useForm({
-  vehicle_id: null, // Modifié pour démarrer à null
-  departure: '', // NOUVEAU
-  destination: '', // NOUVEAU
-  date_debut: '',
-  date_fin: '',
-  is_carpool: false, // NOUVEAU
+    vehicle_id: null,
+    departure: '',
+    destination: '',
+    departureSelected: null,
+    destinationSelected: null,
+    date_debut: '',
+    date_fin: '',
+    is_carpool: false,
 })
 
-// NOUVEAU : renommé `submit` en `submitVehicleReservation`
 function submitVehicleReservation() {
+
+    form.errors.departure = "";
+    form.errors.destination = "";
+
+    if (!form.departureSelected) {
+        form.errors.departure = "Vous n'avez pas sélectionnez de lieu de départ."
+        return;
+    }
+    if (!form.destinationSelected) {
+        form.errors.destination = "Vous n'avez pas sélectionnez de lieu de départ."
+        return;
+    }
+
   form.post(route('reservations.store'), {
     onSuccess: () => form.reset(),
   })
@@ -171,7 +247,7 @@ const fetchMatchingCarpools = async () => {
     }
   } catch (error) {
     console.error("Erreur lors de la recherche de covoiturage. L'appel API a échoué.");
-    
+
     if (error.response) {
         console.error("Statut HTTP:", error.response.status);
         console.error("Données de l'erreur:", error.response.data);
@@ -180,7 +256,7 @@ const fetchMatchingCarpools = async () => {
     } else {
         console.error("Erreur de configuration Axios:", error.message);
     }
-    
+
     matchingCarpools.value = [];
   } finally {
     isLoadingCarpools.value = false;
