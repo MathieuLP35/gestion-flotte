@@ -28,12 +28,11 @@ export default function useGeocoding() {
 
             let suggestions = [];
 
-            // 🔍 1. Essayer d'abord avec API Adresse.gouv.fr
-            const adresseResponse = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=3`);
+            const adresseResponse = await fetch(`https://data.geopf.fr/geocodage/search/?q=${encodeURIComponent(query)}&limit=3&index=address,poi`);
             const adresseData = await adresseResponse.json();
 
             suggestions = adresseData.features.map(f => ({
-                label: f.properties.label,
+                label: f.properties._type === 'poi' ? `${f.properties.toponym}, ${f.properties.postcode} ${f.properties.city}` : f.properties.label,
                 citycode: f.properties.citycode,
                 city: f.properties.city,
                 postcode: f.properties.postcode,
@@ -44,7 +43,6 @@ export default function useGeocoding() {
                 source: 'adresse_gouv',
             }));
 
-            // 🔍 2. Si peu de résultats (moins de 2) ET Nominatim activé → essayer avec Nominatim
             if (suggestions.length < 2 && geocoding.nominatimEnabled) {
                 const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=3&countrycodes=FR&addressdetails=1`;
 
@@ -77,7 +75,7 @@ export default function useGeocoding() {
                 timestamp: Date.now(),
             };
 
-            // Sauvegarder dans localStorage (optionnel)
+            // Sauvegarder dans localStorage
             localStorage.setItem('geocodingCache', JSON.stringify(cache));
         } catch (error) {
             console.error('Erreur lors de la recherche d’adresses :', error);
