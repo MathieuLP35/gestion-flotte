@@ -52,13 +52,13 @@ class PassengerController extends Controller
 
         $passenger->update(['statut' => $request->statut]);
 
-        // Ici, vous devriez envoyer une NOTIFICATION email au passager
+        // Email au passager
         Mail::to($passenger->user->email)->send(new PassengerStatusUpdated($passenger));
 
         return back()->with('success', 'Statut du passager mis à jour.');
     }
 
-    // NOUVEAU : Retirer un passager (ou annuler sa propre place)
+    // Retirer un passager (ou annuler sa propre place)
     public function destroy(Passenger $passenger)
     {
 
