@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
 {
-    protected $fillable = ['vehicle_id', 'user_id', 'depart', 'destination', 'date_debut', 'date_fin', 'statut', 'covoiturage'];
+    protected $fillable = [
+        'vehicle_id', 'user_id', 'depart', 'destination', 
+        'date_debut', 'date_fin', 'statut', 'covoiturage',
+        'date_retour', 'km_final', 'emplacement_retour', 'etat_vehicule', 'notes_retour'
+    ];
 
     protected $casts = [
         'date_debut' => 'datetime',
         'date_fin' => 'datetime',
+        'date_retour' => 'datetime',
     ];
 
     public function vehicle() {
@@ -50,5 +55,21 @@ class Reservation extends Model
         }
 
         return $query->with('driver', 'passengers', 'vehicle')->get();
+    }
+
+    /**
+     * Vérifie si le véhicule peut être retourné
+     */
+    public function canBeReturned(): bool
+    {
+        return in_array($this->statut, ['validé', 'en cours', 'à retourner']) && $this->date_retour === null;
+    }
+
+    /**
+     * Vérifie si le véhicule a été retourné
+     */
+    public function isReturned(): bool
+    {
+        return $this->date_retour !== null;
     }
 }
