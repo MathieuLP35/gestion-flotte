@@ -19,6 +19,7 @@
 
                     <div>
                         <div class="relative">
+                           {{ form }}
                             <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
                             <input
                                 type="text"
@@ -233,6 +234,7 @@ const fetchMatchingCarpools = async () => {
 
   isLoadingCarpools.value = true;
   try {
+
     const response = await axios.post(route('reservations.checkCarpool'), {
       date_debut: form.date_debut,
       date_fin: form.date_fin,
