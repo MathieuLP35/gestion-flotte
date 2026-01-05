@@ -79,6 +79,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
     // /admin/permissions
     // Route::resource('permissions', PermissionController::class);
 
+    // /admin/domains
+    Route::resource('domains', App\Http\Controllers\Admin\AllowedDomainController::class);
+
 });
 
 require __DIR__.'/auth.php';

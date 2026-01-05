@@ -36,6 +36,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                                     Gérer les Utilisateurs
                                 </NavLink>
+                                <NavLink :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
+                                    Gérer les Domaines
+                                </NavLink>
                             </div>
                         </div>
 

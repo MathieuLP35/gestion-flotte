@@ -36,6 +36,13 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'reservations.edit']);
         Permission::create(['name' => 'reservations.delete']);
 
+        // Permissions pour la GESTION DES DOMAINES AUTORISÉS
+        Permission::create(['name' => 'allowed_domains.view']);
+        Permission::create(['name' => 'allowed_domains.create']);
+        Permission::create(['name' => 'allowed_domains.edit']);
+        Permission::create(['name' => 'allowed_domains.delete']);
+
+
         // --- CRÉATION DU RÔLE SUPER-ADMIN ---
         $role = Role::firstOrCreate(['name' => 'Super Admin']);
         $role->givePermissionTo(Permission::all());
