@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AllowedDomain extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+    ];
 }
