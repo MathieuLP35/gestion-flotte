@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import useGeocoding from '@/Composables/useGeocoding';
 import useDate from '@/Composables/useDate';
 import useReservation from '@/Composables/useReservation';
@@ -13,6 +13,30 @@ const props = defineProps({
 const { formatDate } = useDate();
 const { cancelPassenger, deleteReservation } = useReservation();
 const { suggestionsDeparture, suggestionsDestination, isLoadingDeparture, isLoadingDestination, fetchSuggestions } = useGeocoding();
+
+const startTrip = (reservationId) => {
+    router.post(route('reservations.start', reservationId), {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            // Le message de succès sera affiché via la session
+        },
+        onError: (errors) => {
+            console.error('Erreur lors du lancement du trajet:', errors);
+        }
+    });
+};
+
+const endTrip = (reservationId) => {
+    router.post(route('reservations.end', reservationId), {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            // Le message de succès sera affiché via la session
+        },
+        onError: (errors) => {
+            console.error('Erreur lors de la fin du trajet:', errors);
+        }
+    });
+};
 
 const form = useForm({
     departure: '',        // saisie libre
@@ -176,8 +200,11 @@ const searchCarpooling = () => {
                                                     :class="{
                                                     'bg-yellow-100 text-yellow-800': resa.statut === 'en attente',
                                                     'bg-green-100 text-green-800': resa.statut === 'validé',
+                                                    'bg-blue-100 text-blue-800': resa.statut === 'en cours',
+                                                    'bg-orange-100 text-orange-800': resa.statut === 'à retourner',
                                                     'bg-red-100 text-red-800': resa.statut === 'annulé',
-                                                    'bg-gray-100 text-gray-800': !['en attente', 'validé', 'annulé'].includes(resa.statut)
+                                                    'bg-gray-100 text-gray-800': resa.statut === 'terminé',
+                                                    'bg-gray-100 text-gray-800': !['en attente', 'validé', 'en cours', 'à retourner', 'annulé', 'terminé'].includes(resa.statut)
                                                     }">
                                                 {{ resa.statut }}
                                             </span>
@@ -188,6 +215,36 @@ const searchCarpooling = () => {
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                            </svg>
+                                        </Link>
+                                        <button 
+                                            v-if="resa.statut === 'validé'" 
+                                            @click="startTrip(resa.id)" 
+                                            class="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                            title="Lancer le trajet"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" />
+                                            </svg>
+                                        </button>
+                                        <button 
+                                            v-if="resa.statut === 'en cours'" 
+                                            @click="endTrip(resa.id)" 
+                                            class="inline-flex items-center px-3 py-2 bg-orange-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                            title="Terminer le trajet"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />
+                                            </svg>
+                                        </button>
+                                        <Link 
+                                            v-if="(resa.statut === 'en cours' || resa.statut === 'à retourner' || resa.statut === 'validé') && !resa.date_retour" 
+                                            :href="route('reservations.return.form', resa.id)" 
+                                            class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                            title="Retourner le véhicule"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </Link>
                                         <button @click="deleteReservation(resa.id)" class="inline-flex items-center px-3 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
