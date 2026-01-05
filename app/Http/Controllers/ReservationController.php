@@ -111,7 +111,6 @@ class ReservationController extends Controller
             'covoiturage' => $request->has('is_carpool') ? $request->is_carpool : false,
         ]);
 
-        // Optionnel: envoyer notification par mail
         Mail::to(Auth::user()->email)->queue(new ReservationStatusChanged($reservation));
 
         return redirect()->route('dashboard')->with('success', 'Réservation créée en attente de validation');
@@ -122,7 +121,7 @@ class ReservationController extends Controller
 
         $this->authorize('update', $reservation);
 
-        // NOUVEAU : On charge les passagers et leurs utilisateurs
+        // On charge les passagers et leurs utilisateurs
         $reservation->load(['vehicle', 'driver', 'passengers.user']);
 
         return inertia('Reservations/Edit', [
