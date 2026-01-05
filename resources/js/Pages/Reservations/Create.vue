@@ -111,10 +111,28 @@
 
                     <div>
                       <label for="vehicle" class="block text-sm font-medium text-gray-700">Véhicule</label>
+                      <div v-if="suggestedVehicleInfo || calculatedDistance" class="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="flex items-start">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mt-0.5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <div class="flex-1">
+                            <p class="text-sm font-semibold text-green-800">
+                              Véhicule suggéré pour votre trajet
+                            </p>
+                            <p v-if="calculatedDistance" class="text-xs text-green-700 mt-1">
+                              Distance: {{ Math.round(calculatedDistance) }} km à vol d'oiseau
+                            </p>
+                            <p v-if="suggestedVehicleInfo" class="text-xs text-green-700 mt-1">
+                              {{ suggestedVehicleInfo.modele }} ({{ suggestedVehicleInfo.energie }}) - {{ suggestedVehicleInfo.nbr_places }} places
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                       <select v-model="form.vehicle_id" id="vehicle" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
                         <option value="" disabled>Sélectionnez un véhicule</option>
                         <option v-for="v in vehicles" :key="v.id" :value="v.id">
-                          {{ v.modele }} ({{ v.immatriculation }})
+                          {{ v.modele }} ({{ v.immatriculation }}) - {{ v.energie || 'essence' }} - {{ v.nbr_places }} places
                         </option>
                       </select>
                       <div v-if="form.errors.vehicle_id" class="mt-2 text-sm text-red-600">
@@ -155,7 +173,22 @@
                   <ul v-if="matchingCarpools.length > 0" class="space-y-4">
                     <li v-for="resa in matchingCarpools" :key="resa.id" class="p-4 border rounded-lg shadow-sm">
                       <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ resa.depart }} → {{ resa.destination }} </h2>
-                      <h3 class="font-semibold text-gray-800">{{ resa.vehicle.modele }} - {{ resa.vehicle.immatriculation }}</h3>
+                      <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                        <span>{{ resa.vehicle.modele }} - {{ resa.vehicle.immatriculation }}</span>
+                        <span v-if="resa.vehicle.energie === 'electrique' || resa.vehicle.energie === 'hybride'" 
+                              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                              :class="{
+                                'bg-green-100 text-green-800': resa.vehicle.energie === 'electrique',
+                                'bg-emerald-100 text-emerald-800': resa.vehicle.energie === 'hybride'
+                              }"
+                              title="Trajet écologique">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                          </svg>
+                          <span v-if="resa.vehicle.energie === 'electrique'">Électrique</span>
+                          <span v-else>Hybride</span>
+                        </span>
+                      </h3>
                       <p class="text-sm text-gray-600"><strong>Conducteur:</strong> {{ resa.driver.name }}</p>
                       <p class="text-sm text-gray-600"><strong>Départ:</strong> {{ formatDate(resa.date_debut) }}</p>
                       <p class="text-sm text-gray-600"><strong>Retour:</strong> {{ formatDate(resa.date_fin) }}</p>
@@ -184,14 +217,20 @@ import debounce from 'lodash.debounce';
 import useDate from '@/Composables/useDate';
 import useGeocoding from "@/Composables/useGeocoding.js";
 
-const { vehicles } = usePage().props
+const props = defineProps({
+    vehicles: Array,
+    suggestedVehicle: Object,
+    distance: Number,
+});
 
 const { formatDate } = useDate();
 const { suggestionsDeparture, suggestionsDestination, isLoadingDeparture, isLoadingDestination, fetchSuggestions } = useGeocoding();
 
+const suggestedVehicleInfo = ref(props.suggestedVehicle || null);
+const calculatedDistance = ref(props.distance || null);
 
 const form = useForm({
-    vehicle_id: null,
+    vehicle_id: props.suggestedVehicle?.id || null,
     departure: '',
     destination: '',
     departureSelected: null,
@@ -200,6 +239,48 @@ const form = useForm({
     date_fin: '',
     is_carpool: false,
 })
+
+// Fonction pour obtenir la suggestion de véhicule
+const fetchVehicleSuggestion = async () => {
+    if (!form.departureSelected || !form.destinationSelected || !form.date_debut || !form.date_fin) {
+        suggestedVehicleInfo.value = null;
+        calculatedDistance.value = null;
+        return;
+    }
+
+    try {
+        const response = await axios.get(route('reservations.suggestVehicle'), {
+            params: {
+                depart_lat: form.departureSelected.lat,
+                depart_lng: form.departureSelected.lng,
+                dest_lat: form.destinationSelected.lat,
+                dest_lng: form.destinationSelected.lng,
+                date_debut: form.date_debut,
+                date_fin: form.date_fin,
+            }
+        });
+
+        if (response.data.suggestedVehicle) {
+            suggestedVehicleInfo.value = response.data.suggestedVehicle;
+            calculatedDistance.value = response.data.distance;
+            // Pré-sélectionner le véhicule suggéré
+            form.vehicle_id = response.data.suggestedVehicle.id;
+        } else {
+            suggestedVehicleInfo.value = null;
+        }
+    } catch (error) {
+        console.error('Erreur lors de la suggestion de véhicule:', error);
+        suggestedVehicleInfo.value = null;
+        calculatedDistance.value = null;
+    }
+};
+
+// Watcher pour déclencher la suggestion quand les lieux et dates sont sélectionnés
+watch([() => form.departureSelected, () => form.destinationSelected, () => form.date_debut, () => form.date_fin], () => {
+    if (form.departureSelected && form.destinationSelected && form.date_debut && form.date_fin) {
+        fetchVehicleSuggestion();
+    }
+}, { deep: true });
 
 function submitVehicleReservation() {
 

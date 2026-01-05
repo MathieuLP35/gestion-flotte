@@ -52,6 +52,19 @@
                   </div>
                 </div>
 
+                <div>
+                  <label for="energie" class="block text-sm font-medium text-gray-700">Type d'énergie</label>
+                  <select v-model="form.energie" id="energie" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                    <option value="essence">Essence</option>
+                    <option value="diesel">Diesel</option>
+                    <option value="hybride">Hybride</option>
+                    <option value="electrique">Électrique</option>
+                  </select>
+                  <div v-if="form.errors.energie" class="mt-2 text-sm text-red-600">
+                    {{ form.errors.energie }}
+                  </div>
+                </div>
+
                 <div class="flex items-center justify-end pt-4 border-t border-gray-200">
                   <button type="submit" :disabled="form.processing" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150" :class="{ 'opacity-50 cursor-not-allowed': form.processing }">
                     {{ form.processing ? 'Ajout en cours...' : 'Ajouter' }}
@@ -78,6 +91,7 @@ const form = useForm({
   km_initial: 0,
   emplacement: '',
   nbr_places: 1,
+  energie: 'essence',
 });
 
 // 3. Définir la fonction de soumission
