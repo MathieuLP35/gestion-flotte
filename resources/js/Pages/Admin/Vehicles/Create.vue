@@ -52,6 +52,14 @@
                   </div>
                 </div>
 
+                <div>
+                  <label for="nbr_cles" class="block text-sm font-medium text-gray-700">Nombre de clés</label>
+                  <input v-model.number="form.nbr_cles" type="number" min="1" max="5" id="nbr_cles" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <div v-if="form.errors.nbr_cles" class="mt-2 text-sm text-red-600">
+                    {{ form.errors.nbr_cles }}
+                  </div>
+                </div>
+
                 <div class="flex items-center justify-end pt-4 border-t border-gray-200">
                   <button type="submit" :disabled="form.processing" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150" :class="{ 'opacity-50 cursor-not-allowed': form.processing }">
                     {{ form.processing ? 'Ajout en cours...' : 'Ajouter' }}
@@ -78,6 +86,7 @@ const form = useForm({
   km_initial: 0,
   emplacement: '',
   nbr_places: 1,
+  nbr_cles: 2,
 });
 
 // 3. Définir la fonction de soumission

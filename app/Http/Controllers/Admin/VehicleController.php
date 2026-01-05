@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
+use App\Models\VehicleKey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -37,20 +38,31 @@ class VehicleController extends Controller
     // Enregistre un nouveau véhicule
     public function store(Request $request)
     {
+        // 1. Validation (on ajoute nbr_cles)
         $validated = $request->validate([
             'modele' => 'required|string|max:255',
             'immatriculation' => 'required|string|unique:vehicles',
             'km_initial' => 'required|integer|min:0',
             'emplacement' => 'required|string|max:255',
             'nbr_places' => 'required|integer|min:1',
+            'nbr_cles' => 'required|integer|min:1|max:5', 
         ]);
 
         $validated['agence_id'] = Auth::user()->agence_id;
         $validated['en_maintenance'] = false;
 
-        Vehicle::create($validated);
+        // 2. On stocke le véhicule dans une variable pour récupérer son ID
+        $vehicle = Vehicle::create($validated);
 
-        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule créé avec succès');
+        // 3. Boucle pour créer les clés correspondantes
+        for ($i = 1; $i <= $request->nbr_cles; $i++) {
+            VehicleKey::create([
+                'vehicle_id' => $vehicle->id,
+                'emplacement_clef' => "{$validated['immatriculation']} (Clé {$i})", // Valeur par défaut
+            ]);
+        }
+
+        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule et clés créés avec succès');
     }
 
     // Formulaire d’édition d’un véhicule
