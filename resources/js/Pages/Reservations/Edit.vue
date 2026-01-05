@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import MapRoute from '@/Components/MapRoute.vue';
 import { Head, useForm, router, usePage } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 import useDate from '@/Composables/useDate';
@@ -201,6 +202,15 @@ onMounted(() => {
                                     Envoyer
                                 </button>
                             </form>
+                        </div>
+                        <div class="mt-8 space-y-6 pt-6 border-t border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                                Itinéraire du Trajet
+                            </h2>
+                            <MapRoute 
+                                :start-coords="[reservation.depart_latitude, reservation.depart_longitude]" 
+                                :end-coords="[reservation.destination_latitude, reservation.destination_longitude]" 
+                            />
                         </div>
                     </div>
                 </div>

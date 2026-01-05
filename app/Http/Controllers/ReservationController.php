@@ -76,6 +76,8 @@ class ReservationController extends Controller
             'date_debut' => 'required|date|after:now',
             'date_fin' => 'required|date|after:date_debut',
             'is_carpool' => 'sometimes|boolean',
+            'departureSelected' => 'sometimes|array',
+            'destinationSelected' => 'sometimes|array',
         ]);
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
@@ -109,6 +111,10 @@ class ReservationController extends Controller
             'date_fin' => $request->date_fin,
             'statut' => config('reservation.default_status', 'en attente'),
             'covoiturage' => $request->has('is_carpool') ? $request->is_carpool : false,
+            'depart_latitude' => $request->departureSelected['lat'] ? $request->departureSelected['lat'] : null,
+            'depart_longitude' => $request->departureSelected['lng'] ? $request->departureSelected['lng'] : null,
+            'destination_latitude' => $request->destinationSelected['lat'] ? $request->destinationSelected['lat'] : null,
+            'destination_longitude' => $request->destinationSelected['lng'] ? $request->destinationSelected['lng'] : null,
         ]);
 
         Mail::to(Auth::user()->email)->queue(new ReservationStatusChanged($reservation));
