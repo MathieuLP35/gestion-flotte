@@ -15,7 +15,8 @@
     "permissions.reservations.create": "Créer des réservations",
     "permissions.reservations.edit": "Modifier les réservations",
     "permissions.reservations.delete": "Supprimer les réservations",
-    "permissions.domains.view": "Consulter les domaines autorisés",
-    "permissions.domains.create": "Ajouter des domaines autorisés",
-    "permissions.domains.delete": "Supprimer des domaines autorisés"
+    "permissions.allowed_domains.view": "Consulter les domaines autorisés",
+    "permissions.allowed_domains.create": "Ajouter des domaines autorisés",
+    "permissions.allowed_domains.edit": "Modifier des domaines autorisés",
+    "permissions.allowed_domains.delete": "Supprimer des domaines autorisés"
 }
