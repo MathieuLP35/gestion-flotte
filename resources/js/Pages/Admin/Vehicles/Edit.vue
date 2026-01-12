@@ -20,6 +20,7 @@ const form = useForm({
     km_initial: vehicle.km_initial || 0,
     emplacement: vehicle.emplacement || '',
     nbr_places: vehicle.nbr_places || 1,
+    energie: vehicle.energie || 'essence',
     en_maintenance: vehicle.en_maintenance == 1 ? true : false || false,
 });
 
@@ -137,6 +138,19 @@ function deleteKey(id) {
                                 <input v-model.number="form.nbr_places" type="number" min="1" id="nbr_places" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
                                 <div v-if="form.errors.nbr_places" class="mt-2 text-sm text-red-600">
                                     {{ form.errors.nbr_places }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="energie" class="block text-sm font-medium text-gray-700">Type d'énergie</label>
+                                <select v-model="form.energie" id="energie" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                                    <option value="essence">Essence</option>
+                                    <option value="diesel">Diesel</option>
+                                    <option value="hybride">Hybride</option>
+                                    <option value="electrique">Électrique</option>
+                                </select>
+                                <div v-if="form.errors.energie" class="mt-2 text-sm text-red-600">
+                                    {{ form.errors.energie }}
                                 </div>
                             </div>
 
