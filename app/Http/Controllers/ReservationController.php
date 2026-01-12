@@ -146,7 +146,7 @@ class ReservationController extends Controller
             'destination' => 'required',
             'date_debut' => 'required|date|after:now',
             'date_fin' => 'required|date|after:date_debut',
-            'statut' => 'required|in:en attente,validé,annulé',
+            'statut' => 'required|in:en attente,validé,annulé,en cours,à retourner,terminé',
         ]);
 
         $reservation->update($request->only(['vehicle_id', 'departure', 'destination', 'date_debut', 'date_fin', 'statut']));
@@ -225,5 +225,147 @@ class ReservationController extends Controller
             'carpool_available' => $availableCarpools->count() > 0,
             'reservations' => $availableCarpools->values(), // Retourne les trajets en JSON
         ]);
+    }
+
+    /**
+     * Affiche le formulaire de retour du véhicule
+     */
+    public function showReturnForm(Reservation $reservation)
+    {
+        $this->authorize('view', $reservation);
+
+        // Vérifier que l'utilisateur est le conducteur
+        if ($reservation->user_id !== Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à effectuer le retour de ce véhicule');
+        }
+
+        // Vérifier que la réservation est validée, en cours ou à retourner
+        if (!in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
+            return redirect()->route('reservations.show', $reservation)
+                ->with('error', 'Seules les réservations validées, en cours ou à retourner peuvent être retournées');
+        }
+
+        // Vérifier que le véhicule n'a pas déjà été retourné
+        if ($reservation->date_retour !== null) {
+            return redirect()->route('reservations.show', $reservation)
+                ->with('error', 'Ce véhicule a déjà été retourné');
+        }
+
+        $reservation->load(['vehicle', 'driver']);
+
+        return Inertia::render('Reservations/Return', [
+            'reservation' => $reservation
+        ]);
+    }
+
+    /**
+     * Traite le retour du véhicule
+     */
+    public function returnVehicle(Request $request, Reservation $reservation)
+    {
+        $this->authorize('update', $reservation);
+
+        // Vérifier que l'utilisateur est le conducteur
+        if ($reservation->user_id !== Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à effectuer le retour de ce véhicule');
+        }
+
+        // Vérifier que la réservation est validée, en cours ou à retourner
+        if (!in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
+            return back()->withErrors(['error' => 'Seules les réservations validées, en cours ou à retourner peuvent être retournées']);
+        }
+
+        // Vérifier que le véhicule n'a pas déjà été retourné
+        if ($reservation->date_retour !== null) {
+            return back()->withErrors(['error' => 'Ce véhicule a déjà été retourné']);
+        }
+
+        $request->validate([
+            'km_final' => 'required|integer|min:' . $reservation->vehicle->km_initial,
+            'emplacement_retour' => 'required|string|max:255',
+            'etat_vehicule' => 'required|in:excellent,bon,moyen,mauvais',
+            'notes_retour' => 'nullable|string|max:1000',
+        ]);
+
+        // Mettre à jour la réservation avec les informations de retour
+        $reservation->update([
+            'date_retour' => now(),
+            'km_final' => $request->km_final,
+            'emplacement_retour' => $request->emplacement_retour,
+            'etat_vehicule' => $request->etat_vehicule,
+            'notes_retour' => $request->notes_retour,
+            'statut' => 'terminé',
+        ]);
+
+        // Mettre à jour l'emplacement du véhicule
+        $reservation->vehicle->update([
+            'emplacement' => $request->emplacement_retour,
+        ]);
+
+        // Si l'état du véhicule est mauvais, le mettre en maintenance
+        if ($request->etat_vehicule === 'mauvais') {
+            $reservation->vehicle->update([
+                'en_maintenance' => true,
+            ]);
+        }
+
+        return redirect()->route('reservations.show', $reservation)
+            ->with('success', 'Véhicule retourné avec succès');
+    }
+
+    /**
+     * Lance le trajet (change le statut de "validé" à "en cours")
+     */
+    public function startTrip(Reservation $reservation)
+    {
+        $this->authorize('update', $reservation);
+
+        // Vérifier que l'utilisateur est le conducteur
+        if ($reservation->user_id !== Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à lancer ce trajet');
+        }
+
+        // Vérifier que la réservation est validée
+        if ($reservation->statut !== 'validé') {
+            return back()->withErrors(['error' => 'Seules les réservations validées peuvent être lancées']);
+        }
+
+        // Mettre à jour le statut
+        $reservation->update([
+            'statut' => 'en cours',
+        ]);
+
+        // Envoyer un email de notification
+        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
+
+        return back()->with('success', 'Trajet lancé avec succès');
+    }
+
+    /**
+     * Termine le trajet (change le statut de "en cours" à "à retourner")
+     */
+    public function endTrip(Reservation $reservation)
+    {
+        $this->authorize('update', $reservation);
+
+        // Vérifier que l'utilisateur est le conducteur
+        if ($reservation->user_id !== Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à terminer ce trajet');
+        }
+
+        // Vérifier que la réservation est en cours
+        if ($reservation->statut !== 'en cours') {
+            return back()->withErrors(['error' => 'Seuls les trajets en cours peuvent être terminés']);
+        }
+
+        // Mettre à jour le statut
+        $reservation->update([
+            'statut' => 'à retourner',
+        ]);
+
+        // Envoyer un email de notification
+        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
+
+        return back()->with('success', 'Trajet terminé. Vous pouvez maintenant retourner le véhicule.');
     }
 }
