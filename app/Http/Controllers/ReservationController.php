@@ -291,9 +291,10 @@ class ReservationController extends Controller
             'statut' => 'terminé',
         ]);
 
-        // Mettre à jour l'emplacement du véhicule
+        // Mettre à jour l'emplacement et le kilométrage du véhicule
         $reservation->vehicle->update([
             'emplacement' => $request->emplacement_retour,
+            'km_initial' => $request->km_final,
         ]);
 
         // Si l'état du véhicule est mauvais, le mettre en maintenance
