@@ -20,6 +20,11 @@ class Vehicle extends Model
         return $this->hasMany(Maintenance::class);
     }
 
+    public function keys()
+    {
+        return $this->hasMany(VehicleKey::class);
+    }
+  
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
