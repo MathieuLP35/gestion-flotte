@@ -51,12 +51,25 @@
                     {{ form.errors.nbr_places }}
                   </div>
                 </div>
-
+              
                 <div>
                   <label for="nbr_cles" class="block text-sm font-medium text-gray-700">Nombre de clés</label>
                   <input v-model.number="form.nbr_cles" type="number" min="1" max="5" id="nbr_cles" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
                   <div v-if="form.errors.nbr_cles" class="mt-2 text-sm text-red-600">
                     {{ form.errors.nbr_cles }}
+                  </div>
+                </div>
+                
+                <div>
+                  <label for="energie" class="block text-sm font-medium text-gray-700">Type d'énergie</label>
+                  <select v-model="form.energie" id="energie" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                    <option value="essence">Essence</option>
+                    <option value="diesel">Diesel</option>
+                    <option value="hybride">Hybride</option>
+                    <option value="electrique">Électrique</option>
+                  </select>
+                  <div v-if="form.errors.energie" class="mt-2 text-sm text-red-600">
+                    {{ form.errors.energie }}
                   </div>
                 </div>
 
@@ -87,6 +100,7 @@ const form = useForm({
   emplacement: '',
   nbr_places: 1,
   nbr_cles: 2,
+  energie: 'essence',
 });
 
 // 3. Définir la fonction de soumission

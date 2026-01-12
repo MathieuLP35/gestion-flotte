@@ -46,6 +46,7 @@ class VehicleController extends Controller
             'emplacement' => 'required|string|max:255',
             'nbr_places' => 'required|integer|min:1',
             'nbr_cles' => 'required|integer|min:1|max:5',
+            'energie' => 'required|in:essence,diesel,hybride,electrique',
         ]);
 
         $validated['agence_id'] = Auth::user()->agence_id;
@@ -94,6 +95,7 @@ class VehicleController extends Controller
             'km_initial' => 'required|integer|min:0',
             'emplacement' => 'required|string|max:255',
             'nbr_places' => 'required|integer|min:1',
+            'energie' => 'required|in:essence,diesel,hybride,electrique',
             'en_maintenance' => 'sometimes|boolean',
         ]);
 

@@ -63,8 +63,21 @@ onMounted(() => {
                         <p class="mt-1 text-sm text-gray-600">
                             <strong>Conducteur:</strong> {{ reservation.driver.name }}
                         </p>
-                        <p class="mt-1 text-sm text-gray-600">
-                            <strong>Véhicule:</strong> {{ reservation.vehicle.modele }}
+                        <p class="mt-1 text-sm text-gray-600 flex items-center gap-2">
+                            <span><strong>Véhicule:</strong> {{ reservation.vehicle.modele }}</span>
+                            <span v-if="reservation.vehicle.energie === 'electrique' || reservation.vehicle.energie === 'hybride'" 
+                                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                                  :class="{
+                                    'bg-green-100 text-green-800': reservation.vehicle.energie === 'electrique',
+                                    'bg-emerald-100 text-emerald-800': reservation.vehicle.energie === 'hybride'
+                                  }"
+                                  title="Trajet écologique">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                                </svg>
+                                <span v-if="reservation.vehicle.energie === 'electrique'">Électrique</span>
+                                <span v-else>Hybride</span>
+                            </span>
                         </p>
                         <p class="mt-1 text-sm text-gray-600">
                             <strong>Départ:</strong> {{ formatDate(reservation.date_debut) }}
@@ -72,6 +85,63 @@ onMounted(() => {
                         <p class="mt-1 text-sm text-gray-600">
                             <strong>Fin:</strong> {{ formatDate(reservation.date_fin) }}
                         </p>
+                        <p class="mt-1 text-sm text-gray-600">
+                            <strong>Statut:</strong> 
+                            <span class="px-2 py-1 rounded text-xs font-semibold"
+                                :class="{
+                                    'bg-yellow-100 text-yellow-800': reservation.statut === 'en attente',
+                                    'bg-green-100 text-green-800': reservation.statut === 'validé',
+                                    'bg-blue-100 text-blue-800': reservation.statut === 'en cours',
+                                    'bg-orange-100 text-orange-800': reservation.statut === 'à retourner',
+                                    'bg-red-100 text-red-800': reservation.statut === 'annulé',
+                                    'bg-gray-100 text-gray-800': reservation.statut === 'terminé'
+                                }">
+                                {{ reservation.statut }}
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <!-- Section retour du véhicule -->
+                    <div v-if="reservation.date_retour" class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Retour du véhicule</h3>
+                        <p class="mt-1 text-sm text-gray-600">
+                            <strong>Date de retour:</strong> {{ formatDate(reservation.date_retour) }}
+                        </p>
+                        <p class="mt-1 text-sm text-gray-600">
+                            <strong>Kilométrage final:</strong> {{ reservation.km_final }} km
+                        </p>
+                        <p class="mt-1 text-sm text-gray-600">
+                            <strong>Emplacement:</strong> {{ reservation.emplacement_retour }}
+                        </p>
+                        <p class="mt-1 text-sm text-gray-600">
+                            <strong>État:</strong> 
+                            <span class="px-2 py-1 rounded text-xs font-semibold"
+                                :class="{
+                                    'bg-green-100 text-green-800': reservation.etat_vehicule === 'excellent',
+                                    'bg-blue-100 text-blue-800': reservation.etat_vehicule === 'bon',
+                                    'bg-yellow-100 text-yellow-800': reservation.etat_vehicule === 'moyen',
+                                    'bg-red-100 text-red-800': reservation.etat_vehicule === 'mauvais'
+                                }">
+                                {{ reservation.etat_vehicule }}
+                            </span>
+                        </p>
+                        <p v-if="reservation.notes_retour" class="mt-1 text-sm text-gray-600">
+                            <strong>Notes:</strong> {{ reservation.notes_retour }}
+                        </p>
+                    </div>
+                    
+                    <!-- Bouton pour retourner le véhicule -->
+                    <div v-else-if="reservation.user_id === authUser.id && (reservation.statut === 'validé' || reservation.statut === 'en cours' || reservation.statut === 'à retourner') && !reservation.date_retour" 
+                         class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <Link 
+                            :href="route('reservations.return.form', reservation.id)"
+                            class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Retourner le véhicule
+                        </Link>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="text-lg font-medium text-gray-900">Participants</h3>
