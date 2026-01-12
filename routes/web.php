@@ -39,6 +39,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reservations/{reservation}', [ReservationController::class, 'show'])
         ->name('reservations.show');
 
+    // Routes pour la gestion du retour du véhicule
+    Route::get('reservations/{reservation}/return', [ReservationController::class, 'showReturnForm'])
+        ->name('reservations.return.form');
+    Route::post('reservations/{reservation}/return', [ReservationController::class, 'returnVehicle'])
+        ->name('reservations.return');
+
+    // Route pour lancer le trajet
+    Route::post('reservations/{reservation}/start', [ReservationController::class, 'startTrip'])
+        ->name('reservations.start');
+
+    // Route pour terminer le trajet
+    Route::post('reservations/{reservation}/end', [ReservationController::class, 'endTrip'])
+        ->name('reservations.end');
+
     // Route pour VÉRIFIER les trajets disponibles
     Route::post('reservations/check-carpool', [ReservationController::class, 'checkCarpool'])
         ->name('reservations.checkCarpool');
