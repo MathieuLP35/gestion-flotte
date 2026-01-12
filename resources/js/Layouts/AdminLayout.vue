@@ -24,20 +24,26 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')" class="text-gray-600 hover:text-gray-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                                    </svg>
+                                    Utilisateur
+                                </NavLink>
                                 <NavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
                                     Tableau de bord
                                 </NavLink>
                                 <NavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
-                                    Gérer les Rôles
+                                    Rôles
                                 </NavLink>
                                 <NavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.*')">
-                                    Gérer les Véhicules
+                                    Véhicules
                                 </NavLink>
                                 <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
-                                    Gérer les Utilisateurs
+                                    Utilisateurs
                                 </NavLink>
                                 <NavLink :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
-                                    Gérer les Domaines
+                                    Domaines
                                 </NavLink>
                             </div>
                         </div>
@@ -91,7 +97,100 @@ const showingNavigationDropdown = ref(false);
                             </div>
                         </div>
 
+                        <!-- Hamburger -->
+                        <div class="-me-2 flex items-center sm:hidden">
+                            <button
+                                @click="showingNavigationDropdown = !showingNavigationDropdown"
+                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                            >
+                                <svg
+                                    class="h-6 w-6"
+                                    stroke="currentColor"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        :class="{
+                                            hidden: showingNavigationDropdown,
+                                            'inline-flex': !showingNavigationDropdown,
+                                        }"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16"
+                                    />
+                                    <path
+                                        :class="{
+                                            hidden: !showingNavigationDropdown,
+                                            'inline-flex': showingNavigationDropdown,
+                                        }"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Responsive Navigation Menu -->
+                <div
+                    :class="{
+                        block: showingNavigationDropdown,
+                        hidden: !showingNavigationDropdown,
+                    }"
+                    class="sm:hidden"
+                >
+                    <div class="space-y-1 pb-3 pt-2">
+                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            Utilisateur
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
+                            Tableau de bord
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
+                            Rôles
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.*')">
+                            Véhicules
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
+                            Utilisateurs
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
+                            Domaines
+                        </ResponsiveNavLink>
+                    </div>
+
+                    <!-- Responsive Settings Options -->
+                    <div class="border-t border-gray-200 pb-1 pt-4">
+                        <div class="px-4">
+                            <div class="text-base font-medium text-gray-800">
+                                {{ $page.props.auth.user.name }}
+                            </div>
+                            <div class="text-sm font-medium text-gray-500">
+                                {{ $page.props.auth.user.email }}
+                            </div>
+                        </div>
+
+                        <div class="mt-3 space-y-1">
+                            <ResponsiveNavLink :href="route('dashboard')">
+                                Retour au site
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.edit')">
+                                Profil
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                            >
+                                Déconnexion
+                            </ResponsiveNavLink>
+                        </div>
+                    </div>
                 </div>
             </nav>
 
