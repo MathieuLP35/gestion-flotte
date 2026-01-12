@@ -92,6 +92,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
     // /admin/maintenances
     Route::resource('maintenances', MaintenanceController::class);
 
+    // /admin/keys
+    Route::resource('keys', App\Http\Controllers\Admin\KeyController::class);
+
     // /admin/permissions
     // Route::resource('permissions', PermissionController::class);
 

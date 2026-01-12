@@ -19,7 +19,6 @@
 
                     <div>
                         <div class="relative">
-                           {{ form }}
                             <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
                             <input
                                 type="text"
