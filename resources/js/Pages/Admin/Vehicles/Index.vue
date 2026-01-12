@@ -22,6 +22,7 @@
                   <th scope="col" class="py-3 px-6">Kilométrage initial</th>
                   <th scope="col" class="py-3 px-6">Emplacement</th>
                   <th scope="col" class="py-3 px-6">Places</th>
+                  <th scope="col" class="py-3 px-6">Énergie</th>
                   <th scope="col" class="py-3 px-6">En maintenance</th>
                   <th scope="col" class="py-3 px-6 text-center">Actions</th>
                 </tr>
@@ -33,6 +34,17 @@
                   <td class="py-4 px-6">{{ vehicle.km_initial }}</td>
                   <td class="py-4 px-6">{{ vehicle.emplacement }}</td>
                   <td class="py-4 px-6">{{ vehicle.nbr_places }}</td>
+                  <td class="py-4 px-6">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                          :class="{
+                            'bg-blue-100 text-blue-800': vehicle.energie === 'electrique',
+                            'bg-green-100 text-green-800': vehicle.energie === 'hybride',
+                            'bg-yellow-100 text-yellow-800': vehicle.energie === 'essence',
+                            'bg-gray-100 text-gray-800': vehicle.energie === 'diesel' || !vehicle.energie
+                          }">
+                      {{ vehicle.energie ? vehicle.energie.charAt(0).toUpperCase() + vehicle.energie.slice(1) : 'Essence' }}
+                    </span>
+                  </td>
                   <td class="py-4 px-6">
                     <span :class="{'bg-green-100 text-green-800': !vehicle.en_maintenance, 'bg-red-100 text-red-800': vehicle.en_maintenance}" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">
                       {{ vehicle.en_maintenance ? 'Oui' : 'Non' }}

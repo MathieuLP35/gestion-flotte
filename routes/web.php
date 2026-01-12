@@ -34,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [ReservationController::class, 'dashboard'])->name('dashboard');
 
     Route::resource('reservations', ReservationController::class);
+    Route::get('reservations/suggest-vehicle', [ReservationController::class, 'suggestVehicle'])
+        ->name('reservations.suggestVehicle');
     Route::resource('passengers', PassengerController::class);
 
     Route::get('reservations/{reservation}', [ReservationController::class, 'show'])
