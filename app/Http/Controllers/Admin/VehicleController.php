@@ -45,7 +45,7 @@ class VehicleController extends Controller
             'km_initial' => 'required|integer|min:0',
             'emplacement' => 'required|string|max:255',
             'nbr_places' => 'required|integer|min:1',
-            'nbr_cles' => 'required|integer|min:1|max:5', 
+            'nbr_cles' => 'required|integer|min:1|max:5',
         ]);
 
         $validated['agence_id'] = Auth::user()->agence_id;
@@ -74,6 +74,7 @@ class VehicleController extends Controller
         }
 
         $vehicle->load('maintenances');
+        $vehicle->load('keys');
 
         return Inertia::render('Admin/Vehicles/Edit', [
             'vehicle' => $vehicle,
