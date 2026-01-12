@@ -64,7 +64,43 @@ class ReservationController extends Controller
             ->where('en_maintenance', false)
             ->get();
 
-        return Inertia::render('Reservations/Create', ['vehicles' => $vehicles]);
+        return Inertia::render('Reservations/Create', [
+            'vehicles' => $vehicles,
+        ]);
+    }
+
+    /**
+     * API pour suggérer un véhicule basé sur la distance
+     */
+    public function suggestVehicle(Request $request)
+    {
+        $request->validate([
+            'depart_lat' => 'required|numeric',
+            'depart_lng' => 'required|numeric',
+            'dest_lat' => 'required|numeric',
+            'dest_lng' => 'required|numeric',
+            'date_debut' => 'nullable|date',
+            'date_fin' => 'nullable|date|after:date_debut',
+        ]);
+
+        $distance = Vehicle::calculateDistance(
+            (float) $request->depart_lat,
+            (float) $request->depart_lng,
+            (float) $request->dest_lat,
+            (float) $request->dest_lng
+        );
+
+        $suggestedVehicle = Vehicle::suggestBestVehicle(
+            Auth::user()->agence_id,
+            $distance,
+            $request->date_debut ?? null,
+            $request->date_fin ?? null
+        );
+
+        return response()->json([
+            'suggestedVehicle' => $suggestedVehicle,
+            'distance' => $distance,
+        ]);
     }
 
     public function store(Request $request)
@@ -79,6 +115,11 @@ class ReservationController extends Controller
             'departureSelected' => 'sometimes|array',
             'destinationSelected' => 'sometimes|array',
         ]);
+
+        // Si pas de véhicule sélectionné mais suggestion disponible, utiliser la suggestion
+        if (!$request->vehicle_id && $request->suggested_vehicle_id) {
+            $request->merge(['vehicle_id' => $request->suggested_vehicle_id]);
+        }
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
 

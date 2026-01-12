@@ -191,8 +191,21 @@ const searchCarpooling = () => {
                                         <p class="text-sm text-gray-600">
                                             Retour : {{ formatDate(resa.date_fin) }}
                                         </p>
-                                        <p class="text-sm text-gray-500">
-                                            Véhicule: {{ resa.vehicle.modele }} ({{ resa.vehicle.immatriculation }})
+                                        <p class="text-sm text-gray-500 flex items-center gap-2">
+                                            <span>Véhicule: {{ resa.vehicle.modele }} ({{ resa.vehicle.immatriculation }})</span>
+                                            <span v-if="resa.vehicle.energie === 'electrique' || resa.vehicle.energie === 'hybride'" 
+                                                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                                                  :class="{
+                                                    'bg-green-100 text-green-800': resa.vehicle.energie === 'electrique',
+                                                    'bg-emerald-100 text-emerald-800': resa.vehicle.energie === 'hybride'
+                                                  }"
+                                                  title="Trajet écologique">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                                                </svg>
+                                                <span v-if="resa.vehicle.energie === 'electrique'">Électrique</span>
+                                                <span v-else>Hybride</span>
+                                            </span>
                                         </p>
                                         <p class="text-sm text-gray-500">
                                             Statut:
