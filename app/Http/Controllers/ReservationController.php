@@ -269,13 +269,11 @@ class ReservationController extends Controller
             return back()->withErrors(['error' => 'Seules les réservations validées, en cours ou à retourner peuvent être retournées']);
         }
 
-        // Vérifier que le véhicule n'a pas déjà été retourné
-        if ($reservation->date_retour !== null) {
-            return back()->withErrors(['error' => 'Ce véhicule a déjà été retourné']);
-        }
+        // Récupérer le km_initial du véhicule pour la validation
+        $vehicleKmInitial = $reservation->vehicle->km_initial;
 
         $request->validate([
-            'km_final' => 'required|integer|min:' . $reservation->vehicle->km_initial,
+            'km_final' => 'required|integer|min:' . $vehicleKmInitial,
             'emplacement_retour' => 'required|string|max:255',
             'etat_vehicule' => 'required|in:excellent,bon,moyen,mauvais',
             'notes_retour' => 'nullable|string|max:1000',
@@ -292,6 +290,7 @@ class ReservationController extends Controller
         ]);
 
         // Mettre à jour l'emplacement et le kilométrage du véhicule
+        // On utilise le km_initial calculé (qui peut être restauré si c'est une modification)
         $reservation->vehicle->update([
             'emplacement' => $request->emplacement_retour,
             'km_initial' => $request->km_final,
