@@ -36,8 +36,11 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
                                     Rôles
                                 </NavLink>
-                                <NavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.*')">
+                                <NavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.index') || route().current('admin.vehicles.create') || route().current('admin.vehicles.edit')">
                                     Véhicules
+                                </NavLink>
+                                <NavLink :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability')">
+                                    Disponibilités
                                 </NavLink>
                                 <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                                     Utilisateurs
@@ -153,8 +156,11 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
                             Rôles
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.*')">
+                        <ResponsiveNavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.index') || route().current('admin.vehicles.create') || route().current('admin.vehicles.edit')">
                             Véhicules
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability')">
+                            Disponibilités
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                             Utilisateurs

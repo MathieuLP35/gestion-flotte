@@ -87,6 +87,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
     Route::resource('roles', RoleController::class);
 
     // /admin/vehicles
+    // IMPORTANT: Les routes spécifiques doivent être définies AVANT la route resource
+    Route::get('vehicles/availability', [VehicleController::class, 'availability'])->name('vehicles.availability');
+    Route::get('vehicles/{vehicle}/calendar', [VehicleController::class, 'calendar'])->name('vehicles.calendar');
     Route::resource('vehicles', VehicleController::class);
 
     // /admin/maintenances

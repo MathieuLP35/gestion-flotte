@@ -29,9 +29,70 @@ class VehicleController extends Controller
 
     public function show(Vehicle $vehicle)
     {
+        // Vérifier que le véhicule appartient à l'agence de l'utilisateur
+        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
 
         return Inertia::render('Admin/Vehicles/Show', [
             'vehicle' => $vehicle
+        ]);
+    }
+
+    /**
+     * Affiche le calendrier de disponibilités d'un véhicule
+     */
+    public function calendar(Vehicle $vehicle)
+    {
+        // Vérifier que le véhicule appartient à l'agence de l'utilisateur
+        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
+
+        // Charger les réservations du véhicule avec les informations nécessaires
+        $reservations = $vehicle->reservations()
+            ->with(['driver', 'passengers'])
+            ->orderBy('date_debut', 'asc')
+            ->get();
+
+        return Inertia::render('Admin/Vehicles/Calendar', [
+            'vehicle' => $vehicle,
+            'reservations' => $reservations
+        ]);
+    }
+
+    /**
+     * Affiche la page de disponibilités avec tous les véhicules
+     */
+    public function availability(Request $request)
+    {
+        $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)
+            ->orderBy('modele', 'asc')
+            ->get();
+
+        $selectedVehicleId = $request->get('vehicle_id');
+        $selectedVehicle = null;
+        $reservations = collect();
+
+        // Si aucun véhicule n'est sélectionné, prendre le premier par défaut
+        if (!$selectedVehicleId && $vehicles->isNotEmpty()) {
+            $selectedVehicleId = $vehicles->first()->id;
+        }
+
+        if ($selectedVehicleId) {
+            $selectedVehicle = $vehicles->firstWhere('id', $selectedVehicleId);
+            if ($selectedVehicle) {
+                $reservations = $selectedVehicle->reservations()
+                    ->with(['driver', 'passengers'])
+                    ->orderBy('date_debut', 'asc')
+                    ->get();
+            }
+        }
+
+        return Inertia::render('Admin/Vehicles/Availability', [
+            'vehicles' => $vehicles,
+            'selectedVehicle' => $selectedVehicle,
+            'reservations' => $reservations,
         ]);
     }
 
