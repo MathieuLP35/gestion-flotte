@@ -95,7 +95,7 @@
 
                     <div>
                       <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                      <input type="date" v-model="form.date_debut" id="date_debut" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                      <input type="datetime-local" v-model="form.date_debut" id="date_debut" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                       <div v-if="form.errors.date_debut" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_debut }}
                       </div>
@@ -103,7 +103,7 @@
 
                     <div>
                       <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
-                      <input type="date" v-model="form.date_fin" id="date_fin" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                      <input type="datetime-local" v-model="form.date_fin" id="date_fin" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                       <div v-if="form.errors.date_fin" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_fin }}
                       </div>
@@ -175,7 +175,7 @@
                       <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ resa.depart }} → {{ resa.destination }} </h2>
                       <h3 class="font-semibold text-gray-800 flex items-center gap-2">
                         <span>{{ resa.vehicle.modele }} - {{ resa.vehicle.immatriculation }}</span>
-                        <span v-if="resa.vehicle.energie === 'electrique' || resa.vehicle.energie === 'hybride'" 
+                        <span v-if="resa.vehicle.energie === 'electrique' || resa.vehicle.energie === 'hybride'"
                               class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
                               :class="{
                                 'bg-green-100 text-green-800': resa.vehicle.energie === 'electrique',
