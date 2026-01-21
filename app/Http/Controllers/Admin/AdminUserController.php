@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agence;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AdminUserController extends Controller
 {
@@ -29,7 +31,7 @@ class AdminUserController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -53,7 +55,14 @@ class AdminUserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        $agences = Agence::get(['id', 'nom']);
+
+        $user->load('agence');
+
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => $user,
+            'agences' => $agences,
+        ]);
     }
 
     /**
@@ -61,7 +70,17 @@ class AdminUserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $this->authorize('users.edit');
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'agence_id' => 'nullable|exists:agences,id',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur mis à jour.');
     }
 
     /**

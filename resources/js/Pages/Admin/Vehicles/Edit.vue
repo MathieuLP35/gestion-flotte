@@ -21,7 +21,7 @@ const form = useForm({
     emplacement: vehicle.emplacement || '',
     nbr_places: vehicle.nbr_places || 1,
     energie: vehicle.energie || 'essence',
-    en_maintenance: vehicle.en_maintenance == 1 ? true : false || false,
+    en_maintenance: vehicle.en_maintenance === 1,
 });
 
 function submitVehicle() {
@@ -86,6 +86,7 @@ function deleteKey(id) {
         });
     }
 }
+
 </script>
 
 <template>
@@ -189,7 +190,7 @@ function deleteKey(id) {
                                 </button>
                             </div>
                         </form>
-                        
+
                         <div v-if="vehicleRef.keys && vehicleRef.keys.length" class="mt-4 pt-4 border-t border-gray-200">
                             <div class="overflow-y-auto" :style="{ maxHeight: vehicleRef.keys.length > 4 ? '400px' : 'auto' }">
                                 <table class="w-full text-sm text-left text-gray-500">
@@ -205,6 +206,7 @@ function deleteKey(id) {
                                             <td class="py-4 px-6">Clé {{ key.id }}</td>
                                             <td class="py-4 px-6">{{ key.emplacement_clef || '-' }}</td>
                                             <td class="py-4 px-6 whitespace-nowrap">
+                                                <Link :href="route('admin.keys.edit', key.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
                                                 <button @click="deleteKey(key.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
                                             </td>
                                         </tr>

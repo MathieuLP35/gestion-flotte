@@ -1,73 +1,83 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, useForm, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import {Head, router, usePage} from '@inertiajs/vue3';
 
 defineOptions({ layout: AdminLayout });
 
-// On reçoit les props du RoleController@edit
+const page = usePage();
+
 const props = defineProps({
-    role: Object,
-    permissions: Array,
-    rolePermissions: Array // Les permissions que ce rôle a déjà
+    user: Object,
+    agences: Array,
 });
 
-// 3. Récupérer les traductions du fichier JSON
-const translations = computed(() => usePage().props.translations || {});
-
-// 4. Créer notre helper de traduction
-function translate(key) {
-    return translations.value[key] || key; // Renvoie la traduction, ou la clé si non trouvée
-}
-
-// On initialise le formulaire avec les données existantes
-const form = useForm({
-    name: props.role.name,
-    permissions: props.rolePermissions // On pré-coche les cases !
-});
-
-// La soumission se fait sur la route 'update'
-const submit = () => {
-    form.put(route('admin.roles.update', props.role.id));
+const editUser = (id) => {
+    router.put(route('admin.users.update', id), {
+        name: props.user.name,
+        email: props.user.email,
+        agence_id: props.user.agence_id,
+    });
 };
+
 </script>
 
 <template>
-    <Head :title="'Modifier Rôle: ' + form.name" />
+    <Head :title="'Modifier Utilisateur - ' + user.name" />
 
     <div class="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6">Modifier le Rôle</h1>
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-2xl font-bold mb-6">Modifification de l'utilisateur :</h1>
 
-        <form @submit.prevent="submit" class="bg-white shadow-md rounded-lg p-6">
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700">Nom du Rôle</label>
-                <input type="text" v-model="form.name" id="name"
-                       class="mt-1 block w-full border-gray-300 rounded-md" required>
-                <div v-if="form.errors.name" class="text-red-500 text-sm mt-1">{{ form.errors.name }}</div>
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Permissions</label>
-                <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-
-                    <div v-for="permission in permissions" :key="permission" class="flex items-center">
-                        <input type="checkbox" :id="permission" :value="permission" v-model="form.permissions"
-                               class="rounded border-gray-300 text-indigo-600 shadow-sm">
-                        <label :for="permission" class="ml-2 text-sm text-gray-600">{{ translate('permissions.' + permission) }}</label>
-                    </div>
+            <form @submit.prevent="editUser(user.id)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                        Nom
+                    </label>
+                    <input
+                        v-model="user.name"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="name"
+                        type="text"
+                        placeholder="Nom de l'utilisateur"
+                    />
                 </div>
-            </div>
-
-            <div class="flex items-center justify-between">
-                <Link :href="route('admin.roles.index')" 
-                      class="text-sm text-gray-600 hover:text-gray-900">
-                    Annuler
-                </Link>
-                <button type="submit" :disabled="form.processing"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-md">
-                    Mettre à jour
-                </button>
-            </div>
-        </form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                        Email
+                    </label>
+                    <input
+                        v-model="user.email"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="email"
+                        type="email"
+                        placeholder="Email de l'utilisateur"
+                    />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="agence">
+                        Agence
+                    </label>
+                    <select
+                        v-model="user.agence_id"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="agence"
+                    >
+                        <option :value="null">Aucune agence</option>
+                        <option v-for="agence in agences" :key="agence.id" :value="agence.id">
+                            {{ agence.nom }}
+                        </option>
+                    </select>
+                </div>
+                <!-- Ajoutez d'autres champs selon les besoins -->
+                <div class="flex justify-end mt-6">
+                    <button
+                        class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150"
+                        type="submit"
+                    >
+                        Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>

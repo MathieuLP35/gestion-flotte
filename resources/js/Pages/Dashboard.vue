@@ -212,7 +212,7 @@ const searchCarpooling = () => {
                                         </p>
                                         <p class="text-sm text-gray-500 flex items-center gap-2">
                                             <span>Véhicule: {{ resa.vehicle.modele }} ({{ resa.vehicle.immatriculation }})</span>
-                                            <span v-if="resa.vehicle.energie === 'electrique' || resa.vehicle.energie === 'hybride'" 
+                                            <span v-if="resa.vehicle.energie === 'electrique' || resa.vehicle.energie === 'hybride'"
                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
                                                   :class="{
                                                     'bg-green-100 text-green-800': resa.vehicle.energie === 'electrique',
@@ -235,8 +235,8 @@ const searchCarpooling = () => {
                                                     'bg-blue-100 text-blue-800': resa.statut === 'en cours',
                                                     'bg-orange-100 text-orange-800': resa.statut === 'à retourner',
                                                     'bg-red-100 text-red-800': resa.statut === 'annulé',
-                                                    'bg-gray-100 text-gray-800': resa.statut === 'terminé',
-                                                    'bg-gray-100 text-gray-800': !['en attente', 'validé', 'en cours', 'à retourner', 'annulé', 'terminé'].includes(resa.statut)
+                                                    'bg-gray-500 text-gray-100': resa.statut === 'terminé',
+                                                    'bg-gray-600 text-gray-100': !['en attente', 'validé', 'en cours', 'à retourner', 'annulé', 'terminé'].includes(resa.statut)
                                                     }">
                                                 {{ resa.statut }}
                                             </span>
@@ -249,9 +249,9 @@ const searchCarpooling = () => {
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                             </svg>
                                         </Link>
-                                        <button 
-                                            v-if="resa.statut === 'validé'" 
-                                            @click="startTrip(resa.id)" 
+                                        <button
+                                            v-if="resa.statut === 'validé'"
+                                            @click="startTrip(resa.id)"
                                             class="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
                                             title="Lancer le trajet"
                                         >
@@ -259,9 +259,9 @@ const searchCarpooling = () => {
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" />
                                             </svg>
                                         </button>
-                                        <button 
-                                            v-if="(resa.statut === 'en cours' || resa.statut === 'à retourner') && !resa.date_retour" 
-                                            @click="handleReturnVehicle(resa)" 
+                                        <button
+                                            v-if="(resa.statut === 'en cours' || resa.statut === 'à retourner') && !resa.date_retour"
+                                            @click="handleReturnVehicle(resa)"
                                             class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
                                             title="Retourner le véhicule"
                                         >

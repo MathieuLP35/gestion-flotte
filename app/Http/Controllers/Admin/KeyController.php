@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\VehicleKey;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class KeyController extends Controller
 {
@@ -36,11 +38,11 @@ class KeyController extends Controller
         ]);
 
         $vehicle = Vehicle::find($validated['vehicle_id']);
-        
+
         if (!$vehicle) {
             return redirect()->back()->with('error', 'Véhicule non trouvé.');
         }
-        
+
         VehicleKey::create([
             'vehicle_id' => $validated['vehicle_id'],
             'emplacement_clef' => $validated['emplacement_clef'],
@@ -61,17 +63,30 @@ class KeyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(VehicleKey $vehicleKey)
+    public function edit(VehicleKey $key)
     {
-        //
+        $key->load('vehicle');
+
+        return Inertia::render('Admin/Keys/Edit', [
+            'vehicleKey' => $key,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, VehicleKey $vehicleKey)
+    public function update(Request $request, VehicleKey $key)
     {
-        //
+        $validated = $request->validate([
+            'emplacement_clef' => 'required|string|max:255',
+        ]);
+
+        $key->update([
+            'emplacement_clef' => $validated['emplacement_clef'],
+        ]);
+
+        return redirect()->route('admin.vehicles.edit', $key->vehicle_id)
+                         ->with('success', 'Clé mise à jour avec succès.');
     }
 
     /**

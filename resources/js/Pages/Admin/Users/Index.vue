@@ -1,6 +1,6 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3'; 
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 defineOptions({ layout: AdminLayout });
@@ -39,13 +39,6 @@ const deleteUser = (userId) => {
 
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-2xl font-bold">Gestion des Utilisateurs</h1>
-                    
-                    <Link 
-                        v-if="page.props.auth.permissions.includes('users.create')"
-                        :href="route('admin.users.create')" 
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-md">
-                        Créer un utilisateur
-                    </Link>
                 </div>
 
                 <div class="overflow-x-auto relative shadow-md sm:rounded-lg border border-gray-200">
@@ -66,14 +59,14 @@ const deleteUser = (userId) => {
                                 <td class="p-3 font-medium">{{ user.agence ? user.agence.nom : 'Aucune agence' }}</td>
                                 <td>{{ user.roles.map(role => role.name).join(', ') }}</td>
                                 <td class="py-4 px-6 text-center whitespace-nowrap">
-                                    <Link 
+                                    <Link
                                         v-if="page.props.auth.permissions.includes('users.edit')"
-                                        :href="route('admin.users.edit', user.id)" 
+                                        :href="route('admin.users.edit', user.id)"
                                         class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">
                                         Modifier
                                     </Link>
-                                    
-                                    <button 
+
+                                    <button
                                         v-if="page.props.auth.permissions.includes('users.delete')"
                                         @click="deleteUser(user.id)"
                                         class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">

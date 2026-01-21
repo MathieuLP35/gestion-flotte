@@ -21,6 +21,7 @@ class ReservationPolicy
         return $reservation->passengers()
                             ->where('user_id', $user->id)
                             ->where('statut', 'confirme')
+                            ->orWhere('statut', 'en_attente')
                             ->exists();
     }
 
