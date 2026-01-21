@@ -125,7 +125,7 @@ onUnmounted(() => {
                         <h3 class="text-lg font-medium text-gray-900">Participants</h3>
                         <ul class="mt-2 space-y-1">
                             <li class="text-sm text-gray-700"><strong>{{ reservation.driver.name }}</strong> (Conducteur)</li>
-                            <li v-for="p in reservation.passengers.filter(() => p.statut === 'confirme')" :key="p.id" class="text-sm text-gray-700">
+                            <li v-for="p in reservation.passengers.filter(p => p.statut === 'confirme')" :key="p.id" class="text-sm text-gray-700">
                                 {{ p.user.name }} (Passager)
                             </li>
                         </ul>
