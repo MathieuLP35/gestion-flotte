@@ -35,6 +35,8 @@ class MessageController extends Controller
             'body' => $request->body,
         ]);
 
+        broadcast(new \App\Events\MessageSent($message->load('user')))->toOthers();
+
         // On recharge le message avec l'utilisateur pour le renvoyer au front-end
         $message->load('user:id,name');
 
