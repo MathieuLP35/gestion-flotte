@@ -18,7 +18,7 @@ class ReservationController extends Controller
 
     use AuthorizesRequests;
 
-    
+
     public function index()
     {
         $user = Auth::user();
@@ -35,7 +35,7 @@ class ReservationController extends Controller
     public function dashboard()
     {
         $userId = Auth::id();
-        
+
         // 1. Les trajets où je suis CONDUCTEUR
         $reservationsAsDriver = Reservation::with(['vehicle', 'passengers.user'])
             ->where('user_id', $userId)
@@ -48,7 +48,7 @@ class ReservationController extends Controller
             ->where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         return inertia('Dashboard', [
             'reservationsAsDriver' => $reservationsAsDriver,
             'reservationsAsPassenger' => $reservationsAsPassenger,
@@ -259,7 +259,7 @@ class ReservationController extends Controller
             }
 
             // +1 pour le conducteur
-            $currentOccupants = $reservation->passengers->where('statut', 'confirme')->count() + 1; 
+            $currentOccupants = $reservation->passengers->where('statut', 'confirme')->count() + 1;
 
             return $reservation->vehicle->nbr_places > $currentOccupants;
         });
