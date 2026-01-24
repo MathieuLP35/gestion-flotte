@@ -42,6 +42,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability')">
                                     Disponibilités
                                 </NavLink>
+                                <NavLink :href="route('admin.settings.vehicleSuggestion.edit')" :active="route().current('admin.settings.vehicleSuggestion.*')">
+                                    Suggestion véhicule
+                                </NavLink>
                                 <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                                     Utilisateurs
                                 </NavLink>
@@ -161,6 +164,9 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability')">
                             Disponibilités
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('admin.settings.vehicleSuggestion.edit')" :active="route().current('admin.settings.vehicleSuggestion.*')">
+                            Suggestion véhicule
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                             Utilisateurs

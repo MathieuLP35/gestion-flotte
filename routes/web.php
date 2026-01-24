@@ -104,6 +104,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
     // /admin/domains
     Route::resource('domains', App\Http\Controllers\Admin\AllowedDomainController::class);
 
+    // /admin/settings/vehicle-suggestion
+    Route::get('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'edit'])->name('settings.vehicleSuggestion.edit');
+    Route::put('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'update'])->name('settings.vehicleSuggestion.update');
 });
 
 require __DIR__.'/auth.php';

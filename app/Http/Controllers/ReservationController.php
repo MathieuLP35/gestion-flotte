@@ -152,10 +152,10 @@ class ReservationController extends Controller
             'date_fin' => $request->date_fin,
             'statut' => config('reservation.default_status', 'en attente'),
             'covoiturage' => $request->has('is_carpool') ? $request->is_carpool : false,
-            'depart_latitude' => $request->departureSelected['lat'] ? $request->departureSelected['lat'] : null,
-            'depart_longitude' => $request->departureSelected['lng'] ? $request->departureSelected['lng'] : null,
-            'destination_latitude' => $request->destinationSelected['lat'] ? $request->destinationSelected['lat'] : null,
-            'destination_longitude' => $request->destinationSelected['lng'] ? $request->destinationSelected['lng'] : null,
+            'depart_latitude' => ($request->departureSelected ?? [])['lat'] ?? null,
+            'depart_longitude' => ($request->departureSelected ?? [])['lng'] ?? null,
+            'destination_latitude' => ($request->destinationSelected ?? [])['lat'] ?? null,
+            'destination_longitude' => ($request->destinationSelected ?? [])['lng'] ?? null,
         ]);
 
         Mail::to(Auth::user()->email)->queue(new ReservationStatusChanged($reservation));
@@ -190,10 +190,12 @@ class ReservationController extends Controller
             'statut' => 'required|in:en attente,validé,annulé,en cours,à retourner,terminé',
         ]);
 
+        $oldStatut = $reservation->statut;
         $reservation->update($request->only(['vehicle_id', 'departure', 'destination', 'date_debut', 'date_fin', 'statut']));
 
-        // Envoyer mail si changement statut
-        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
+        if ($oldStatut !== $reservation->statut) {
+            Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
+        }
 
         return redirect()->route('reservations.index')->with('success', 'Réservation mise à jour');
     }
@@ -349,6 +351,8 @@ class ReservationController extends Controller
                 'en_maintenance' => true,
             ]);
         }
+
+        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
 
         return redirect()->route('reservations.show', $reservation)
             ->with('success', 'Véhicule retourné avec succès');

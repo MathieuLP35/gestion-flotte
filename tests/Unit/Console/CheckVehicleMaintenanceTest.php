@@ -24,7 +24,7 @@ it('envoie un mail d\'alerte quand km_initial >= km_alert_threshold', function (
         ->expectsOutput('Vérification des entretiens terminée.')
         ->assertSuccessful();
 
-    Mail::assertSent(\App\Mail\MaintenanceAlert::class);
+    Mail::assertQueued(\App\Mail\MaintenanceAlert::class);
 });
 
 it('n\'envoie pas de mail si km_initial < km_alert_threshold', function () {

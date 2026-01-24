@@ -12,16 +12,26 @@ class ReservationStatusChanged extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $reservation;
+    public Reservation $reservation;
 
     public function __construct(Reservation $reservation)
     {
-        $this->reservation = $reservation;
+        $this->reservation = $reservation->loadMissing(['vehicle', 'driver']);
     }
 
     public function build()
     {
-        return $this->subject('Mise à jour de votre réservation')
+        $subject = match ($this->reservation->statut) {
+            'en attente' => 'Réservation enregistrée',
+            'validé' => 'Votre réservation est validée',
+            'annulé' => 'Votre réservation a été annulée',
+            'en cours' => 'Votre trajet a démarré',
+            'à retourner' => 'Pensez à retourner le véhicule',
+            'terminé' => 'Véhicule retourné – réservation terminée',
+            default => 'Mise à jour de votre réservation',
+        };
+
+        return $this->subject($subject)
             ->markdown('emails.reservation.status_changed');
     }
 }

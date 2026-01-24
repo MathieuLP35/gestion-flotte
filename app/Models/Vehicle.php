@@ -66,8 +66,10 @@ class Vehicle extends Model
      */
     public static function suggestBestVehicle(int $agenceId, float $distance, ?string $dateDebut = null, ?string $dateFin = null): ?Vehicle
     {
-        // Seuil pour considérer un trajet comme "petit" (en km)
-        $petitTrajetSeuil = 100;
+        $settings = VehicleSuggestionSetting::get();
+        $petitTrajetSeuil = $settings->petit_trajet_seuil_km;
+        $prioritePetit = $settings->priorite_petit_trajet ?: ['electrique', 'hybride'];
+        $prioriteLong = $settings->priorite_long_trajet ?: ['hybride', 'essence', 'diesel'];
 
         // Récupérer les véhicules disponibles de l'agence
         $query = self::where('agence_id', $agenceId)
@@ -94,25 +96,8 @@ class Vehicle extends Model
             return null;
         }
 
-        // Pour les petits trajets, privilégier électrique puis hybride
-        if ($distance <= $petitTrajetSeuil) {
-            // Chercher d'abord un véhicule électrique
-            $electrique = $vehicles->where('energie', 'electrique')->first();
-            if ($electrique) {
-                return $electrique;
-            }
+        $priorite = ($distance <= $petitTrajetSeuil) ? $prioritePetit : $prioriteLong;
 
-            // Sinon, chercher un véhicule hybride
-            $hybride = $vehicles->where('energie', 'hybride')->first();
-            if ($hybride) {
-                return $hybride;
-            }
-        }
-
-        // Pour les trajets plus longs ou si pas d'électrique/hybride disponible
-        // Privilégier hybride, puis essence, puis diesel
-        $priorite = ['hybride', 'essence', 'diesel'];
-        
         foreach ($priorite as $energie) {
             $vehicle = $vehicles->where('energie', $energie)->first();
             if ($vehicle) {
@@ -120,7 +105,6 @@ class Vehicle extends Model
             }
         }
 
-        // Si aucun véhicule ne correspond, retourner le premier disponible
         return $vehicles->first();
     }
 }

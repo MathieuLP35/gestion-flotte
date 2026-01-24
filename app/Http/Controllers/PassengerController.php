@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PassengerRemovedFromTrip;
+use App\Mail\PassengerRequestReceived;
 use App\Mail\PassengerStatusUpdated;
 use Illuminate\Http\Request;
 use App\Models\Passenger;
@@ -31,13 +33,15 @@ class PassengerController extends Controller
             return back()->with('error', 'Vous êtes déjà passager sur ce trajet.');
         }
 
-        Passenger::create([
+        $passenger = Passenger::create([
             'reservation_id' => $request->reservation_id,
             'user_id' => Auth::id(),
-            'statut' => 'en_attente', // L'admin (ou le conducteur) devra valider
+            'statut' => 'en_attente',
         ]);
 
-        // On peut rediriger vers le tableau de bord ou la page "Mes trajets"
+        $passenger->load('reservation.driver');
+        Mail::to($passenger->reservation->driver->email)->queue(new PassengerRequestReceived($passenger));
+
         return redirect()->route('dashboard')->with('success', 'Votre demande de covoiturage a été envoyée.');
     }
 
@@ -61,10 +65,17 @@ class PassengerController extends Controller
     // Retirer un passager (ou annuler sa propre place)
     public function destroy(Passenger $passenger)
     {
-
         $this->authorize('delete', $passenger);
 
-        $passenger->delete();
+        if (Auth::id() !== $passenger->user_id) {
+            $email = $passenger->user->email;
+            $userName = $passenger->user->name;
+            $reservation = $passenger->reservation;
+            $passenger->delete();
+            Mail::to($email)->send(new PassengerRemovedFromTrip($reservation, $userName));
+        } else {
+            $passenger->delete();
+        }
 
         return back()->with('success', 'Passager retiré du trajet.');
     }
