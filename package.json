@@ -4,7 +4,16 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "test:php": "composer test",
+        "test:vue": "vitest run",
+        "test:vue:coverage": "echo Rapport HTML: coverage/vue/index.html && vitest run --coverage",
+        "test:vue:coverage:istanbul": "cross-env VITEST_COVERAGE_PROVIDER=istanbul vitest run --coverage",
+        "test": "npm run test:php && npm run test:vue",
+        "coverage:php": "composer test:coverage",
+        "coverage:vue": "vitest run --coverage",
+        "coverage:index": "node scripts/coverage-index.js",
+        "coverage": "npm run coverage:php && npm run coverage:vue && npm run coverage:index"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.0",
@@ -12,15 +21,21 @@
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/vite": "^4.0.0",
         "@vitejs/plugin-vue": "^6.0.3",
+        "@vue/test-utils": "^2.4.6",
         "autoprefixer": "^10.4.21",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
+        "jsdom": "^27.4.0",
         "laravel-echo": "^2.3.0",
         "laravel-vite-plugin": "^2.0.0",
         "postcss": "^8.5.6",
         "pusher-js": "^8.4.0",
         "tailwindcss": "^3.4.18",
         "vite": "^7.3.0",
+        "@vitest/coverage-istanbul": "^4.0.18",
+        "@vitest/coverage-v8": "^4.0.18",
+        "cross-env": "^7.0.3",
+        "vitest": "^4.0.18",
         "vue": "^3.4.0"
     },
     "dependencies": {

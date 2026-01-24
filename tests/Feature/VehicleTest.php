@@ -1,38 +1,33 @@
 <?php
 
-namespace Tests\Feature;
-
-use App\Models\User;
 use App\Models\Agence;
-use App\Models\Vehicle;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
-class VehicleTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+});
 
-    public function test_user_can_create_vehicle()
-    {
-        $agence = Agence::factory()->create();
-        $user = User::factory()->create(['agence_id' => $agence->id]);
+it('allows admin to create a vehicle', function () {
+    $agence = Agence::factory()->create();
+    $user = User::factory()->create(['agence_id' => $agence->id]);
+    $user->assignRole('Super Admin');
 
-        $this->actingAs($user);
+    $response = $this->actingAs($user)->post(route('admin.vehicles.store'), [
+        'modele' => 'Peugeot 208',
+        'immatriculation' => 'AB-123-CD',
+        'km_initial' => 0,
+        'emplacement' => 'Garage A',
+        'nbr_places' => 5,
+        'nbr_cles' => 1,
+        'energie' => 'essence',
+    ]);
 
-        $response = $this->post(route('vehicles.store'), [
-            'modele' => 'Peugeot 208',
-            'immatriculation' => 'AB-123-CD',
-            'km_initial' => 0,
-            'emplacement' => 'Garage A',
-            'nbr_places' => 5,
-        ]);
+    $response->assertRedirect(route('admin.vehicles.index'));
 
-        $response->assertRedirect(route('vehicles.index'));
-
-        $this->assertDatabaseHas('vehicles', [
-            'modele' => 'Peugeot 208',
-            'immatriculation' => 'AB-123-CD',
-            'agence_id' => $agence->id,
-        ]);
-    }
-}
+    $this->assertDatabaseHas('vehicles', [
+        'modele' => 'Peugeot 208',
+        'immatriculation' => 'AB-123-CD',
+        'agence_id' => $agence->id,
+    ]);
+});

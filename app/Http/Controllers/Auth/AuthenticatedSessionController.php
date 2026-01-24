@@ -68,7 +68,7 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended();
+            return redirect()->intended(route('dashboard'));
 
         } catch (ValidationException $e) {
             // En cas d’échec, incrémenter le compteur
