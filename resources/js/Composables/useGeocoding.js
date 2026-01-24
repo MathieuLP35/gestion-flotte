@@ -28,7 +28,7 @@ export default function useGeocoding() {
             if (type === 'departure') isLoadingDeparture.value = true;
             if (type === 'destination') isLoadingDestination.value = true;
 
-            const adresseResponse = await fetch(`https://data.geopf.fr/geocodage/search/?q=${encodeURIComponent(query)}&limit=3&index=address,poi`);
+            const adresseResponse = await fetch(`https://data.geopf.fr/geocodage/search/?q=${encodeURIComponent(query)}&limit=3&index=address`);
             const adresseData = await adresseResponse.json();
 
             suggestions = adresseData.features.map(f => ({
@@ -43,27 +43,8 @@ export default function useGeocoding() {
                 source: 'adresse_gouv',
             }));
 
-            console.log(nominatimEnabled);
+            // On ajoute les agences à la liste des suggestions
 
-            if (suggestions.length < 2 && nominatimEnabled) {
-                const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=3&countrycodes=FR&addressdetails=1`;
-
-                const nominatimResponse = await fetch(nominatimUrl);
-                const nominatimData = await nominatimResponse.json();
-
-                const nominatimSuggestions = nominatimData.map(f => ({
-                    label: `${f.address.office ? f.address.office + ' ' : ''}, ${f.address.house_number ? f.address.house_number + ' ' : ''}${f.address.road ? f.address.road + ', ' : ''}${f.address.postcode ? f.address.postcode + ' ' : ''}${f.address.city || f.address.town || f.address.village || ''}`.trim().replace(/^,|,$/g, ''),
-                    city: f.address?.city || f.address?.town || f.address?.village || '',
-                    postcode: f.address?.postcode || '',
-                    street: f.address?.road || '',
-                    type: f.type || '',
-                    lat: parseFloat(f.lat),
-                    lng: parseFloat(f.lon),
-                    source: 'nominatim',
-                }));
-
-                suggestions = [...suggestions, ...nominatimSuggestions];
-            }
 
             if (type === 'departure') {
                 suggestionsDeparture.value = suggestions;
