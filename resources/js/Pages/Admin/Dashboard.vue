@@ -244,10 +244,9 @@ const doughnutOptions = {
                     </div>
                     <div class="divide-y divide-gray-100">
                         <template v-if="recent_reservations?.length">
-                            <Link
+                            <div
                                 v-for="r in recent_reservations"
                                 :key="r.id"
-                                :href="route('reservations.show', r.id)"
                                 class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition"
                             >
                                 <div class="min-w-0">
@@ -260,7 +259,7 @@ const doughnutOptions = {
                                 >
                                     {{ statusLabels[r.statut] || r.statut }}
                                 </span>
-                            </Link>
+                            </div>
                         </template>
                         <p v-else class="px-5 py-8 text-center text-gray-500">Aucune réservation</p>
                     </div>

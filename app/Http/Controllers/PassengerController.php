@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\PassengerRemovedFromTrip;
 use App\Mail\PassengerRequestReceived;
 use App\Mail\PassengerStatusUpdated;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use App\Models\Passenger;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -24,7 +25,28 @@ class PassengerController extends Controller
             'reservation_id' => 'required|exists:reservations,id'
         ]);
 
-        // Vérifier qu'il n'est pas déjà passager de ce vol
+        $reservation = Reservation::with(['vehicle', 'passengers'])->findOrFail($request->reservation_id);
+
+        // Le conducteur ne peut pas s'ajouter comme passager
+        if ($reservation->user_id === Auth::id()) {
+            return back()->with('error', 'Vous êtes le conducteur de ce trajet.');
+        }
+
+        // Seules les réservations en covoiturage et validées acceptent de nouvelles demandes
+        if (!$reservation->covoiturage) {
+            return back()->with('error', 'Ce trajet n\'accepte pas les passagers.');
+        }
+        if ($reservation->statut !== 'validé') {
+            return back()->with('error', 'Les demandes ne sont possibles que pour les trajets validés.');
+        }
+
+        // Vérifier qu'il reste des places (conducteur + 1 par place, nbr_places inclut le conducteur)
+        $occupants = 1 + $reservation->passengers->whereIn('statut', ['confirme', 'en_attente'])->count();
+        if ($reservation->vehicle && $reservation->vehicle->nbr_places && $occupants >= $reservation->vehicle->nbr_places) {
+            return back()->with('error', 'Ce trajet est complet.');
+        }
+
+        // Vérifier qu'il n'est pas déjà passager de ce trajet
         $existing = Passenger::where('reservation_id', $request->reservation_id)
                              ->where('user_id', Auth::id())
                              ->exists();

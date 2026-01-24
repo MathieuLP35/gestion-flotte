@@ -17,12 +17,11 @@ class ReservationPolicy
             return true;
         }
 
-        // 2. Un passager CONFIRMÉ a le droit
+        // 2. Un passager confirmé ou en attente a le droit
         return $reservation->passengers()
-                            ->where('user_id', $user->id)
-                            ->where('statut', 'confirme')
-                            ->orWhere('statut', 'en_attente')
-                            ->exists();
+            ->where('user_id', $user->id)
+            ->whereIn('statut', ['confirme', 'en_attente'])
+            ->exists();
     }
 
     /**
