@@ -43,6 +43,28 @@ class AllowedDomainController extends Controller
         return back()->with('success', 'Domaine ajouté.');
     }
 
+    public function edit(AllowedDomain $domain)
+    {
+        $this->authorize('allowed_domains.edit');
+
+        return Inertia::render('Admin/Domains/Edit', [
+            'domain' => $domain,
+        ]);
+    }
+
+    public function update(Request $request, AllowedDomain $domain)
+    {
+        $this->authorize('allowed_domains.edit');
+
+        $request->validate([
+            'name' => 'required|string|unique:allowed_domains,name,' . $domain->id . '|lowercase',
+        ]);
+
+        $domain->update($request->only('name'));
+
+        return redirect()->route('admin.domains.index')->with('success', 'Domaine mis à jour.');
+    }
+
     public function destroy(AllowedDomain $domain) 
     {
         // Ta façon de faire que tu aimes (et qui fonctionne en L12)

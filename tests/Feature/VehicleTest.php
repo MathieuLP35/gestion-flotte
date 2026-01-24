@@ -23,7 +23,7 @@ it('allows admin to create a vehicle', function () {
         'energie' => 'essence',
     ]);
 
-    $response->assertRedirect(route('admin.vehicles.index'));
+    $response->assertRedirect(route('admin.vehicles.availability'));
 
     $this->assertDatabaseHas('vehicles', [
         'modele' => 'Peugeot 208',

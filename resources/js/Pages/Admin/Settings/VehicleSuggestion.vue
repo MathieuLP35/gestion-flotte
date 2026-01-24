@@ -8,6 +8,7 @@ defineOptions({ layout: AdminLayout });
 const props = defineProps({
     setting: Object,
     energies: Array,
+    can: Object, // { edit: boolean }
 });
 
 const page = usePage();
@@ -60,7 +61,8 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
                             type="number"
                             min="1"
                             max="2000"
-                            class="mt-1 block w-full max-w-xs border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            :disabled="!can?.edit"
+                            class="mt-1 block w-full max-w-xs border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                         />
                         <p class="mt-1 text-xs text-gray-500">
                             Si la distance ≤ ce seuil, on applique la priorité « petit trajet », sinon la priorité « long trajet ».
@@ -76,7 +78,8 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
                                 v-for="(_, i) in form.priorite_petit_trajet"
                                 :key="'p'+i"
                                 v-model="form.priorite_petit_trajet[i]"
-                                class="border border-gray-300 rounded-md shadow-sm py-1.5 px-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                :disabled="!can?.edit"
+                                class="border border-gray-300 rounded-md shadow-sm py-1.5 px-2 text-sm focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                             >
                                 <option value="">—</option>
                                 <option v-for="e in energies" :key="e" :value="e">{{ labels[e] || e }}</option>
@@ -93,7 +96,8 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
                                 v-for="(_, i) in form.priorite_long_trajet"
                                 :key="'l'+i"
                                 v-model="form.priorite_long_trajet[i]"
-                                class="border border-gray-300 rounded-md shadow-sm py-1.5 px-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                :disabled="!can?.edit"
+                                class="border border-gray-300 rounded-md shadow-sm py-1.5 px-2 text-sm focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                             >
                                 <option value="">—</option>
                                 <option v-for="e in energies" :key="e" :value="e">{{ labels[e] || e }}</option>
@@ -102,7 +106,7 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
                         <p v-if="form.errors.priorite_long_trajet" class="mt-1 text-sm text-red-600">{{ form.errors.priorite_long_trajet }}</p>
                     </div>
 
-                    <div class="flex justify-end">
+                    <div v-if="can?.edit" class="flex justify-end">
                         <button
                             type="submit"
                             :disabled="form.processing"

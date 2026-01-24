@@ -42,6 +42,15 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'allowed_domains.edit']);
         Permission::create(['name' => 'allowed_domains.delete']);
 
+        // Permissions pour la SUGGESTION DE VÉHICULE (paramètres admin)
+        Permission::firstOrCreate(['name' => 'vehicle_suggestion.view']);
+        Permission::firstOrCreate(['name' => 'vehicle_suggestion.edit']);
+
+        // Accès à l'administration (lien / menu admin)
+        Permission::firstOrCreate(['name' => 'admin.view']);
+
+        // Permissions pour les AGENCES
+        Permission::firstOrCreate(['name' => 'agences.view']);
 
         // --- CRÉATION DU RÔLE SUPER-ADMIN ---
         $role = Role::firstOrCreate(['name' => 'Super Admin']);

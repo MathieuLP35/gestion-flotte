@@ -12,11 +12,15 @@
     "permissions.vehicles.edit": "Modifier les véhicules",
     "permissions.vehicles.delete": "Supprimer les véhicules",
     "permissions.reservations.view": "Consulter les réservations",
-    "permissions.reservations.create": "Créer des réservations",
+    "permissions.reservations.create": "Créer les réservations",
     "permissions.reservations.edit": "Modifier les réservations",
     "permissions.reservations.delete": "Supprimer les réservations",
     "permissions.allowed_domains.view": "Consulter les domaines autorisés",
     "permissions.allowed_domains.create": "Ajouter des domaines autorisés",
     "permissions.allowed_domains.edit": "Modifier des domaines autorisés",
-    "permissions.allowed_domains.delete": "Supprimer des domaines autorisés"
+    "permissions.allowed_domains.delete": "Supprimer les domaines autorisés",
+    "permissions.vehicle_suggestion.view": "Consulter les paramètres de suggestion de véhicule",
+    "permissions.vehicle_suggestion.edit": "Modifier les paramètres de suggestion de véhicule",
+    "permissions.admin.view": "Accéder à l'administration",
+    "permissions.agences.view": "Consulter les agences"
 }

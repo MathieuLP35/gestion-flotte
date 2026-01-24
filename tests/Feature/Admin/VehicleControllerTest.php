@@ -3,10 +3,16 @@
 use App\Models\Agence;
 use App\Models\User;
 use App\Models\Vehicle;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
-    Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+    foreach (['vehicles.view', 'vehicles.create', 'vehicles.edit', 'vehicles.delete'] as $name) {
+        Permission::firstOrCreate(['name' => $name]);
+    }
+    $role->givePermissionTo(['vehicles.view', 'vehicles.create', 'vehicles.edit', 'vehicles.delete']);
 });
 
 function adminWithAgence(): array
@@ -17,17 +23,12 @@ function adminWithAgence(): array
     return [$user, $agence];
 }
 
-it('affiche la liste des véhicules de l\'agence', function () {
-    [$user, $agence] = adminWithAgence();
-    Vehicle::create([
-        'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-123',
-        'km_initial' => 0, 'emplacement' => 'X', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
-    ]);
+it('redirige l\'index véhicules vers la page disponibilités', function () {
+    [$user] = adminWithAgence();
 
     $response = $this->actingAs($user)->get(route('admin.vehicles.index'));
 
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page->component('Admin/Vehicles/Index')->has('vehicles'));
+    $response->assertRedirect(route('admin.vehicles.availability'));
 });
 
 it('affiche le formulaire de création', function () {
@@ -79,7 +80,7 @@ it('crée un véhicule avec des clés', function () {
         'energie' => 'essence',
     ]);
 
-    $response->assertRedirect(route('admin.vehicles.index'));
+    $response->assertRedirect(route('admin.vehicles.availability'));
     $this->assertDatabaseHas('vehicles', ['immatriculation' => 'AB-789-CD', 'agence_id' => $agence->id]);
     expect(\App\Models\VehicleKey::where('vehicle_id', Vehicle::where('immatriculation', 'AB-789-CD')->first()->id)->count())->toBe(2);
 });
@@ -114,7 +115,7 @@ it('met à jour un véhicule', function () {
         'en_maintenance' => false,
     ]);
 
-    $response->assertRedirect(route('admin.vehicles.index'));
+    $response->assertRedirect(route('admin.vehicles.availability'));
     $v->refresh();
     expect($v->modele)->toBe('Clio 5')->and($v->emplacement)->toBe('Y');
 });
@@ -128,7 +129,7 @@ it('supprime un véhicule', function () {
 
     $response = $this->actingAs($user)->delete(route('admin.vehicles.destroy', $v));
 
-    $response->assertRedirect(route('admin.vehicles.index'));
+    $response->assertRedirect(route('admin.vehicles.availability'));
     $this->assertDatabaseMissing('vehicles', ['id' => $v->id]);
 });
 

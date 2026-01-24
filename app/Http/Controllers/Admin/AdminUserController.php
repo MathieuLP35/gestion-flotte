@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class AdminUserController extends Controller
 {
@@ -56,12 +57,14 @@ class AdminUserController extends Controller
     public function edit(User $user)
     {
         $agences = Agence::get(['id', 'nom']);
+        $roles = Role::orderBy('name')->get(['id', 'name']);
 
-        $user->load('agence');
+        $user->load(['agence', 'roles']);
 
         return Inertia::render('Admin/Users/Edit', [
             'user' => $user,
             'agences' => $agences,
+            'roles' => $roles,
         ]);
     }
 
@@ -76,9 +79,18 @@ class AdminUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'agence_id' => 'nullable|exists:agences,id',
+            'role_id' => 'nullable|exists:roles,id',
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'agence_id' => $validated['agence_id'],
+        ]);
+
+        if ($request->has('role_id')) {
+            $user->syncRoles($request->role_id ? [Role::findOrFail($request->role_id)->name] : []);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur mis à jour.');
     }

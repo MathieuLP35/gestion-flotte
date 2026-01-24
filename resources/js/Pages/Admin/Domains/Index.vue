@@ -1,12 +1,15 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     domains: Array,
     can: Object // Reçoit { create: bool, delete: bool, edit: bool }
 });
 
+const page = usePage();
+const success = computed(() => page.props.flash?.success);
 const form = useForm({ name: '' });
 
 const submit = () => {
@@ -37,6 +40,10 @@ function deleteDomain(id) {
                         <h1 class="text-2xl font-bold">Gestion des domaines</h1>
                     </div>
 
+                    <div v-if="success" class="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm">
+                        {{ success }}
+                    </div>
+
                     <div v-if="can.create" class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <form @submit.prevent="submit" class="flex gap-2">
                             <input 
@@ -64,14 +71,22 @@ function deleteDomain(id) {
                                 <tr v-for="domain in domains" :key="domain.id" class="border-b">
                                     <td class="p-3 font-medium">{{ domain.name }}</td>
                                     <td class="py-4 px-6 text-center whitespace-nowrap">
-                                        <button 
-                                            v-if="can.delete" 
+                                        <Link
+                                            v-if="can.edit"
+                                            :href="route('admin.domains.edit', domain.id)"
+                                            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150"
+                                        >
+                                            Modifier
+                                        </Link>
+                                        <button
+                                            v-if="can.delete"
                                             @click="deleteDomain(domain.id)"
-                                            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">
+                                            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150"
+                                        >
                                             Supprimer
                                         </button>
-                                        
-                                        <span v-else class="text-gray-400 text-xs italic">Lecture seule</span>
+
+                                        <span v-if="!can.edit && !can.delete" class="text-gray-400 text-xs italic">Lecture seule</span>
                                     </td>
                                 </tr>
                             </tbody>

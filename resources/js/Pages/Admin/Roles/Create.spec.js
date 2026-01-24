@@ -9,9 +9,9 @@ describe('Admin/Roles/Create', () => {
 
     const wrapper = mount(RolesCreate, {
       props: { permissions: ['vehicles.manage', 'users.manage'] },
-      global: { stubs: { Head: true, AdminLayout: { template: '<div><slot /></div>' } } },
+      global: { stubs: { Head: true, Link: true, AdminLayout: { template: '<div><slot /></div>' } } },
     });
-    expect(wrapper.text()).toContain('Créer un nouveau Rôle');
+    expect(wrapper.text()).toContain('Créer un nouveau rôle');
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.find('input#name').exists()).toBe(true);
     expect(wrapper.findAll('input[type="checkbox"]').length).toBeGreaterThanOrEqual(2);

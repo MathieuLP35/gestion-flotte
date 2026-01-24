@@ -9,13 +9,15 @@ class EnsureUserHasAdminAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Si l'utilisateur n'est pas connecté OU
-        // s'il n'a PAS le rôle 'Super Admin'...
-        if (! $request->user() || ! $request->user()->hasRole('Super Admin')) {
+        if (! $request->user()) {
             abort(403, 'ACTION NON AUTORISÉE.');
         }
 
-        // S'il est admin, on le laisse passer.
-        return $next($request);
+        // Accès si : rôle Super Admin OU permission admin.view
+        if ($request->user()->hasRole('Super Admin') || $request->user()->can('admin.view')) {
+            return $next($request);
+        }
+
+        abort(403, 'ACTION NON AUTORISÉE.');
     }
 }

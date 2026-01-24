@@ -15,7 +15,7 @@ describe('Admin/Roles/Edit', () => {
       },
       global: { stubs: { Head: true, Link: true, AdminLayout: { template: '<div><slot /></div>' } } },
     });
-    expect(wrapper.text()).toContain('Modifier le Rôle');
+    expect(wrapper.text()).toContain('Modifier le rôle');
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.find('input#name').element.value).toBe('Manager');
     expect(wrapper.find('button[type="submit"]').text()).toContain('Mettre à jour');

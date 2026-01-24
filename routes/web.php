@@ -80,6 +80,9 @@ Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
     // /admin/dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // /admin/agences
+    Route::resource('agences', App\Http\Controllers\Admin\AgenceController::class)->except(['show']);
+
     // /admin/users, /admin/users/create, etc.
     Route::resource('users', AdminUserController::class);
 

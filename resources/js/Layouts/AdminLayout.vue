@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -8,6 +8,24 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+
+const perms = computed(() => page.props.auth?.permissions ?? []);
+
+const canViewDashboard = computed(() => perms.value.includes('admin.view'));
+const canViewAgences = computed(() => perms.value.includes('agences.view'));
+const canViewRoles = computed(() => perms.value.includes('roles.view'));
+const canViewVehicles = computed(() => perms.value.includes('vehicles.view'));
+const canViewVehicleSuggestion = computed(() => perms.value.includes('vehicle_suggestion.view'));
+const canViewUsers = computed(() => perms.value.includes('users.view'));
+const canViewDomains = computed(() => perms.value.includes('allowed_domains.view'));
+
+const showVehiclesMenu = computed(() => canViewVehicles.value || canViewVehicleSuggestion.value);
+
+const vehiclesMenuActive = computed(() => {
+    const url = page.url || '';
+    return /^\/admin\/vehicles(\/|$)/.test(url) || /\/admin\/settings\/vehicle-suggestion/.test(url);
+});
 </script>
 
 <template>
@@ -23,32 +41,54 @@ const showingNavigationDropdown = ref(false);
                                 </Link>
                             </div>
 
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div class="hidden items-center space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')" class="text-gray-600 hover:text-gray-900">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                                     </svg>
                                     Utilisateur
                                 </NavLink>
-                                <NavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
+                                <NavLink v-if="canViewDashboard" :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
                                     Tableau de bord
                                 </NavLink>
-                                <NavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
+                                <NavLink v-if="canViewAgences" :href="route('admin.agences.index')" :active="route().current('admin.agences.*')">
+                                    Agences
+                                </NavLink>
+                                <NavLink v-if="canViewRoles" :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
                                     Rôles
                                 </NavLink>
-                                <NavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.index') || route().current('admin.vehicles.create') || route().current('admin.vehicles.edit')">
-                                    Véhicules
-                                </NavLink>
-                                <NavLink :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability')">
-                                    Disponibilités
-                                </NavLink>
-                                <NavLink :href="route('admin.settings.vehicleSuggestion.edit')" :active="route().current('admin.settings.vehicleSuggestion.*')">
-                                    Suggestion véhicule
-                                </NavLink>
-                                <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
+                                <div v-if="showVehiclesMenu" class="inline-flex items-center">
+                                    <Dropdown align="left" width="48">
+                                        <template #trigger>
+                                            <button
+                                                type="button"
+                                                :class="vehiclesMenuActive
+                                                    ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out'
+                                                    : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out'"
+                                            >
+                                                Véhicules
+                                                <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </template>
+                                        <template #content>
+                                            <DropdownLink v-if="canViewVehicles" :href="route('admin.vehicles.availability')">
+                                                Gestion
+                                            </DropdownLink>
+                                            <DropdownLink
+                                                v-if="canViewVehicleSuggestion"
+                                                :href="route('admin.settings.vehicleSuggestion.edit')"
+                                            >
+                                                Suggestion véhicule
+                                            </DropdownLink>
+                                        </template>
+                                    </Dropdown>
+                                </div>
+                                <NavLink v-if="canViewUsers" :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                                     Utilisateurs
                                 </NavLink>
-                                <NavLink :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
+                                <NavLink v-if="canViewDomains" :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
                                     Domaines
                                 </NavLink>
                             </div>
@@ -153,25 +193,32 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Utilisateur
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
+                        <ResponsiveNavLink v-if="canViewDashboard" :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
                             Tableau de bord
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
+                        <ResponsiveNavLink v-if="canViewAgences" :href="route('admin.agences.index')" :active="route().current('admin.agences.*')">
+                            Agences
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="canViewRoles" :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
                             Rôles
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.vehicles.index')" :active="route().current('admin.vehicles.index') || route().current('admin.vehicles.create') || route().current('admin.vehicles.edit')">
-                            Véhicules
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability')">
-                            Disponibilités
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.settings.vehicleSuggestion.edit')" :active="route().current('admin.settings.vehicleSuggestion.*')">
-                            Suggestion véhicule
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
+                        <div v-if="showVehiclesMenu" class="pt-1">
+                            <div class="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking">Véhicules</div>
+                            <ResponsiveNavLink v-if="canViewVehicles" :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability') || route().current('admin.vehicles.create') || route().current('admin.vehicles.edit') || route().current('admin.vehicles.calendar')">
+                                Véhicules
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                v-if="canViewVehicleSuggestion"
+                                :href="route('admin.settings.vehicleSuggestion.edit')"
+                                :active="route().current('admin.settings.vehicleSuggestion.*')"
+                            >
+                                Suggestion véhicule
+                            </ResponsiveNavLink>
+                        </div>
+                        <ResponsiveNavLink v-if="canViewUsers" :href="route('admin.users.index')" :active="route().current('admin.users.*')">
                             Utilisateurs
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
+                        <ResponsiveNavLink v-if="canViewDomains" :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
                             Domaines
                         </ResponsiveNavLink>
                     </div>

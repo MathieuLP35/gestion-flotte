@@ -13,8 +13,8 @@
                 {{ vehicle.modele }} - {{ vehicle.immatriculation }}
               </p>
             </div>
-            <Link :href="route('admin.vehicles.index')" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md shadow-md transition ease-in-out duration-150">
-              Retour à la liste
+            <Link :href="route('admin.vehicles.availability')" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md shadow-md transition ease-in-out duration-150">
+              Retour aux véhicules
             </Link>
           </div>
 

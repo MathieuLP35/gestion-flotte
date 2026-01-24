@@ -13,6 +13,10 @@
             </Link>
           </div>
 
+          <div v-if="page.props.flash?.success" class="mx-6 mt-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm">
+            {{ page.props.flash.success }}
+          </div>
+
           <div class="flex flex-col lg:flex-row h-[calc(100vh-200px)]">
             <!-- Sidebar avec la liste des véhicules -->
             <div class="w-full lg:w-96 border-r border-gray-200 bg-gray-50 overflow-y-auto">
@@ -286,7 +290,7 @@
 
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -294,6 +298,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
 
+const page = usePage();
 const props = defineProps({
   vehicles: Array,
   selectedVehicle: Object,

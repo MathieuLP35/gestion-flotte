@@ -51,6 +51,7 @@ it('affiche le formulaire d\'édition d\'un utilisateur', function () {
         ->component('Admin/Users/Edit')
         ->has('user')
         ->has('agences')
+        ->has('roles')
     );
 });
 
@@ -64,6 +65,7 @@ it('met à jour un utilisateur', function () {
         'name' => 'Nouveau Nom',
         'email' => $target->email,
         'agence_id' => $agence->id,
+        'role_id' => $admin->roles->first()?->id,
     ]);
 
     $response->assertRedirect(route('admin.users.index'));
