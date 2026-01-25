@@ -1,26 +1,25 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import useAdminPermissions from '@/Composables/useAdminPermissions';
 
 const showingNavigationDropdown = ref(false);
 const page = usePage();
-
-const perms = computed(() => page.props.auth?.permissions ?? []);
-
-const canViewDashboard = computed(() => perms.value.includes('admin.view'));
-const canViewAgences = computed(() => perms.value.includes('agences.view'));
-const canViewRoles = computed(() => perms.value.includes('roles.view'));
-const canViewVehicles = computed(() => perms.value.includes('vehicles.view'));
-const canViewVehicleSuggestion = computed(() => perms.value.includes('vehicle_suggestion.view'));
-const canViewUsers = computed(() => perms.value.includes('users.view'));
-const canViewDomains = computed(() => perms.value.includes('allowed_domains.view'));
-
-const showVehiclesMenu = computed(() => canViewVehicles.value || canViewVehicleSuggestion.value);
+const {
+    canViewDashboard,
+    canViewAgences,
+    canViewRoles,
+    canViewVehicles,
+    canViewVehicleSuggestion,
+    canViewUsers,
+    canViewDomains,
+    showVehiclesMenu,
+} = useAdminPermissions();
 
 const vehiclesMenuActive = computed(() => {
     const url = page.url || '';

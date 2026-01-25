@@ -1,8 +1,9 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AdminDashboardMap from '@/Components/AdminDashboardMap.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import useAdminPermissions from '@/Composables/useAdminPermissions';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -22,8 +23,14 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarEleme
 
 defineOptions({ layout: AdminLayout });
 
-const page = usePage();
-const canViewVehicleSuggestion = computed(() => page.props.auth?.permissions?.includes('vehicle_suggestion.view') ?? false);
+const {
+    canViewAgences,
+    canViewRoles,
+    canViewVehicles,
+    canViewVehicleSuggestion,
+    canViewUsers,
+    canViewDomains,
+} = useAdminPermissions();
 
 const props = defineProps({
     agence: Object,
@@ -267,11 +274,11 @@ const doughnutOptions = {
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                     <h2 class="text-base font-semibold text-gray-900">Accès rapides</h2>
                     <nav class="mt-4 space-y-2">
-                        <Link :href="route('admin.vehicles.availability')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Véhicules</Link>
-                        <Link :href="route('admin.users.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Utilisateurs</Link>
-                        <Link v-if="!agence" :href="route('admin.agences.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Agences</Link>
-                        <Link :href="route('admin.roles.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Rôles</Link>
-                        <Link :href="route('admin.domains.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Domaines</Link>
+                        <Link v-if="canViewVehicles" :href="route('admin.vehicles.availability')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Véhicules</Link>
+                        <Link v-if="canViewUsers" :href="route('admin.users.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Utilisateurs</Link>
+                        <Link v-if="canViewAgences && !agence" :href="route('admin.agences.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Agences</Link>
+                        <Link v-if="canViewRoles" :href="route('admin.roles.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Rôles</Link>
+                        <Link v-if="canViewDomains" :href="route('admin.domains.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Domaines</Link>
                         <Link v-if="canViewVehicleSuggestion" :href="route('admin.settings.vehicleSuggestion.edit')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Suggestion véhicule</Link>
                         <Link :href="route('dashboard')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Réservations (espace utilisateur)</Link>
                     </nav>

@@ -51,6 +51,7 @@ class PermissionSeeder extends Seeder
 
         // Permissions pour les AGENCES
         Permission::firstOrCreate(['name' => 'agences.view']);
+        Permission::firstOrCreate(['name' => 'agences.view_all']); // Vision globale (toutes les agences)
 
         // --- CRÉATION DU RÔLE SUPER-ADMIN ---
         $role = Role::firstOrCreate(['name' => 'Super Admin']);

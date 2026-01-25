@@ -7,6 +7,7 @@ use App\Models\Agence;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -22,8 +23,13 @@ class AdminUserController extends Controller
     {
         $this->authorize('users.view');
 
+        $query = User::with('agence', 'roles');
+        if (!Auth::user()->can('agences.view_all')) {
+            $query->where('agence_id', Auth::user()->agence_id);
+        }
+
         return inertia('Admin/Users/Index', [
-            'users' => User::with('agence', 'roles')->get(),
+            'users' => $query->get(),
         ]);
     }
 
@@ -48,6 +54,10 @@ class AdminUserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize('users.view');
+        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
         return inertia('Admin/Users/Show', compact('user'));
     }
 
@@ -56,6 +66,11 @@ class AdminUserController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize('users.edit');
+        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
+
         $agences = Agence::get(['id', 'nom']);
         $roles = Role::orderBy('name')->get(['id', 'name']);
 
@@ -74,6 +89,9 @@ class AdminUserController extends Controller
     public function update(Request $request, User $user)
     {
         $this->authorize('users.edit');
+        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -101,6 +119,9 @@ class AdminUserController extends Controller
     public function destroy(User $user)
     {
         $this->authorize('users.delete');
+        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
 
         // TODO: Notifier les personnes (conducteur de trajet, etc.) concernées par la suppression de cet utilisateur.
 

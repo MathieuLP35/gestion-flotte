@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Agence;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AgenceController extends Controller
@@ -16,6 +17,7 @@ class AgenceController extends Controller
         $this->authorize('agences.view');
 
         $agences = Agence::withCount(['vehicles', 'users'])
+            ->when(!Auth::user()->can('agences.view_all'), fn ($q) => $q->where('id', Auth::user()->agence_id))
             ->orderBy('nom')
             ->get();
 
@@ -46,6 +48,9 @@ class AgenceController extends Controller
     public function edit(Agence $agence)
     {
         $this->authorize('agences.view');
+        if (!Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
+            abort(403);
+        }
         return Inertia::render('Admin/Agences/Edit', [
             'agence' => $agence,
         ]);
@@ -54,6 +59,9 @@ class AgenceController extends Controller
     public function update(Request $request, Agence $agence)
     {
         $this->authorize('agences.view');
+        if (!Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
+            abort(403);
+        }
         $request->validate([
             'nom' => 'required|string|max:255',
             'adresse' => 'nullable|string|max:500',
@@ -67,6 +75,9 @@ class AgenceController extends Controller
     public function destroy(Agence $agence)
     {
         $this->authorize('agences.view');
+        if (!Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
+            abort(403);
+        }
         if ($agence->vehicles()->exists()) {
             return back()->with('error', 'Impossible de supprimer une agence qui possède des véhicules.');
         }

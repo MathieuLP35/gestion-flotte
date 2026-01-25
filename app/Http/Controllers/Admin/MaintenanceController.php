@@ -22,7 +22,7 @@ class MaintenanceController extends Controller
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
 
-        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -33,18 +33,20 @@ class MaintenanceController extends Controller
 
     public function edit(Maintenance $maintenance)
     {
-        if ($maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
-        $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)->get();
+        $vehicles = Auth::user()->can('agences.view_all')
+            ? Vehicle::orderBy('modele')->get()
+            : Vehicle::where('agence_id', Auth::user()->agence_id)->get();
 
         return Inertia::render('Admin/Maintenances/Edit', ['maintenance' => $maintenance, 'vehicles' => $vehicles]);
     }
 
     public function update(Request $request, Maintenance $maintenance)
     {
-        if ($maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -61,7 +63,7 @@ class MaintenanceController extends Controller
 
     public function destroy(Maintenance $maintenance)
     {
-        if ($maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 

@@ -30,8 +30,7 @@ class VehicleController extends Controller
     public function show(Vehicle $vehicle)
     {
         $this->authorize('vehicles.view');
-        // Vérifier que le véhicule appartient à l'agence de l'utilisateur
-        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -46,8 +45,7 @@ class VehicleController extends Controller
     public function calendar(Vehicle $vehicle)
     {
         $this->authorize('vehicles.view');
-        // Vérifier que le véhicule appartient à l'agence de l'utilisateur
-        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -69,9 +67,11 @@ class VehicleController extends Controller
     public function availability(Request $request)
     {
         $this->authorize('vehicles.view');
-        $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)
-            ->orderBy('modele', 'asc')
-            ->get();
+        $query = Vehicle::query()->orderBy('modele', 'asc');
+        if (!Auth::user()->can('agences.view_all')) {
+            $query->where('agence_id', Auth::user()->agence_id);
+        }
+        $vehicles = $query->get();
 
         $selectedVehicleId = $request->get('vehicle_id');
         $selectedVehicle = null;
@@ -135,8 +135,7 @@ class VehicleController extends Controller
     public function edit(Vehicle $vehicle)
     {
         $this->authorize('vehicles.edit');
-        // Vérifier que le véhicule appartient à l'agence de l'utilisateur, sinon 403
-        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -152,7 +151,7 @@ class VehicleController extends Controller
     public function update(Request $request, Vehicle $vehicle)
     {
         $this->authorize('vehicles.edit');
-        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -175,7 +174,7 @@ class VehicleController extends Controller
     public function destroy(Vehicle $vehicle)
     {
         $this->authorize('vehicles.delete');
-        if ($vehicle->agence_id !== Auth::user()->agence_id) {
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 

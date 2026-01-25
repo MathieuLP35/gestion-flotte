@@ -43,6 +43,10 @@ class KeyController extends Controller
             return redirect()->back()->with('error', 'Véhicule non trouvé.');
         }
 
+        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
+
         VehicleKey::create([
             'vehicle_id' => $validated['vehicle_id'],
             'emplacement_clef' => $validated['emplacement_clef'],
@@ -67,6 +71,10 @@ class KeyController extends Controller
     {
         $key->load('vehicle');
 
+        if (!Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
+
         return Inertia::render('Admin/Keys/Edit', [
             'vehicleKey' => $key,
         ]);
@@ -77,6 +85,10 @@ class KeyController extends Controller
      */
     public function update(Request $request, VehicleKey $key)
     {
+        if (!Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'emplacement_clef' => 'required|string|max:255',
         ]);
@@ -96,6 +108,10 @@ class KeyController extends Controller
     {
         $key = VehicleKey::find($vehicleKey);
         if ($key) {
+            $key->load('vehicle');
+            if (!Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+                abort(403);
+            }
             $vehicleId = $key->vehicle_id;
             $key->delete();
             return redirect()->route('admin.vehicles.edit', $vehicleId)

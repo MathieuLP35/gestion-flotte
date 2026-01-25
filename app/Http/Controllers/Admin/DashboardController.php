@@ -14,16 +14,25 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $agenceId = Auth::user()?->agence_id;
+        $user = Auth::user();
+        $hasGlobalView = $user?->can('agences.view_all');
+        $agenceId = $hasGlobalView ? null : $user?->agence_id;
 
         $baseReservations = Reservation::query();
         $baseVehicles = Vehicle::query();
         $baseUsers = User::query();
 
-        if ($agenceId) {
+        if ($hasGlobalView) {
+            // Vision globale : aucun filtre agence
+        } elseif ($agenceId !== null) {
             $baseReservations->whereHas('vehicle', fn ($q) => $q->where('agence_id', $agenceId));
             $baseVehicles->where('agence_id', $agenceId);
             $baseUsers->where('agence_id', $agenceId);
+        } else {
+            // Ni vision globale ni agence rattachée : aucune donnée
+            $baseReservations->whereRaw('1=0');
+            $baseVehicles->whereRaw('1=0');
+            $baseUsers->whereRaw('1=0');
         }
 
         $debutMois = now()->startOfMonth();
@@ -50,7 +59,7 @@ class DashboardController extends Controller
             ->limit(8)
             ->get(['id', 'depart', 'destination', 'date_debut', 'statut', 'vehicle_id', 'user_id']);
 
-        $agencesCount = $agenceId ? 1 : Agence::count();
+        $agencesCount = $hasGlobalView ? Agence::count() : ($agenceId ? 1 : 0);
 
         // Graphique : réservations par jour (30 derniers jours)
         $dateExpr = DB::getDriverName() === 'sqlite' ? 'date(date_debut)' : 'DATE(date_debut)';
