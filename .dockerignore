@@ -1,0 +1,39 @@
+# Git
+.git
+.github
+.gitignore
+
+# Dependencies
+node_modules
+vendor
+
+# Env (injecté au runtime)
+.env
+.env.*
+!.env.example
+
+# Build / cache
+/public/build
+/public/hot
+/storage/*.key
+/storage/pail
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+coverage
+.phpunit.cache
+.phpunit.result.cache
+
+# IDE / divers
+.idea
+.zed
+.fleet
+.nova
+.phpactor.json
+*.md
+!README.md
+
+# Tests (optionnel : on peut les exclure pour alléger l’image)
+# tests

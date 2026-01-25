@@ -1,0 +1,84 @@
+# Déploiement : build Docker sur le VPS (pas de registry), compatible Dockge
+# Déclenché au push sur main. Qualité (Pint, Larastan, PEST, Trivy) puis rsync + build + compose up.
+# Secrets : SSH_PRIVATE_KEY, SSH_USER.
+
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DEPLOY_PATH: /var/www/gestion-flotte
+  SERVER_HOST: ${{ secrets.SERVER_IP }}
+
+jobs:
+  quality-gate:
+    name: Pint · Larastan · PEST · Trivy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: dom, fileinfo, mbstring, pdo, pdo_sqlite
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: composer install --no-interaction --prefer-dist
+      - run: npm ci
+      - run: ./vendor/bin/pint --test
+      - run: ./vendor/bin/phpstan analyse --memory-limit=1G
+      - run: composer test
+      - run: npm run test:vue
+      - uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "table"
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
+
+  deploy:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Rsync du projet vers le VPS (exclut .env, node_modules, vendor, .git)
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+            ${{ secrets.SSH_USER }}@${{ env.SERVER_HOST }} "mkdir -p ${{ env.DEPLOY_PATH }}/docker"
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
+            --exclude='.env' \
+            --exclude='node_modules' \
+            --exclude='vendor' \
+            --exclude='.git' \
+            --exclude='coverage' \
+            --exclude='storage/logs/*' \
+            --exclude='.phpunit.cache' \
+            . \
+            ${{ secrets.SSH_USER }}@${{ env.SERVER_HOST }}:${{ env.DEPLOY_PATH }}/
+
+      - name: Build + up + migrate sur le VPS
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ env.SERVER_HOST }} \
+            "cd ${{ env.DEPLOY_PATH }} && \
+             docker compose -f docker-compose.prod.yml --env-file .env build && \
+             docker compose -f docker-compose.prod.yml --env-file .env up -d && \
+             sleep 5 && \
+             docker compose -f docker-compose.prod.yml --env-file .env exec -T app php artisan migrate --force || true"

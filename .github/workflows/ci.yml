@@ -1,0 +1,70 @@
+# Pipeline qualité & sécurité (Pint → Larastan → PEST → SonarQube → Trivy)
+# Déclenché sur push et PR. SonarCloud : sonar-project.properties + secret SONAR_TOKEN.
+
+name: CI Qualité & Sécurité
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    name: Pint · Larastan · PEST · Sonar · Trivy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: dom, fileinfo, mbstring, pdo, pdo_sqlite
+          coverage: none
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Composer
+        run: composer install --no-interaction --prefer-dist
+
+      - name: NPM
+        run: npm ci
+
+      # --- 1. Laravel Pint (nettoie/formate le code PHP) ---
+      - name: Laravel Pint
+        run: ./vendor/bin/pint --test
+
+      # --- 2. Larastan (détection bugs logiques, typage) ---
+      - name: Larastan
+        run: ./vendor/bin/phpstan analyse --memory-limit=1G
+
+      # --- 3. PEST (validation back-end + front-end) ---
+      - name: PEST (PHP)
+        run: composer test
+
+      - name: PEST / Vitest (Vue)
+        run: npm run test:vue
+
+      # --- 4. SonarCloud (sécurité & dette technique) — config dans sonar-project.properties ---
+      - name: SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # --- 5. Trivy (bloque les failles de sécurité) ---
+      - name: Trivy
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "table"
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true

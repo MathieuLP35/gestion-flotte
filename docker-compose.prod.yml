@@ -1,0 +1,95 @@
+# Docker Compose Production - Gestion Flotte
+# Build local sur le VPS (pas de registry). Compatible Dockge.
+# Usage: docker compose -f docker-compose.prod.yml --env-file .env build && docker compose -f docker-compose.prod.yml --env-file .env up -d
+# Build args (Vite) : VITE_APP_NAME, REVERB_APP_KEY, REVERB_HOST, REVERB_PORT, REVERB_SCHEME dans .env
+
+services:
+  app:
+    image: gestion-flotte-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME:-Laravel}
+        VITE_REVERB_APP_KEY: ${REVERB_APP_KEY:-}
+        VITE_REVERB_HOST: ${REVERB_HOST:-localhost}
+        VITE_REVERB_PORT: ${REVERB_PORT:-8080}
+        VITE_REVERB_SCHEME: ${REVERB_SCHEME:-https}
+    env_file: .env
+    environment:
+      APP_ENV: production
+      DB_HOST: mysql
+    volumes:
+      - storage_data:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  reverb:
+    image: gestion-flotte-app:latest
+    env_file: .env
+    environment:
+      APP_ENV: production
+      DB_HOST: mysql
+      REVERB_SERVER_HOST: "0.0.0.0"
+    command: ["php", "artisan", "reverb:start"]
+    volumes:
+      - storage_data:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+      app:
+        condition: service_started
+    restart: unless-stopped
+
+  queue:
+    image: gestion-flotte-app:latest
+    env_file: .env
+    environment:
+      APP_ENV: production
+      DB_HOST: mysql
+    command: ["php", "artisan", "queue:work", "--tries=3", "--sleep=3"]
+    volumes:
+      - storage_data:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+      app:
+        condition: service_started
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+      MYSQL_USER: ${DB_USERNAME:-laravel}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p\"$$MYSQL_ROOT_PASSWORD\" || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  storage_data:
+  bootstrap_cache:
+  mysql_data:
