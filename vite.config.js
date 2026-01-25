@@ -36,7 +36,7 @@ export default defineConfig({
         include: ['resources/js/**/*.spec.js', 'resources/js/**/*.test.js'],
         coverage: {
             provider: process.env.VITEST_COVERAGE_PROVIDER || 'v8',
-            reporter: ['text', 'text-summary', 'html'],
+            reporter: ['text', 'text-summary', 'html', 'lcov'],
             reportsDirectory: 'coverage/vue',
             clean: true,
             include: ['resources/js/**/*.vue', 'resources/js/**/*.js'],
