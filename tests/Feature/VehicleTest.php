@@ -2,10 +2,16 @@
 
 use App\Models\Agence;
 use App\Models\User;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
-    Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+    foreach (['vehicles.view', 'vehicles.create', 'vehicles.edit', 'vehicles.delete'] as $name) {
+        Permission::firstOrCreate(['name' => $name]);
+    }
+    $role->givePermissionTo(['vehicles.view', 'vehicles.create', 'vehicles.edit', 'vehicles.delete']);
 });
 
 it('allows admin to create a vehicle', function () {
