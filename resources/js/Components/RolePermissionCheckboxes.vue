@@ -23,6 +23,8 @@ const GROUP_LABELS = {
     reservations: 'Réservations',
     allowed_domains: 'Domaines autorisés',
     vehicle_suggestion: 'Suggestion de véhicule',
+    admin: 'Administration',
+    agences: 'Agences',
 };
 
 const grouped = computed(() => {

@@ -22,5 +22,6 @@
     "permissions.vehicle_suggestion.view": "Consulter les paramètres de suggestion de véhicule",
     "permissions.vehicle_suggestion.edit": "Modifier les paramètres de suggestion de véhicule",
     "permissions.admin.view": "Accéder à l'administration",
-    "permissions.agences.view": "Consulter les agences"
+    "permissions.agences.view": "Consulter les agences",
+    "permissions.agences.view_all": "Consulter toutes les agences"
 }
