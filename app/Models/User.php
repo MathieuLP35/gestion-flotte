@@ -25,12 +25,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * The attributes that should be hidden for serialization.
+     * (Les relations avec pivot sont exclues via UserResource, pas via $hidden.)
      *
      * @var list<string>
      */
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verified_at',
     ];
 
     /**

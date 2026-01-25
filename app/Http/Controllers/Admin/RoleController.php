@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoleResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -19,8 +20,10 @@ class RoleController extends Controller
     {
         $this->authorize('roles.view');
 
+        $roles = Role::with('permissions')->get();
+
         return inertia('Admin/Roles/Index', [
-            'roles' => Role::with('permissions')->get()
+            'roles' => $roles->map(fn (Role $r) => (new RoleResource($r))->resolve())->values()->all(),
         ]);
     }
 
@@ -65,9 +68,8 @@ class RoleController extends Controller
         $this->authorize('roles.edit');
 
         return inertia('Admin/Roles/Edit', [
-            'role' => $role,
-            'permissions' => Permission::all()->pluck('name'),
-            'rolePermissions' => $role->permissions->pluck('name'),
+            'role' => new RoleResource($role->load('permissions')),
+            'permissions' => Permission::all()->pluck('name')->values()->all(),
         ]);
     }
 

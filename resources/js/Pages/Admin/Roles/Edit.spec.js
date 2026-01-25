@@ -9,9 +9,8 @@ describe('Admin/Roles/Edit', () => {
 
     const wrapper = mount(RolesEdit, {
       props: {
-        role: { id: 1, name: 'Manager' },
+        role: { id: 1, name: 'Manager', permissions: ['vehicles.manage'] },
         permissions: ['vehicles.manage', 'users.manage'],
-        rolePermissions: ['vehicles.manage'],
       },
       global: { stubs: { Head: true, Link: true, AdminLayout: { template: '<div><slot /></div>' } } },
     });

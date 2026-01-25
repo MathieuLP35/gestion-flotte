@@ -1,23 +1,14 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
 
 defineOptions({ layout: AdminLayout });
 
 const page = usePage();
 
 const props = defineProps({
-    users: Array
+    users: Array,
 });
-
-// 3. Récupérer les traductions du fichier JSON
-const translations = computed(() => usePage().props.translations || {});
-
-// 4. Créer notre helper de traduction
-function translate(key) {
-    return translations.value[key] || key; // Renvoie la traduction, ou la clé si non trouvée
-}
 
 // 2. Ajouter la fonction de suppression
 const deleteUser = (userId) => {
@@ -57,7 +48,7 @@ const deleteUser = (userId) => {
                                 <td class="p-3 font-medium">{{ user.name }}</td>
                                 <td class="p-3 font-medium">{{ user.email }}</td>
                                 <td class="p-3 font-medium">{{ user.agence ? user.agence.nom : 'Aucune agence' }}</td>
-                                <td>{{ user.roles.map(role => role.name).join(', ') }}</td>
+                                <td>{{ (user.roles || []).join(', ') || '—' }}</td>
                                 <td class="py-4 px-6 text-center whitespace-nowrap">
                                     <Link
                                         v-if="page.props.auth.permissions.includes('users.edit')"

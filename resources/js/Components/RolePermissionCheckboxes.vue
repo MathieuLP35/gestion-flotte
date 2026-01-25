@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { computed, onMounted } from 'vue';
+import useTranslations from '@/Composables/useTranslations';
 
 const props = defineProps({
     permissions: { type: Array, required: true },
@@ -9,12 +9,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const page = usePage();
-const translations = computed(() => page.props.translations || {});
+const { t, load } = useTranslations();
 
-function translate(key) {
-    return translations.value[key] || key;
-}
+onMounted(() => {
+    const keys = props.permissions.map((p) => 'permissions.' + p);
+    load(keys);
+});
 
 const GROUP_LABELS = {
     roles: 'Rôles',
@@ -142,7 +142,7 @@ function toggleAll(checked) {
                             @change="toggle(p)"
                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                         />
-                        <span class="text-gray-700">{{ translate('permissions.' + p) }}</span>
+                        <span class="text-gray-700">{{ t('permissions.' + p) }}</span>
                     </label>
                 </div>
             </div>

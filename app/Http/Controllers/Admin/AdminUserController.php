@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoleResource;
+use App\Http\Resources\UserResource;
 use App\Models\Agence;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -28,8 +30,10 @@ class AdminUserController extends Controller
             $query->where('agence_id', Auth::user()->agence_id);
         }
 
+        $users = $query->get();
+
         return inertia('Admin/Users/Index', [
-            'users' => $query->get(),
+            'users' => $users->map(fn (User $u) => (new UserResource($u))->resolve())->values()->all(),
         ]);
     }
 
@@ -58,7 +62,11 @@ class AdminUserController extends Controller
         if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
-        return inertia('Admin/Users/Show', compact('user'));
+        $user->load(['agence', 'roles']);
+
+        return inertia('Admin/Users/Show', [
+            'user' => (new UserResource($user))->resolve(),
+        ]);
     }
 
     /**
@@ -71,15 +79,12 @@ class AdminUserController extends Controller
             abort(403);
         }
 
-        $agences = Agence::get(['id', 'nom']);
-        $roles = Role::orderBy('name')->get(['id', 'name']);
-
-        $user->load(['agence', 'roles']);
+        $user->load(['roles']);
 
         return Inertia::render('Admin/Users/Edit', [
-            'user' => $user,
-            'agences' => $agences,
-            'roles' => $roles,
+            'user' => (new UserResource($user))->resolve(),
+            'agences' => Agence::get(['id', 'nom']),
+            'roles' => Role::orderBy('name')->get(['id', 'name'])->map(fn ($r) => (new RoleResource($r))->resolve())->values()->all(),
         ]);
     }
 

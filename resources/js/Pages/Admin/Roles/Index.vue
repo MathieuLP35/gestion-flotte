@@ -1,23 +1,20 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3'; 
-import { computed } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+import useTranslations from '@/Composables/useTranslations';
 
 defineOptions({ layout: AdminLayout });
 
 const page = usePage();
 
 const props = defineProps({
-    roles: Array
+    roles: Array,
 });
 
-// 3. Récupérer les traductions du fichier JSON
-const translations = computed(() => usePage().props.translations || {});
+const { t, load } = useTranslations();
 
-// 4. Créer notre helper de traduction
-function translate(key) {
-    return translations.value[key] || key; // Renvoie la traduction, ou la clé si non trouvée
-}
+onMounted(() => load());
 
 // 2. Ajouter la fonction de suppression
 const deleteRole = (roleId) => {
@@ -60,12 +57,12 @@ const deleteRole = (roleId) => {
                             <tr v-for="role in roles" :key="role.id" class="border-b">
                                 <td class="p-3 font-medium">{{ role.name }}</td>
                                 <td class="p-3">
-                                    <span v-for="perm in role.permissions.slice(0, 3)" :key="perm.id"
+                                    <span v-for="perm in (role.permissions || []).slice(0, 3)" :key="perm"
                                         class="text-xs bg-gray-200 text-gray-700 rounded-full px-2 py-0.5 mr-1">
-                                        {{ translate('permissions.' + perm.name) }}
+                                        {{ t('permissions.' + perm) }}
                                     </span>
-                                    <span v-if="role.permissions.length > 3" class="text-xs">
-                                        + {{ role.permissions.length - 3 }} autres
+                                    <span v-if="(role.permissions || []).length > 3" class="text-xs">
+                                        + {{ (role.permissions || []).length - 3 }} autres
                                     </span>
                                 </td>
                                 

@@ -30,7 +30,7 @@ describe('Admin/Roles/Index', () => {
     const wrapper = mount(RolesIndex, {
       props: {
         roles: [
-          { id: 1, name: 'Admin', permissions: [{ id: 1, name: 'vehicles.manage' }] },
+          { id: 1, name: 'Admin', permissions: ['vehicles.manage'] },
           { id: 2, name: 'Super Admin', permissions: [] },
         ],
       },

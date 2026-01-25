@@ -8,12 +8,11 @@ defineOptions({ layout: AdminLayout });
 const props = defineProps({
     role: Object,
     permissions: Array,
-    rolePermissions: Array,
 });
 
 const form = useForm({
     name: props.role.name,
-    permissions: [...(props.rolePermissions || [])],
+    permissions: [...(props.role.permissions || [])],
 });
 
 const submit = () => {

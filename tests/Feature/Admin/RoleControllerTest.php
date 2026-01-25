@@ -57,7 +57,6 @@ it('affiche le formulaire d\'édition d\'un rôle', function () {
         ->component('Admin/Roles/Edit')
         ->has('role')
         ->has('permissions')
-        ->has('rolePermissions')
     );
 });
 

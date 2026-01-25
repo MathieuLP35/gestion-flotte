@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -22,33 +23,33 @@ class HandleInertiaRequests extends Middleware
         return parent::version($request);
     }
 
-/**
+    /**
      * Define the props that are shared by default.
+     * Utilise des Resources pour limiter les données exposées (pas de pivot,
+     * timestamps, password, etc.) et n'envoie que les traductions essentielles.
      *
      * @return array<string, mixed>
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
-            
+
             'auth' => [
-                'user' => $request->user(),
-                
-                'permissions' => $request->user() ? $request->user()->getAllPermissions()->pluck('name') : [],
-                'roles' => $request->user() ? $request->user()->getRoleNames() : [],
+                'user' => $user ? (new UserResource($user))->resolve() : null,
+                'permissions' => $user ? $user->getAllPermissions()->pluck('name')->values()->all() : [],
+                'roles' => $user ? $user->getRoleNames()->all() : [],
             ],
-            
+
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error'   => fn () => $request->session()->get('error'),
             ],
 
-            'translations' => function () {
-                return file_exists(resource_path('lang/fr.json'))
-                    ? json_decode(file_get_contents(resource_path('lang/fr.json')), true)
-                    : [];
-            },
+            // Traductions chargées à la demande via GET /api/translations?keys=... (useTranslations)
+            'translations' => [],
         ];
     }
 }
