@@ -4,7 +4,16 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build && \
+    echo "✓ Build Vite terminé" && \
+    if [ -d "public/build" ] && [ -n "$(ls -A public/build 2>/dev/null)" ]; then \
+        echo "✓ public/build créé avec succès" && \
+        ls -la public/build/ | head -5; \
+    else \
+        echo "✗ ERREUR: public/build n'existe pas ou est vide après le build!" && \
+        ls -la public/ 2>&1 && \
+        exit 1; \
+    fi
 
 # --- Étape 2 : Serveur Application PHP ---
 FROM php:8.4-fpm-alpine
@@ -18,16 +27,23 @@ RUN apk add --no-cache \
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copie du code source et des assets compilés
+# Copie du code source (sans public/build car il sera copié depuis frontend-builder)
 COPY . .
+
+# Copier public/build depuis le stage frontend-builder ET créer le backup directement
 COPY --from=frontend-builder /app/public/build ./public/build
-# Sauvegarder public/build dans un emplacement qui ne sera pas écrasé par le volume
-RUN if [ -d "public/build" ] && [ -n "$(ls -A public/build 2>/dev/null)" ]; then \
+# Créer le backup IMMÉDIATEMENT après la copie, avant toute autre opération
+RUN mkdir -p /tmp && \
+    if [ -d "public/build" ] && [ -n "$(ls -A public/build 2>/dev/null)" ]; then \
         cp -r public/build /tmp/public-build-backup && \
-        echo "Backup de public/build créé dans /tmp/public-build-backup" && \
-        ls -la /tmp/public-build-backup | head -3; \
+        echo "✓ Backup de public/build créé dans /tmp/public-build-backup" && \
+        ls -la /tmp/public-build-backup | head -3 && \
+        echo "Contenu du backup:" && \
+        ls /tmp/public-build-backup/ | head -5; \
     else \
-        echo "ATTENTION: public/build est vide ou n'existe pas après le build Vite!"; \
+        echo "✗ ERREUR: public/build est vide ou n'existe pas!" && \
+        ls -la public/ 2>&1 && \
+        exit 1; \
     fi
 
 # Installation des dépendances PHP sans les outils de dev
