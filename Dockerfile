@@ -25,8 +25,13 @@ COPY --from=frontend-builder /app/public/build ./public/build
 # Installation des dépendances PHP sans les outils de dev
 RUN composer install --no-dev --optimize-autoloader
 
-# Permissions pour Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Copie de l'entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Permissions pour Laravel (seront réappliquées par l'entrypoint si volume monté)
+RUN chown -R www-data:www-data storage bootstrap/cache || true
 
 EXPOSE 9000
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]

@@ -11,8 +11,11 @@ services:
         condition: service_started
     volumes:
       - .:/var/www
+      - storage_data:/var/www/storage
+      - bootstrap_cache:/var/www/bootstrap/cache
     environment:
       - APP_ENV=production
+      - DB_HOST=db
     networks:
       - app-network
 
@@ -63,6 +66,14 @@ services:
     container_name: laravel-reverb
     restart: unless-stopped
     command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    volumes:
+      - .:/var/www
+      - storage_data:/var/www/storage
+      - bootstrap_cache:/var/www/bootstrap/cache
+    env_file: .env
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
     depends_on:
       - app
       - redis
@@ -73,8 +84,16 @@ services:
   worker:
     build: .
     container_name: laravel-worker
+    env_file: .env
     restart: unless-stopped
     command: php artisan queue:work --verbose --tries=3 --timeout=90
+    volumes:
+      - .:/var/www
+      - storage_data:/var/www/storage
+      - bootstrap_cache:/var/www/bootstrap/cache
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
     depends_on:
       - app
       - redis
@@ -87,3 +106,5 @@ networks:
 
 volumes:
   pgdata:
+  storage_data:
+  bootstrap_cache:
