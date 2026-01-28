@@ -37,9 +37,8 @@ RUN npm run build
 # ---------------------------------------------------------------------
 FROM php:8.2-fpm-bookworm AS app
 
-RUN apt-get update && \
+RUN apt-get update --fix-missing && \
     apt-get install -y --no-install-recommends \
-        git \
         unzip \
         libzip-dev \
         libpng-dev \
