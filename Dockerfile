@@ -1,90 +1,32 @@
-# ---------------------------------------------------------------------
-# Stage 1: Build des assets frontend (Vite)
-# ---------------------------------------------------------------------
-FROM node:20-alpine AS frontend
-
+# --- Étape 1 : Build du Frontend (Vite/VueJS) ---
+FROM node:22-alpine AS frontend-builder
 WORKDIR /app
-
-# Variables Vite (injectées au build, overridables en CI)
-ARG VITE_APP_NAME=Laravel
-ARG VITE_REVERB_APP_KEY=
-ARG VITE_REVERB_HOST=localhost
-ARG VITE_REVERB_PORT=80
-ARG VITE_REVERB_SCHEME=http
-
-ENV VITE_APP_NAME=$VITE_APP_NAME \
-    VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY \
-    VITE_REVERB_HOST=$VITE_REVERB_HOST \
-    VITE_REVERB_PORT=$VITE_REVERB_PORT \
-    VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
-
 COPY package*.json ./
 RUN npm install
-
 COPY . .
-
-# .env minimal pour Vite au build
-RUN echo "VITE_APP_NAME=$VITE_APP_NAME" > .env && \
-    echo "VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY" >> .env && \
-    echo "VITE_REVERB_HOST=$VITE_REVERB_HOST" >> .env && \
-    echo "VITE_REVERB_PORT=$VITE_REVERB_PORT" >> .env && \
-    echo "VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME" >> .env
-
 RUN npm run build
 
-# ---------------------------------------------------------------------
-# Stage 2: Application PHP
-# ---------------------------------------------------------------------
-FROM php:8.2-fpm-bookworm AS app
+# --- Étape 2 : Serveur Application PHP ---
+FROM php:8.4-fpm-alpine
+WORKDIR /var/www
 
-RUN apt-get update --fix-missing && \
-    apt-get install -y --no-install-recommends \
-        unzip \
-        libzip-dev \
-        libpng-dev \
-        libonig-dev \
-        libxml2-dev \
-        libsqlite3-dev \
-        libpq-dev \
-    && docker-php-ext-install -j$(nproc) \
-        pdo \
-        pdo_pgsql \
-        pdo_sqlite \
-        mbstring \
-        xml \
-        bcmath \
-        ctype \
-        json \
-        fileinfo \
-        opcache \
-        zip \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Installation des extensions système et PHP nécessaires
+RUN apk add --no-cache \
+    libpng-dev libzip-dev zip unzip git icu-dev libpq-dev \
+    && docker-php-ext-install pdo_pgsql bcmath zip intl
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Installation de Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
-
-# Composer (sans dev)
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --prefer-dist --ignore-platform-reqs
-
+# Copie du code source et des assets compilés
 COPY . .
+COPY --from=frontend-builder /app/public/build ./public/build
 
-# Assets buildés par Vite
-COPY --from=frontend /app/public/build ./public/build
+# Installation des dépendances PHP sans les outils de dev
+RUN composer install --no-dev --optimize-autoloader
 
-# Entrypoint (doit être copié avant le rm de docker/)
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint
-RUN chmod +x /usr/local/bin/entrypoint
-
-# Autoload optimisé
-RUN composer dump-autoload --optimize --no-dev
-
-# Nettoyage
-RUN rm -rf node_modules .git tests .github coverage docker
+# Permissions pour Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 9000
-
-ENTRYPOINT ["/usr/local/bin/entrypoint"]
 CMD ["php-fpm"]
