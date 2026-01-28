@@ -41,6 +41,10 @@ if [ "$1" = "php-fpm" ] || [ -z "$1" ]; then
     
     while [ $attempt -lt $max_attempts ]; do
         # Tester la connexion avec une commande simple
+        # Afficher les variables pour debug
+        if [ $attempt -eq 0 ]; then
+            echo "Variables DB: HOST=${DB_HOST:-non défini}, DATABASE=${DB_DATABASE:-non défini}, USER=${DB_USERNAME:-non défini}"
+        fi
         if php -r "try { \$pdo = new PDO('pgsql:host='.getenv('DB_HOST').';port='.(getenv('DB_PORT') ?: '5432').';dbname='.getenv('DB_DATABASE'), getenv('DB_USERNAME'), getenv('DB_PASSWORD')); echo 'OK'; } catch (Exception \$e) { exit(1); }" 2>/dev/null; then
             echo "Base de données prête!"
             db_ready=1
