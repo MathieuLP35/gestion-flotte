@@ -22,7 +22,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 COPY --from=frontend-builder /app/public/build ./public/build
 # Sauvegarder public/build dans un emplacement qui ne sera pas écrasé par le volume
-RUN cp -r public/build /tmp/public-build-backup 2>/dev/null || true
+RUN if [ -d "public/build" ] && [ -n "$(ls -A public/build 2>/dev/null)" ]; then \
+        cp -r public/build /tmp/public-build-backup && \
+        echo "Backup de public/build créé dans /tmp/public-build-backup" && \
+        ls -la /tmp/public-build-backup | head -3; \
+    else \
+        echo "ATTENTION: public/build est vide ou n'existe pas après le build Vite!"; \
+    fi
 
 # Installation des dépendances PHP sans les outils de dev
 RUN composer install --no-dev --optimize-autoloader

@@ -9,17 +9,33 @@ mkdir -p storage/framework/cache storage/framework/sessions storage/framework/vi
 # S'assurer que public/build existe avec les assets
 # Le problème : le volume monté .:/var/www écrase le public/build de l'image
 # Solution : si public/build est vide dans le volume monté, on le copie depuis le backup de l'image
+echo "Vérification de public/build..."
 if [ ! -d "public/build" ] || [ -z "$(ls -A public/build 2>/dev/null)" ]; then
-    echo "public/build est vide dans le volume monté, copie depuis l'image..."
+    echo "[ENTRYPOINT] public/build est vide dans le volume monté, copie depuis l'image..."
     # Créer le répertoire
     mkdir -p public/build
-    # Copier depuis le backup de l'image si disponible
-    if [ -d "/tmp/public-build-backup" ] && [ -n "$(ls -A /tmp/public-build-backup 2>/dev/null)" ]; then
-        echo "Copie de public/build depuis le backup de l'image..."
-        cp -r /tmp/public-build-backup/* public/build/ 2>/dev/null && echo "Assets copiés avec succès!" || echo "Erreur lors de la copie"
+    # Vérifier si le backup existe
+    if [ -d "/tmp/public-build-backup" ]; then
+        echo "[ENTRYPOINT] Backup trouvé dans /tmp/public-build-backup"
+        if [ -n "$(ls -A /tmp/public-build-backup 2>/dev/null)" ]; then
+            echo "[ENTRYPOINT] Copie de public/build depuis le backup de l'image..."
+            cp -r /tmp/public-build-backup/* public/build/ 2>&1
+            if [ $? -eq 0 ]; then
+                echo "[ENTRYPOINT] Assets copiés avec succès!"
+                ls -la public/build/ | head -5
+            else
+                echo "[ENTRYPOINT] Erreur lors de la copie"
+            fi
+        else
+            echo "[ENTRYPOINT] Le répertoire backup existe mais est vide"
+        fi
     else
-        echo "ATTENTION: Aucun backup trouvé. Builder les assets localement avec 'npm run build'"
+        echo "[ENTRYPOINT] ATTENTION: Aucun backup trouvé dans /tmp/public-build-backup"
+        echo "[ENTRYPOINT] Le Dockerfile doit créer le backup avec: RUN cp -r public/build /tmp/public-build-backup"
     fi
+else
+    echo "[ENTRYPOINT] public/build existe déjà et contient des fichiers"
+    ls -la public/build/ | head -5
 fi
 
 # Permissions - toujours essayer de fixer les permissions
