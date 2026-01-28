@@ -49,6 +49,7 @@
         "leaflet": "^1.9.4",
         "leaflet-routing-machine": "^3.2.12",
         "lodash.debounce": "^4.0.8",
-        "or": "^0.2.0"
+        "or": "^0.2.0",
+        "ziggy-js": "^2.0"
     }
 }
