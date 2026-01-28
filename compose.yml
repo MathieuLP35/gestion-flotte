@@ -10,7 +10,9 @@ services:
       redis:
         condition: service_started
     volumes:
-      - .:/var/www
+      # En production, ne pas monter le répertoire local pour préserver public/build de l'image
+      # Décommentez la ligne suivante pour le développement (mais alors builder les assets localement)
+      # - .:/var/www
       - storage_data:/var/www/storage
       - bootstrap_cache:/var/www/bootstrap/cache
     env_file: .env
@@ -28,7 +30,9 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www
+      # En production, ne pas monter le répertoire local pour préserver public/build de l'image
+      # Décommentez la ligne suivante pour le développement
+      # - .:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app

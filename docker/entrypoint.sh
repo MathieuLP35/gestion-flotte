@@ -6,6 +6,18 @@
 mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views \
          storage/logs storage/app/public bootstrap/cache
 
+# S'assurer que public/build existe avec les assets
+# Le problème : le volume monté .:/var/www écrase le public/build de l'image
+# Solution : si public/build est vide, on doit le builder ou copier depuis l'image
+if [ ! -d "public/build" ] || [ -z "$(ls -A public/build 2>/dev/null)" ]; then
+    echo "ATTENTION: public/build est vide ou n'existe pas!"
+    echo "Les assets Vite doivent être présents. Options:"
+    echo "1. Builder localement: npm run build (puis le répertoire sera monté)"
+    echo "2. Ou ne pas monter le répertoire local en production"
+    # Créer le répertoire au moins pour éviter les erreurs
+    mkdir -p public/build
+fi
+
 # Permissions - toujours essayer de fixer les permissions
 # Si on tourne en root, on peut changer le propriétaire
 if [ "$(id -u)" = "0" ]; then
