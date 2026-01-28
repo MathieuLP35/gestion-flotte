@@ -22,7 +22,8 @@ WORKDIR /var/www
 # Installation des extensions système et PHP nécessaires
 RUN apk add --no-cache \
     libpng-dev libzip-dev zip unzip git icu-dev libpq-dev \
-    && docker-php-ext-install pdo_pgsql bcmath zip intl pcntl
+    && docker-php-ext-install pdo_pgsql bcmath zip intl pcntl posix
+
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
