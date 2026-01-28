@@ -8,10 +8,19 @@ mkdir -p storage/framework/cache storage/framework/sessions storage/framework/vi
 # Permissions - toujours essayer de fixer les permissions
 # Si on tourne en root, on peut changer le propriétaire
 if [ "$(id -u)" = "0" ]; then
+    # Forcer le changement de propriétaire pour tous les fichiers storage (même existants)
     chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
     chmod -R 775 storage bootstrap/cache 2>/dev/null || true
-    # Créer le fichier de log s'il n'existe pas et le rendre accessible
+    # S'assurer que le répertoire logs lui-même a les bonnes permissions
+    chown www-data:www-data storage/logs 2>/dev/null || true
+    chmod 775 storage/logs 2>/dev/null || true
+    # S'assurer que le fichier de log existe et a les bonnes permissions
+    # Si le fichier existe déjà, on le supprime pour le recréer avec les bonnes permissions
+    if [ -f storage/logs/laravel.log ]; then
+        rm -f storage/logs/laravel.log 2>/dev/null || true
+    fi
     touch storage/logs/laravel.log 2>/dev/null || true
+    # Forcer le changement de propriétaire (doit fonctionner car on vient de créer le fichier)
     chown www-data:www-data storage/logs/laravel.log 2>/dev/null || true
     chmod 664 storage/logs/laravel.log 2>/dev/null || true
 else
