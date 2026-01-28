@@ -122,9 +122,6 @@ const vehiclesMenuActive = computed(() => {
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('dashboard')"> 
-                                            Retour au site
-                                        </DropdownLink>
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
@@ -234,9 +231,6 @@ const vehiclesMenuActive = computed(() => {
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('dashboard')">
-                                Retour au site
-                            </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Profil
                             </ResponsiveNavLink>
@@ -259,7 +253,7 @@ const vehiclesMenuActive = computed(() => {
             </header>
 
             <main>
-                <slot /> 
+                <slot />
             </main>
             <footer class="bg-white border-t border-gray-200 mt-auto">
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
