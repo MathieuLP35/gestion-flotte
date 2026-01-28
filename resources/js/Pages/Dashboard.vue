@@ -313,14 +313,17 @@ const searchCarpooling = () => {
                         <ul v-else class="space-y-6">
                             <Link v-for="pass in reservationsAsPassenger" :key="pass.id" :href="route('reservations.show', pass.reservation.id)" class="p-4 border border-gray-200 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-indigo-700">
-                                        {{ pass.reservation.destination }}
+                                    <h3 class="text-lg font-semibold text-indigo-700 mb-1">
+                                        {{ pass.reservation.depart }} → {{ pass.reservation.destination }}
                                     </h3>
                                     <p class="text-sm text-gray-600">
                                         Conducteur: {{ pass.reservation.driver.name }}
                                     </p>
                                     <p class="text-sm text-gray-500">
                                         Départ: {{ formatDate(pass.reservation.date_debut) }}
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        Retour : {{ formatDate(pass.reservation.date_fin) }}
                                     </p>
                                     <div class="mt-2">
                                         <span class="text-sm font-medium">Statut: </span>
