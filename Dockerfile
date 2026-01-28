@@ -37,10 +37,30 @@ RUN npm run build
 # ---------------------------------------------------------------------
 FROM php:8.2-fpm-bookworm AS app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git unzip libzip-dev libpng-dev libonig-dev libxml2-dev libsqlite3-dev libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql pdo_sqlite mbstring xml bcmath ctype json fileinfo opcache zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git \
+        unzip \
+        libzip-dev \
+        libpng-dev \
+        libonig-dev \
+        libxml2-dev \
+        libsqlite3-dev \
+        libpq-dev \
+    && docker-php-ext-install -j$(nproc) \
+        pdo \
+        pdo_pgsql \
+        pdo_sqlite \
+        mbstring \
+        xml \
+        bcmath \
+        ctype \
+        json \
+        fileinfo \
+        opcache \
+        zip \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
