@@ -38,8 +38,8 @@ RUN npm run build
 FROM php:8.2-fpm-bookworm AS app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git unzip libzip-dev libpng-dev libonig-dev libxml2-dev libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring xml bcmath ctype json fileinfo opcache zip \
+    git unzip libzip-dev libpng-dev libonig-dev libxml2-dev libsqlite3-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql pdo_sqlite mbstring xml bcmath ctype json fileinfo opcache zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -55,15 +55,15 @@ COPY . .
 # Assets buildés par Vite
 COPY --from=frontend /app/public/build ./public/build
 
+# Entrypoint (doit être copié avant le rm de docker/)
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod +x /usr/local/bin/entrypoint
+
 # Autoload optimisé
 RUN composer dump-autoload --optimize --no-dev
 
 # Nettoyage
 RUN rm -rf node_modules .git tests .github coverage docker
-
-# Entrypoint (doit être copié après le rm de docker/)
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint
-RUN chmod +x /usr/local/bin/entrypoint
 
 EXPOSE 9000
 

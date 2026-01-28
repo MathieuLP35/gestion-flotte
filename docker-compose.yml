@@ -1,6 +1,6 @@
-# Docker Compose Production - Gestion Flotte
+# Docker Compose - Gestion Flotte
 # Build local sur le VPS (pas de registry). Compatible Dockge.
-# Usage: docker compose -f docker-compose.prod.yml --env-file .env build && docker compose -f docker-compose.prod.yml --env-file .env up -d
+# Usage: docker compose --env-file .env build && docker compose --env-file .env up -d
 # Build args (Vite) : VITE_APP_NAME, REVERB_APP_KEY, REVERB_HOST, REVERB_PORT, REVERB_SCHEME dans .env
 
 services:

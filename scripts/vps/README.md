@@ -1,6 +1,6 @@
 # Scripts VPS — déploiement sur le serveur
 
-À utiliser sur le VPS (ex. **${{ secrets.SERVER_IP }}**) pour préparer l’environnement et déployer.
+À utiliser sur le VPS pour préparer l’environnement et déployer.
 
 ---
 
@@ -29,8 +29,8 @@ Installe Docker, crée le répertoire de déploiement, récupère `docker-compos
 ### Depuis ta machine (SSH)
 
 ```bash
-scp scripts/vps/setup-vps.sh user@${{ secrets.SERVER_IP }}:/tmp/
-ssh user@${{ secrets.SERVER_IP }} 'sudo bash /tmp/setup-vps.sh'
+scp scripts/vps/setup-vps.sh user@IP:/tmp/
+ssh user@IP 'sudo bash /tmp/setup-vps.sh'
 ```
 
 ### Directement sur le VPS
@@ -54,7 +54,7 @@ Pour un **dépôt privé** : `REPO_URL="https://TOKEN@github.com/OWNER/gestion-f
 
 1. Éditer `.env` :  
    `nano /var/www/gestion-flotte/.env`
-2. Renseigner au minimum : `APP_KEY`, `DB_PASSWORD`, `MYSQL_ROOT_PASSWORD`, `REVERB_APP_KEY`, `REVERB_APP_SECRET`, `VITE_APP_NAME`, `REVERB_HOST`, `REVERB_PORT`, `REVERB_SCHEME` (les `REVERB_*` et `VITE_APP_NAME` servent aussi au **build** Docker).
+2. Renseigner au minimum : `APP_KEY`, `DB_PASSWORD` (PostgreSQL), `REVERB_APP_KEY`, `REVERB_APP_SECRET`, `VITE_APP_NAME`, `REVERB_HOST`, `REVERB_PORT`, `REVERB_SCHEME` (les `REVERB_*` et `VITE_APP_NAME` servent aussi au **build** Docker).
 
 ---
 

@@ -86,7 +86,7 @@ echo ""
 echo "=== Suite ==="
 echo "1. Éditez .env : nano $DEPLOY_PATH/.env"
 echo "   — APP_KEY (php artisan key:generate en local)"
-echo "   — DB_PASSWORD, MYSQL_ROOT_PASSWORD"
+echo "   — DB_PASSWORD (PostgreSQL)"
 echo "   — REVERB_APP_KEY, REVERB_APP_SECRET, REVERB_HOST, REVERB_PORT, REVERB_SCHEME"
 echo "   — VITE_APP_NAME (pour le build Docker)"
 if [ -f "$DEPLOY_PATH/scripts/vps/deploy.sh" ]; then
