@@ -19,7 +19,7 @@ ENV VITE_APP_NAME=$VITE_APP_NAME \
     VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 
