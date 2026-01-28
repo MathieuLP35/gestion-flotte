@@ -13,6 +13,7 @@ services:
       - .:/var/www
       - storage_data:/var/www/storage
       - bootstrap_cache:/var/www/bootstrap/cache
+    env_file: .env
     environment:
       - APP_ENV=production
       - DB_HOST=db
