@@ -8,14 +8,18 @@ mkdir -p storage/framework/cache storage/framework/sessions storage/framework/vi
 
 # S'assurer que public/build existe avec les assets
 # Le problème : le volume monté .:/var/www écrase le public/build de l'image
-# Solution : si public/build est vide, on doit le builder ou copier depuis l'image
+# Solution : si public/build est vide dans le volume monté, on le copie depuis le backup de l'image
 if [ ! -d "public/build" ] || [ -z "$(ls -A public/build 2>/dev/null)" ]; then
-    echo "ATTENTION: public/build est vide ou n'existe pas!"
-    echo "Les assets Vite doivent être présents. Options:"
-    echo "1. Builder localement: npm run build (puis le répertoire sera monté)"
-    echo "2. Ou ne pas monter le répertoire local en production"
-    # Créer le répertoire au moins pour éviter les erreurs
+    echo "public/build est vide dans le volume monté, copie depuis l'image..."
+    # Créer le répertoire
     mkdir -p public/build
+    # Copier depuis le backup de l'image si disponible
+    if [ -d "/tmp/public-build-backup" ] && [ -n "$(ls -A /tmp/public-build-backup 2>/dev/null)" ]; then
+        echo "Copie de public/build depuis le backup de l'image..."
+        cp -r /tmp/public-build-backup/* public/build/ 2>/dev/null && echo "Assets copiés avec succès!" || echo "Erreur lors de la copie"
+    else
+        echo "ATTENTION: Aucun backup trouvé. Builder les assets localement avec 'npm run build'"
+    fi
 fi
 
 # Permissions - toujours essayer de fixer les permissions

@@ -21,6 +21,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copie du code source et des assets compilés
 COPY . .
 COPY --from=frontend-builder /app/public/build ./public/build
+# Sauvegarder public/build dans un emplacement qui ne sera pas écrasé par le volume
+RUN cp -r public/build /tmp/public-build-backup 2>/dev/null || true
 
 # Installation des dépendances PHP sans les outils de dev
 RUN composer install --no-dev --optimize-autoloader

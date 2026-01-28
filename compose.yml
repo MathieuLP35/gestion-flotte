@@ -10,9 +10,11 @@ services:
       redis:
         condition: service_started
     volumes:
-      # En production, ne pas monter le répertoire local pour préserver public/build de l'image
-      # Décommentez la ligne suivante pour le développement (mais alors builder les assets localement)
-      # - .:/var/www
+      # En production, vous pouvez ne pas monter le répertoire local
+      # Mais pour que nginx fonctionne, il faut soit :
+      # 1. Monter le répertoire local (développement)
+      # 2. Ou builder les assets localement avant de démarrer
+      - .:/var/www
       - storage_data:/var/www/storage
       - bootstrap_cache:/var/www/bootstrap/cache
     env_file: .env
@@ -30,9 +32,9 @@ services:
     ports:
       - "8080:80"
     volumes:
-      # En production, ne pas monter le répertoire local pour préserver public/build de l'image
-      # Décommentez la ligne suivante pour le développement
-      # - .:/var/www
+      # Monter le répertoire local pour que nginx puisse servir les fichiers
+      # IMPORTANT: Assurez-vous que public/build existe localement (npm run build)
+      - .:/var/www:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
