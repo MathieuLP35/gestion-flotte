@@ -30,10 +30,17 @@ jobs:
           cache: "npm"
       - run: composer install --no-interaction --prefer-dist
       - run: npm ci
+      - name: Environnement Laravel (tests)
+        run: |
+          cp .env.example .env
+          php artisan key:generate
       - run: ./vendor/bin/pint --test
       - run: ./vendor/bin/phpstan analyse --memory-limit=1G
       - run: composer test
-      - run: npm run test:vue
+      - name: Tests Vue (Vitest)
+        run: npm run test:vue
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: 1
       - uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: "fs"
