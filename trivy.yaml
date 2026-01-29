@@ -4,5 +4,5 @@
 # https://trivy.dev/latest/docs/configuration/skipping/
 scan:
   file-patterns:
-    - "composer:composer\.lock"
-    - "npm:package-lock\.json"
+    - 'composer:composer.lock'
+    - 'npm:package-lock.json'
