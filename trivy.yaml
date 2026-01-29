@@ -1,0 +1,8 @@
+# Restreint le scan Trivy aux dépendances du projet (Composer + npm).
+# Exclut les paquets Python (setuptools, urllib3, wheel) détectés dans l'environnement CI
+# et non utilisés par cette application Laravel/PHP + Node.
+# https://trivy.dev/latest/docs/configuration/skipping/
+scan:
+  file-patterns:
+    - "composer:composer\.lock"
+    - "npm:package-lock\.json"

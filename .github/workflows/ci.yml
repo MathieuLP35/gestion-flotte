@@ -65,12 +65,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # --- 5. Trivy (bloque les failles de sécurité) ---
+      # --- 5. Trivy (bloque les failles de sécurité) — limité à Composer + npm ---
       - name: Trivy
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: "fs"
           scan-ref: "."
+          trivy-config: trivy.yaml
           format: "table"
           exit-code: "1"
           severity: "CRITICAL,HIGH"

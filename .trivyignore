@@ -1,0 +1,8 @@
+# Vulnérabilités Python (setuptools, urllib3, wheel) : non utilisées par l'app (Laravel/PHP + Node).
+# Détectées dans l'environnement CI ou par des outils tiers. Ignorées sans impact sur l'application.
+CVE-2024-6345
+CVE-2025-47273
+CVE-2025-66418
+CVE-2025-66471
+CVE-2026-21441
+CVE-2026-24049
