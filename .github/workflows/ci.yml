@@ -37,6 +37,11 @@ jobs:
       - name: NPM
         run: npm ci
 
+      - name: Environnement Laravel (tests)
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
       # --- 1. Laravel Pint (nettoie/formate le code PHP) ---
       - name: Laravel Pint
         run: ./vendor/bin/pint --test
