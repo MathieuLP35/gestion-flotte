@@ -80,7 +80,7 @@ class ReservationController extends Controller
             'dest_lat' => 'required|numeric',
             'dest_lng' => 'required|numeric',
             'date_debut' => 'nullable|date',
-            'date_fin' => 'nullable|date|after:date_debut',
+            'date_fin' => 'nullable|date|after_or_equal:date_debut',
         ]);
 
         $distance = Vehicle::calculateDistance(
@@ -90,11 +90,19 @@ class ReservationController extends Controller
             (float) $request->dest_lng
         );
 
+        // Normaliser les dates (datetime-local envoie "YYYY-MM-DDTHH:mm") pour la requête SQL
+        $dateDebut = $request->filled('date_debut')
+            ? Carbon::parse($request->date_debut)->format('Y-m-d H:i:s')
+            : null;
+        $dateFin = $request->filled('date_fin')
+            ? Carbon::parse($request->date_fin)->format('Y-m-d H:i:s')
+            : null;
+
         $suggestedVehicle = Vehicle::suggestBestVehicle(
             Auth::user()->agence_id,
             $distance,
-            $request->date_debut ?? null,
-            $request->date_fin ?? null
+            $dateDebut,
+            $dateFin
         );
 
         return response()->json([
@@ -231,7 +239,7 @@ class ReservationController extends Controller
     {
         $request->validate([
             'date_debut' => 'required|date',
-            'date_fin' => 'sometimes|date|after:date_debut',
+            'date_fin' => 'nullable|sometimes|date|after_or_equal:date_debut',
             'departure' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
         ]);

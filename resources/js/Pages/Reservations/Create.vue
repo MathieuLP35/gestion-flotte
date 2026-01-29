@@ -307,20 +307,20 @@ const isLoadingCarpools = ref(false);
 
 // Fonction pour appeler l'API Laravel
 const fetchMatchingCarpools = async () => {
-  if (form.destination.length < 3 || !form.date_debut) {
+  if (form.destination.length < 3 || !form.date_debut || !form.date_fin) {
     matchingCarpools.value = [];
     return;
   }
 
   isLoadingCarpools.value = true;
   try {
-
-    const response = await axios.post(route('reservations.checkCarpool'), {
+    const payload = {
       date_debut: form.date_debut,
       date_fin: form.date_fin,
       departure: form.departure,
       destination: form.destination,
-    });
+    };
+    const response = await axios.post(route('reservations.checkCarpool'), payload);
 
     if (response.data.carpool_available) {
       matchingCarpools.value = response.data.reservations;
@@ -345,10 +345,13 @@ const fetchMatchingCarpools = async () => {
   }
 };
 
-// Watcher "intelligent" avec debounce
+// Watcher "intelligent" avec debounce (ne déclenche la recherche que si les deux dates sont renseignées)
 watch(
   [() => form.departure, () => form.destination, () => form.date_debut, () => form.date_fin],
-  debounce(fetchMatchingCarpools, 500) // 500ms après que l'utilisateur ait fini de taper
+  debounce(() => {
+    if (form.date_debut && form.date_fin) fetchMatchingCarpools();
+    else matchingCarpools.value = [];
+  }, 500)
 );
 
 // Fonction pour rejoindre un covoiturage (devient passager)
