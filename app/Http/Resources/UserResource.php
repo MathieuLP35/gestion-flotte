@@ -30,6 +30,7 @@ class UserResource extends JsonResource
             'agence_id' => $user->agence_id,
             'agence' => $this->whenLoaded('agence', function () use ($user) {
                 $agence = $user->agence;
+
                 return $agence !== null ? ['id' => $agence->id, 'nom' => $agence->nom] : null;
             }),
             'roles' => $this->whenLoaded('roles', fn () => $user->roles->pluck('name')->values()->all()),
