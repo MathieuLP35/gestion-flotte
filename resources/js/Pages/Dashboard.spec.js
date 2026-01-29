@@ -1,20 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
-
-// Mock Inertia router pour tester startTrip / endTrip / handleReturnVehicle
-vi.mock('@inertiajs/vue3', async () => {
-  const actual = await vi.importActual('@inertiajs/vue3');
-  return {
-    ...actual,
-    router: {
-      post: vi.fn(),
-      visit: vi.fn(),
-    },
-  };
-});
-
-import Dashboard from '@/Pages/Dashboard.vue';
 import { router } from '@inertiajs/vue3';
+import Dashboard from '@/Pages/Dashboard.vue';
 
 vi.mock('@/Composables/useGeocoding', () => ({
   default: () => ({
@@ -44,6 +31,12 @@ const pageProps = {
 describe('Dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(router, 'post').mockImplementation(() => {});
+    vi.spyOn(router, 'visit').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('renders AuthenticatedLayout', () => {
