@@ -8,7 +8,7 @@ vi.mock('@/Composables/useDate', () => ({
 
 const pageProps = {
   props: {
-    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [] },
+    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [], permissions: [] },
   },
 };
 
@@ -36,5 +36,29 @@ describe('Carpooling/Search', () => {
       },
     });
     expect(wrapper.text()).toContain('Aucun covoiturage disponible');
+  });
+
+  it('renders carpooling list when carpoolings has data', () => {
+    const carpoolings = [
+      {
+        id: 1,
+        depart: 'Paris',
+        destination: 'Lyon',
+        date_debut: '2025-02-01T08:00:00',
+        date_fin: '2025-02-02T18:00:00',
+        vehicle: { modele: 'Clio', immatriculation: 'AB-123', energie: 'essence' },
+      },
+    ];
+    const wrapper = mount(CarpoolingSearch, {
+      props: { carpoolings },
+      global: {
+        mocks: { $page: pageProps },
+        components: { Head: { name: 'Head', render: () => null } },
+      },
+    });
+    expect(wrapper.text()).toContain('Paris');
+    expect(wrapper.text()).toContain('Lyon');
+    expect(wrapper.text()).toContain('Clio');
+    expect(wrapper.text()).toContain('Rejoindre ce trajet');
   });
 });

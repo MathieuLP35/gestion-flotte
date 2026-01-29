@@ -7,6 +7,7 @@ const pageProps = {
     auth: {
       user: { name: 'User', email: 'user@example.com' },
       roles: [],
+      permissions: [],
     },
   },
 };

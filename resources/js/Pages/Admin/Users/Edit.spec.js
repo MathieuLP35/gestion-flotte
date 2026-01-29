@@ -39,7 +39,7 @@ describe('Admin/Users/Edit', () => {
   it('shows role options and selects current role', () => {
     const wrapper = mount(UsersEdit, {
       props: {
-        user: { id: 1, name: 'A', email: 'a@a.com', agence_id: null, roles: [{ id: 2, name: 'Editeur' }] },
+        user: { id: 1, name: 'A', email: 'a@a.com', agence_id: null, role_id: 2, roles: [{ id: 2, name: 'Editeur' }] },
         agences: [],
         roles: [{ id: 1, name: 'Super Admin' }, { id: 2, name: 'Editeur' }],
       },

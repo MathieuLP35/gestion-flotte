@@ -20,7 +20,7 @@ vi.mock('@/Composables/useReservation', () => ({
 
 const pageProps = {
   props: {
-    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [] },
+    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [], permissions: [] },
   },
 };
 
@@ -71,5 +71,63 @@ describe('Dashboard', () => {
     });
     expect(wrapper.text()).toContain('Mes Trajets (Passager)');
     expect(wrapper.text()).toContain("Vous n'êtes encore passager d'aucun trajet.");
+  });
+
+  it('renders reservation cards when reservationsAsDriver has data', () => {
+    const reservationsAsDriver = [
+      {
+        id: 1,
+        depart: 'Paris',
+        destination: 'Lyon',
+        date_debut: '2025-02-01',
+        date_fin: '2025-02-02',
+        statut: 'validé',
+        vehicle: { modele: 'Clio', immatriculation: 'AB-123', energie: 'essence', nbr_places: 5 },
+        passengers: [],
+      },
+    ];
+    const wrapper = mount(Dashboard, {
+      props: { reservationsAsDriver, reservationsAsPassenger: [] },
+      global: { mocks: { $page: pageProps } },
+    });
+    expect(wrapper.text()).toContain('Paris');
+    expect(wrapper.text()).toContain('Lyon');
+    expect(wrapper.text()).toContain('Clio');
+    // Lien d’édition (icône sans texte "Modifier") : route() fourni par setup global
+    expect(wrapper.find('a[href="/r/reservations/edit/1"]').exists()).toBe(true);
+  });
+
+  it('renders reservation cards when reservationsAsPassenger has data', () => {
+    const reservationsAsPassenger = [
+      {
+        id: 1,
+        reservation: {
+          id: 10,
+          destination: 'Nantes',
+          date_debut: '2025-02-01',
+          driver: { name: 'Marie' },
+        },
+        statut: 'confirme',
+      },
+    ];
+    const wrapper = mount(Dashboard, {
+      props: { reservationsAsDriver: [], reservationsAsPassenger },
+      global: { mocks: { $page: pageProps } },
+    });
+    expect(wrapper.text()).toContain('Nantes');
+    expect(wrapper.text()).toContain('Marie');
+    expect(wrapper.text()).toContain('Annuler ma place');
+  });
+
+  it('renders search form with departure and destination inputs', () => {
+    const wrapper = mount(Dashboard, {
+      props: { reservationsAsDriver: [], reservationsAsPassenger: [] },
+      global: { mocks: { $page: pageProps } },
+    });
+    expect(wrapper.find('input#departure').exists()).toBe(true);
+    expect(wrapper.find('input#destination').exists()).toBe(true);
+    expect(wrapper.find('input#departureDate').exists()).toBe(true);
+    expect(wrapper.find('input#arrivalDate').exists()).toBe(true);
+    expect(wrapper.find('button[type="submit"]').text()).toContain('Rechercher');
   });
 });

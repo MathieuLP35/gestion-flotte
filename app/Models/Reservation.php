@@ -45,6 +45,7 @@ class Reservation extends Model
     public static function searchCarpoolings(string $departure, string $destination, string $departureDate, ?string $arrivalDate = null)
     {
         $query = self::where('covoiturage', 1)
+            ->where('statut', 'validé')
             ->where('depart', $departure)
             ->where('destination', $destination);
 

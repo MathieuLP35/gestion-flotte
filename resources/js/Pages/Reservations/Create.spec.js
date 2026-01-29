@@ -17,7 +17,7 @@ vi.mock('@/Composables/useDate', () => ({
 
 const pageProps = {
   props: {
-    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [] },
+    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [], permissions: [] },
   },
 };
 
@@ -39,5 +39,39 @@ describe('Reservations/Create', () => {
     });
     expect(wrapper.text()).toContain('Option 1 : Réserver un véhicule');
     expect(wrapper.text()).toContain('Option 2 : Rejoindre un covoiturage');
+  });
+
+  it('renders form fields for Option 1: Départ, Destination, dates, véhicule', () => {
+    const wrapper = mount(ReservationsCreate, {
+      props: { vehicles: [{ id: 1, modele: 'Clio', immatriculation: 'AB-123', energie: 'essence', nbr_places: 5 }] },
+      global: { mocks: { $page: pageProps } },
+    });
+    expect(wrapper.text()).toContain('Départ');
+    expect(wrapper.text()).toContain('Destination');
+    expect(wrapper.find('input#departure').exists()).toBe(true);
+    expect(wrapper.find('input#destination').exists()).toBe(true);
+    expect(wrapper.text()).toContain('Véhicule');
+    expect(wrapper.text()).toContain('Clio');
+    expect(wrapper.find('select#vehicle').exists()).toBe(true);
+    expect(wrapper.find('input#date_debut').exists()).toBe(true);
+    expect(wrapper.find('input#date_fin').exists()).toBe(true);
+  });
+
+  it('renders vehicle select when vehicles is empty', () => {
+    const wrapper = mount(ReservationsCreate, {
+      props: { vehicles: [] },
+      global: { mocks: { $page: pageProps } },
+    });
+    expect(wrapper.text()).toContain('Option 1');
+    expect(wrapper.find('select#vehicle').exists()).toBe(true);
+    expect(wrapper.text()).toContain('Sélectionnez un véhicule');
+  });
+
+  it('renders submit button Réserver ce véhicule', () => {
+    const wrapper = mount(ReservationsCreate, {
+      props: { vehicles: [{ id: 1, modele: 'Clio', immatriculation: 'AB-123', energie: 'essence', nbr_places: 5 }] },
+      global: { mocks: { $page: pageProps } },
+    });
+    expect(wrapper.text()).toContain('Réserver ce véhicule');
   });
 });
