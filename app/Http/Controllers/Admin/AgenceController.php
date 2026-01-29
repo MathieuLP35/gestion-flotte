@@ -12,12 +12,13 @@ use Inertia\Inertia;
 class AgenceController extends Controller
 {
     use AuthorizesRequests;
+
     public function index()
     {
         $this->authorize('agences.view');
 
         $agences = Agence::withCount(['vehicles', 'users'])
-            ->when(!Auth::user()->can('agences.view_all'), fn ($q) => $q->where('id', Auth::user()->agence_id))
+            ->when(! Auth::user()->can('agences.view_all'), fn ($q) => $q->where('id', Auth::user()->agence_id))
             ->orderBy('nom')
             ->get();
 
@@ -29,6 +30,7 @@ class AgenceController extends Controller
     public function create()
     {
         $this->authorize('agences.view');
+
         return Inertia::render('Admin/Agences/Create');
     }
 
@@ -48,9 +50,10 @@ class AgenceController extends Controller
     public function edit(Agence $agence)
     {
         $this->authorize('agences.view');
-        if (!Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
             abort(403);
         }
+
         return Inertia::render('Admin/Agences/Edit', [
             'agence' => $agence,
         ]);
@@ -59,7 +62,7 @@ class AgenceController extends Controller
     public function update(Request $request, Agence $agence)
     {
         $this->authorize('agences.view');
-        if (!Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
             abort(403);
         }
         $request->validate([
@@ -75,7 +78,7 @@ class AgenceController extends Controller
     public function destroy(Agence $agence)
     {
         $this->authorize('agences.view');
-        if (!Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $agence->id !== Auth::user()->agence_id) {
             abort(403);
         }
         if ($agence->vehicles()->exists()) {

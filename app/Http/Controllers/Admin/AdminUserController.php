@@ -15,7 +15,6 @@ use Spatie\Permission\Models\Role;
 
 class AdminUserController extends Controller
 {
-
     use AuthorizesRequests;
 
     /**
@@ -26,7 +25,7 @@ class AdminUserController extends Controller
         $this->authorize('users.view');
 
         $query = User::with('agence', 'roles');
-        if (!Auth::user()->can('agences.view_all')) {
+        if (! Auth::user()->can('agences.view_all')) {
             $query->where('agence_id', Auth::user()->agence_id);
         }
 
@@ -40,10 +39,7 @@ class AdminUserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -59,7 +55,7 @@ class AdminUserController extends Controller
     public function show(User $user)
     {
         $this->authorize('users.view');
-        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
         $user->load(['agence', 'roles']);
@@ -75,7 +71,7 @@ class AdminUserController extends Controller
     public function edit(User $user)
     {
         $this->authorize('users.edit');
-        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -94,13 +90,13 @@ class AdminUserController extends Controller
     public function update(Request $request, User $user)
     {
         $this->authorize('users.edit');
-        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'agence_id' => 'nullable|exists:agences,id',
             'role_id' => 'nullable|exists:roles,id',
         ]);
@@ -124,13 +120,14 @@ class AdminUserController extends Controller
     public function destroy(User $user)
     {
         $this->authorize('users.delete');
-        if (!Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
         // TODO: Notifier les personnes (conducteur de trajet, etc.) concernées par la suppression de cet utilisateur.
 
         $user->delete();
+
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé.');
     }
 }

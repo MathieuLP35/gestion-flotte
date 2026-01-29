@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
 
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
-                'error'   => fn () => $request->session()->get('error'),
+                'error' => fn () => $request->session()->get('error'),
             ],
 
             // Traductions chargées à la demande via GET /api/translations?keys=... (useTranslations)

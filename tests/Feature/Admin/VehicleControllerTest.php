@@ -20,6 +20,7 @@ function adminWithAgence(): array
     $agence = Agence::factory()->create();
     $user = User::factory()->create(['agence_id' => $agence->id]);
     $user->assignRole('Super Admin');
+
     return [$user, $agence];
 }
 

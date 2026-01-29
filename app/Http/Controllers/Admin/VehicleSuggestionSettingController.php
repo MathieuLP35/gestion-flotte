@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\VehicleSuggestionSetting;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 
 class VehicleSuggestionSettingController extends Controller
 {
@@ -18,6 +18,7 @@ class VehicleSuggestionSettingController extends Controller
         $this->authorize('vehicle_suggestion.view');
 
         $s = VehicleSuggestionSetting::get();
+
         return Inertia::render('Admin/Settings/VehicleSuggestion', [
             'setting' => [
                 'petit_trajet_seuil_km' => $s->petit_trajet_seuil_km,

@@ -18,6 +18,7 @@ function userWithCovoiturage(): array
         'date_debut' => now()->addDay()->setTime(8, 0), 'date_fin' => now()->addDay()->setTime(12, 0),
         'statut' => 'validé', 'covoiturage' => true,
     ]);
+
     return [$user, $r];
 }
 

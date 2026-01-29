@@ -17,6 +17,7 @@ function reservationForMessage(): array
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
         'date_debut' => now()->addDay(), 'date_fin' => now()->addDays(2), 'statut' => 'validé', 'covoiturage' => false,
     ]);
+
     return [$user, $r];
 }
 

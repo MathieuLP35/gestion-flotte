@@ -6,8 +6,8 @@ use App\Models\Passenger; // 1. Assurez-vous d'importer le modèle Passenger
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue; // 2. N'oubliez pas l'import pour la Queue
 use Illuminate\Mail\Mailable; // <-- 3. L'IMPORT LE PLUS IMPORTANT (pour corriger l'erreur)
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 // 4. Assurez-vous que votre classe "extends Mailable" ET "implements ShouldQueue"
@@ -34,7 +34,7 @@ class PassengerStatusUpdated extends Mailable implements ShouldQueue
         $subject = $this->passenger->statut === 'confirme'
             ? 'Votre demande de covoiturage a été confirmée !'
             : 'Mise à jour de votre demande de covoiturage';
-            
+
         return new Envelope(
             subject: $subject,
         );

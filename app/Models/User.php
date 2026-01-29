@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +19,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'agence_id', 'locked_until'
+        'name', 'email', 'password', 'agence_id', 'locked_until',
     ];
-
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,7 +47,8 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function agence() {
+    public function agence()
+    {
         return $this->belongsTo(Agence::class);
     }
 

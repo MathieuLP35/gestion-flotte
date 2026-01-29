@@ -23,6 +23,7 @@ function reservationWithDriver(): array
         'vehicle_id' => $v->id, 'user_id' => $driver->id, 'depart' => 'Lyon', 'destination' => 'Paris',
         'date_debut' => now()->addDay(), 'date_fin' => now()->addDays(2), 'statut' => 'validé', 'covoiturage' => true,
     ]);
+
     return [$driver, $r, $agence];
 }
 

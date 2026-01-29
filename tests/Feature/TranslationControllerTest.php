@@ -23,7 +23,7 @@ it('retourne les clés permissions.* pour un utilisateur authentifié', function
     $response->assertOk();
     $data = $response->json();
     expect($data)->toBeArray();
-    $invalid = array_filter(array_keys($data), fn ($k) => !str_starts_with((string) $k, 'permissions.'));
+    $invalid = array_filter(array_keys($data), fn ($k) => ! str_starts_with((string) $k, 'permissions.'));
     expect($invalid)->toBeEmpty();
 });
 

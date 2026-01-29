@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('reservations', function (Blueprint $table) {
             // Ajout de la destination, après l'ID du véhicule
-            $table->string('destination')->after('vehicle_id'); 
+            $table->string('destination')->after('vehicle_id');
         });
     }
 

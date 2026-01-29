@@ -39,6 +39,7 @@ class VehicleSuggestionSetting extends Model
         if ($row) {
             return $row;
         }
+
         return self::create(self::DEFAULTS);
     }
 }

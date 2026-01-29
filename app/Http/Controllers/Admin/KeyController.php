@@ -39,11 +39,11 @@ class KeyController extends Controller
 
         $vehicle = Vehicle::find($validated['vehicle_id']);
 
-        if (!$vehicle) {
+        if (! $vehicle) {
             return redirect()->back()->with('error', 'Véhicule non trouvé.');
         }
 
-        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -53,7 +53,7 @@ class KeyController extends Controller
         ]);
 
         return redirect()->route('admin.vehicles.edit', $vehicle->id)
-                         ->with('success', 'Clé ajoutée avec succès.');
+            ->with('success', 'Clé ajoutée avec succès.');
     }
 
     /**
@@ -71,7 +71,7 @@ class KeyController extends Controller
     {
         $key->load('vehicle');
 
-        if (!Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -85,7 +85,7 @@ class KeyController extends Controller
      */
     public function update(Request $request, VehicleKey $key)
     {
-        if (!Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -98,7 +98,7 @@ class KeyController extends Controller
         ]);
 
         return redirect()->route('admin.vehicles.edit', $key->vehicle_id)
-                         ->with('success', 'Clé mise à jour avec succès.');
+            ->with('success', 'Clé mise à jour avec succès.');
     }
 
     /**
@@ -109,14 +109,16 @@ class KeyController extends Controller
         $key = VehicleKey::find($vehicleKey);
         if ($key) {
             $key->load('vehicle');
-            if (!Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+            if (! Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
                 abort(403);
             }
             $vehicleId = $key->vehicle_id;
             $key->delete();
+
             return redirect()->route('admin.vehicles.edit', $vehicleId)
-                             ->with('success', 'Clé supprimée avec succès.');
+                ->with('success', 'Clé supprimée avec succès.');
         }
+
         return redirect()->back()->with('error', 'Clé non trouvée.');
     }
 }

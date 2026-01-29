@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Agence;
-use App\Models\Passenger;
 use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -19,6 +18,7 @@ function userWithAgence(): array
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-RES',
         'km_initial' => 1000, 'emplacement' => 'X', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
     ]);
+
     return [$user, $agence, $v];
 }
 
@@ -66,7 +66,7 @@ it('affiche le formulaire de création de réservation', function () {
 it('suggère un véhicule', function () {
     [$user, $agence, $v] = userWithAgence();
 
-    $response = $this->actingAs($user)->get(route('reservations.suggestVehicle') . '?' . http_build_query([
+    $response = $this->actingAs($user)->get(route('reservations.suggestVehicle').'?'.http_build_query([
         'depart_lat' => 45.75,
         'depart_lng' => 4.85,
         'dest_lat' => 48.85,

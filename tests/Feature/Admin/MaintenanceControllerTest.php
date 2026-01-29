@@ -19,6 +19,7 @@ function maintenanceAdminAndVehicle(): array
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-MAINT',
         'km_initial' => 0, 'emplacement' => 'X', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
     ]);
+
     return [$user, $v];
 }
 

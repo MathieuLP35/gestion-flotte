@@ -11,7 +11,6 @@ use Inertia\Inertia;
 
 class AllowedDomainController extends Controller
 {
-
     use AuthorizesRequests;
 
     public function index()
@@ -23,9 +22,9 @@ class AllowedDomainController extends Controller
             'can' => [
                 // Gate::allows() est parfaitement reconnu par les IDE
                 'create' => Gate::allows('allowed_domains.create'),
-                'edit'   => Gate::allows('allowed_domains.edit'),
+                'edit' => Gate::allows('allowed_domains.edit'),
                 'delete' => Gate::allows('allowed_domains.delete'),
-            ]
+            ],
         ]);
     }
 
@@ -35,7 +34,7 @@ class AllowedDomainController extends Controller
         $this->authorize('allowed_domains.create');
 
         $request->validate([
-            'name' => 'required|string|unique:allowed_domains,name|lowercase'
+            'name' => 'required|string|unique:allowed_domains,name|lowercase',
         ]);
 
         AllowedDomain::create($request->all());
@@ -57,7 +56,7 @@ class AllowedDomainController extends Controller
         $this->authorize('allowed_domains.edit');
 
         $request->validate([
-            'name' => 'required|string|unique:allowed_domains,name,' . $domain->id . '|lowercase',
+            'name' => 'required|string|unique:allowed_domains,name,'.$domain->id.'|lowercase',
         ]);
 
         $domain->update($request->only('name'));
@@ -65,7 +64,7 @@ class AllowedDomainController extends Controller
         return redirect()->route('admin.domains.index')->with('success', 'Domaine mis à jour.');
     }
 
-    public function destroy(AllowedDomain $domain) 
+    public function destroy(AllowedDomain $domain)
     {
         // Ta façon de faire que tu aimes (et qui fonctionne en L12)
         $this->authorize('allowed_domains.delete');

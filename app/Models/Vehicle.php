@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Vehicle extends Model
 {
     protected $fillable = [
-        'agence_id', 'modele', 'immatriculation', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie'
+        'agence_id', 'modele', 'immatriculation', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie',
     ];
 
-    public function agence() {
+    public function agence()
+    {
         return $this->belongsTo(Agence::class);
     }
 
@@ -24,7 +24,7 @@ class Vehicle extends Model
     {
         return $this->hasMany(VehicleKey::class);
     }
-  
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
@@ -32,11 +32,11 @@ class Vehicle extends Model
 
     /**
      * Calcule la distance à vol d'oiseau entre deux points GPS (formule de Haversine)
-     * 
-     * @param float $lat1 Latitude du point 1
-     * @param float $lon1 Longitude du point 1
-     * @param float $lat2 Latitude du point 2
-     * @param float $lon2 Longitude du point 2
+     *
+     * @param  float  $lat1  Latitude du point 1
+     * @param  float  $lon1  Longitude du point 1
+     * @param  float  $lat2  Latitude du point 2
+     * @param  float  $lon2  Longitude du point 2
      * @return float Distance en kilomètres
      */
     public static function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
@@ -57,12 +57,11 @@ class Vehicle extends Model
 
     /**
      * Suggère le véhicule le plus adapté basé sur la distance et le type d'énergie
-     * 
-     * @param int $agenceId ID de l'agence
-     * @param float $distance Distance en kilomètres
-     * @param string|null $dateDebut Date de début de la réservation
-     * @param string|null $dateFin Date de fin de la réservation
-     * @return Vehicle|null
+     *
+     * @param  int  $agenceId  ID de l'agence
+     * @param  float  $distance  Distance en kilomètres
+     * @param  string|null  $dateDebut  Date de début de la réservation
+     * @param  string|null  $dateFin  Date de fin de la réservation
      */
     public static function suggestBestVehicle(int $agenceId, float $distance, ?string $dateDebut = null, ?string $dateFin = null): ?Vehicle
     {
@@ -79,14 +78,14 @@ class Vehicle extends Model
         if ($dateDebut && $dateFin) {
             $query->whereDoesntHave('reservations', function ($q) use ($dateDebut, $dateFin) {
                 $q->where('statut', 'validé')
-                  ->where(function ($query) use ($dateDebut, $dateFin) {
-                      $query->whereBetween('date_debut', [$dateDebut, $dateFin])
+                    ->where(function ($query) use ($dateDebut, $dateFin) {
+                        $query->whereBetween('date_debut', [$dateDebut, $dateFin])
                             ->orWhereBetween('date_fin', [$dateDebut, $dateFin])
                             ->orWhere(function ($q) use ($dateDebut, $dateFin) {
                                 $q->where('date_debut', '<=', $dateDebut)
-                                  ->where('date_fin', '>=', $dateFin);
+                                    ->where('date_fin', '>=', $dateFin);
                             });
-                  });
+                    });
             });
         }
 

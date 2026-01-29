@@ -8,7 +8,8 @@ class VehicleKey extends Model
 {
     protected $fillable = ['vehicle_id', 'emplacement_clef'];
 
-    public function vehicle() {
+    public function vehicle()
+    {
         return $this->belongsTo(Vehicle::class);
     }
 }

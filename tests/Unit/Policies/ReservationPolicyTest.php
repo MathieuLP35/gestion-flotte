@@ -1,10 +1,7 @@
 <?php
 
-use App\Models\Agence;
-use App\Models\Passenger;
 use App\Models\Reservation;
 use App\Models\User;
-use App\Models\Vehicle;
 use App\Policies\ReservationPolicy;
 
 it('autorise le conducteur à voir la réservation', function () {

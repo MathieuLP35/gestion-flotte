@@ -2,27 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Mail\PassengerRemovedFromTrip;
 use App\Mail\PassengerRequestReceived;
 use App\Mail\PassengerStatusUpdated;
-use App\Models\Reservation;
-use Illuminate\Http\Request;
 use App\Models\Passenger;
+use App\Models\Reservation;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class PassengerController extends Controller
 {
-
     use AuthorizesRequests;
-
 
     public function store(Request $request)
     {
         $request->validate([
-            'reservation_id' => 'required|exists:reservations,id'
+            'reservation_id' => 'required|exists:reservations,id',
         ]);
 
         $reservation = Reservation::with(['vehicle', 'passengers'])->findOrFail($request->reservation_id);
@@ -33,7 +30,7 @@ class PassengerController extends Controller
         }
 
         // Seules les réservations en covoiturage et validées acceptent de nouvelles demandes
-        if (!$reservation->covoiturage) {
+        if (! $reservation->covoiturage) {
             return back()->with('error', 'Ce trajet n\'accepte pas les passagers.');
         }
         if ($reservation->statut !== 'validé') {
@@ -48,8 +45,8 @@ class PassengerController extends Controller
 
         // Vérifier qu'il n'est pas déjà passager de ce trajet
         $existing = Passenger::where('reservation_id', $request->reservation_id)
-                             ->where('user_id', Auth::id())
-                             ->exists();
+            ->where('user_id', Auth::id())
+            ->exists();
 
         if ($existing) {
             return back()->with('error', 'Vous êtes déjà passager sur ce trajet.');
@@ -73,7 +70,7 @@ class PassengerController extends Controller
         $this->authorize('update', $passenger);
 
         $request->validate([
-            'statut' => 'required|in:confirme,refuse'
+            'statut' => 'required|in:confirme,refuse',
         ]);
 
         $passenger->update(['statut' => $request->statut]);

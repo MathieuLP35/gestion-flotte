@@ -7,7 +7,6 @@ use App\Models\Maintenance;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\In;
 use Inertia\Inertia;
 
 class MaintenanceController extends Controller
@@ -22,7 +21,7 @@ class MaintenanceController extends Controller
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
 
-        if (!Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -33,7 +32,7 @@ class MaintenanceController extends Controller
 
     public function edit(Maintenance $maintenance)
     {
-        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -46,7 +45,7 @@ class MaintenanceController extends Controller
 
     public function update(Request $request, Maintenance $maintenance)
     {
-        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -63,7 +62,7 @@ class MaintenanceController extends Controller
 
     public function destroy(Maintenance $maintenance)
     {
-        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 

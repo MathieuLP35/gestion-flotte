@@ -3,12 +3,11 @@
 namespace App\Providers;
 
 // 1. IMPORTEZ VOS MODÈLES ET POLICIES
-use App\Models\Reservation;
-use App\Policies\ReservationPolicy;
 use App\Models\Passenger;
+use App\Models\Reservation;
 use App\Models\User;
 use App\Policies\PassengerPolicy;
-
+use App\Policies\ReservationPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -42,7 +41,7 @@ class AuthServiceProvider extends ServiceProvider
 
             // Si non, on retourne null pour laisser les
             // autres Policies (ReservationPolicy...) faire leur travail.
-            return null; 
+            return null;
         });
     }
 }

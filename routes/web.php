@@ -76,45 +76,44 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('carpooling.search');
 });
 
-
 Route::middleware(['auth', 'verified', 'admin']) // <- Notre "videur"
     ->prefix('admin') // <- Toutes les URL commenceront par /admin
     ->name('admin.') // <- Tous les noms de route commenceront par admin.
     ->group(function () {
 
-    // /admin/dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        // /admin/dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // /admin/agences
-    Route::resource('agences', App\Http\Controllers\Admin\AgenceController::class)->except(['show']);
+        // /admin/agences
+        Route::resource('agences', App\Http\Controllers\Admin\AgenceController::class)->except(['show']);
 
-    // /admin/users, /admin/users/create, etc.
-    Route::resource('users', AdminUserController::class);
+        // /admin/users, /admin/users/create, etc.
+        Route::resource('users', AdminUserController::class);
 
-    // /admin/roles
-    Route::resource('roles', RoleController::class);
+        // /admin/roles
+        Route::resource('roles', RoleController::class);
 
-    // /admin/vehicles
-    // IMPORTANT: Les routes spécifiques doivent être définies AVANT la route resource
-    Route::get('vehicles/availability', [VehicleController::class, 'availability'])->name('vehicles.availability');
-    Route::get('vehicles/{vehicle}/calendar', [VehicleController::class, 'calendar'])->name('vehicles.calendar');
-    Route::resource('vehicles', VehicleController::class);
+        // /admin/vehicles
+        // IMPORTANT: Les routes spécifiques doivent être définies AVANT la route resource
+        Route::get('vehicles/availability', [VehicleController::class, 'availability'])->name('vehicles.availability');
+        Route::get('vehicles/{vehicle}/calendar', [VehicleController::class, 'calendar'])->name('vehicles.calendar');
+        Route::resource('vehicles', VehicleController::class);
 
-    // /admin/maintenances
-    Route::resource('maintenances', MaintenanceController::class);
+        // /admin/maintenances
+        Route::resource('maintenances', MaintenanceController::class);
 
-    // /admin/keys
-    Route::resource('keys', App\Http\Controllers\Admin\KeyController::class);
+        // /admin/keys
+        Route::resource('keys', App\Http\Controllers\Admin\KeyController::class);
 
-    // /admin/permissions
-    // Route::resource('permissions', PermissionController::class);
+        // /admin/permissions
+        // Route::resource('permissions', PermissionController::class);
 
-    // /admin/domains
-    Route::resource('domains', App\Http\Controllers\Admin\AllowedDomainController::class);
+        // /admin/domains
+        Route::resource('domains', App\Http\Controllers\Admin\AllowedDomainController::class);
 
-    // /admin/settings/vehicle-suggestion
-    Route::get('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'edit'])->name('settings.vehicleSuggestion.edit');
-    Route::put('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'update'])->name('settings.vehicleSuggestion.update');
-});
+        // /admin/settings/vehicle-suggestion
+        Route::get('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'edit'])->name('settings.vehicleSuggestion.edit');
+        Route::put('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'update'])->name('settings.vehicleSuggestion.update');
+    });
 
 require __DIR__.'/auth.php';

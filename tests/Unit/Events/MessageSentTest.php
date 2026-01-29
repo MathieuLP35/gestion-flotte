@@ -24,5 +24,5 @@ it('diffuse sur le canal privé de la réservation', function () {
     $channels = $event->broadcastOn();
 
     expect($channels)->toHaveCount(1);
-    expect($channels[0]->name)->toContain('reservation.' . $r->id);
+    expect($channels[0]->name)->toContain('reservation.'.$r->id);
 });

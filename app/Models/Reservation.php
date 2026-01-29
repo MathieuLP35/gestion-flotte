@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     protected $fillable = [
-        'vehicle_id', 'user_id', 'depart', 'destination', 
+        'vehicle_id', 'user_id', 'depart', 'destination',
         'date_debut', 'date_fin', 'statut', 'covoiturage',
         'depart_latitude', 'depart_longitude', 'destination_latitude', 'destination_longitude',
-        'date_retour', 'km_final', 'emplacement_retour', 'etat_vehicule', 'notes_retour'
+        'date_retour', 'km_final', 'emplacement_retour', 'etat_vehicule', 'notes_retour',
     ];
 
     protected $casts = [
@@ -19,11 +19,13 @@ class Reservation extends Model
         'date_retour' => 'datetime',
     ];
 
-    public function vehicle() {
+    public function vehicle()
+    {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
@@ -51,7 +53,7 @@ class Reservation extends Model
 
         if ($arrivalDate) {
             $query->where('date_debut', '<=', $arrivalDate)
-            ->where('date_fin', '>=', $departureDate);
+                ->where('date_fin', '>=', $departureDate);
         } else {
             $query->where('date_debut', '>=', $departureDate);
         }

@@ -14,12 +14,12 @@ class AllowedDomainRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // 1. Extraction du domaine
-        $domain = substr(strrchr($value, "@"), 1);
+        $domain = substr(strrchr($value, '@'), 1);
 
         // 2. Vérification en base
         $isAllowed = AllowedDomain::where('name', $domain)->exists();
 
-        if (!$isAllowed) {
+        if (! $isAllowed) {
             // Utilisation du helper __() pour injecter la variable proprement
             $fail(__("Désolé, le domaine :domain n'est pas autorisé.", ['domain' => $domain]));
         }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
@@ -7,7 +8,6 @@ use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-
     use AuthorizesRequests;
 
     // RÉCUPÈRE tous les messages pour une réservation

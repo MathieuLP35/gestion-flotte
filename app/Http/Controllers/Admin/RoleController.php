@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RoleResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-
     use AuthorizesRequests;
 
     /**
@@ -36,7 +36,7 @@ class RoleController extends Controller
         $this->authorize('roles.create');
 
         return inertia('Admin/Roles/Create', [
-            'permissions' => Permission::all()->pluck('name')
+            'permissions' => Permission::all()->pluck('name'),
         ]);
     }
 
@@ -50,7 +50,7 @@ class RoleController extends Controller
 
         $request->validate([
             'name' => 'required|string|unique:roles,name',
-            'permissions' => 'array'
+            'permissions' => 'array',
         ]);
 
         $role = Role::create(['name' => $request->name]);
@@ -82,8 +82,8 @@ class RoleController extends Controller
         $this->authorize('roles.edit');
 
         $request->validate([
-            'name' => 'required|string|unique:roles,name,' . $role->id,
-            'permissions' => 'array'
+            'name' => 'required|string|unique:roles,name,'.$role->id,
+            'permissions' => 'array',
         ]);
 
         $role->update(['name' => $request->name]);
@@ -100,6 +100,7 @@ class RoleController extends Controller
         $this->authorize('roles.delete');
 
         $role->delete();
+
         return redirect()->route('admin.roles.index')->with('success', 'Rôle supprimé.');
     }
 }

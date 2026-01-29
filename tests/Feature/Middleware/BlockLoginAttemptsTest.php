@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 it('passe la requête si pas d\'email', function () {

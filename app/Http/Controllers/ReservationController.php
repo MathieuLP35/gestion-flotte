@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Reservation;
-use App\Models\Vehicle;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStatusChanged;
 use App\Models\Passenger;
+use App\Models\Reservation;
+use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class ReservationController extends Controller
 {
-
     use AuthorizesRequests;
-
 
     public function index()
     {
@@ -28,7 +26,7 @@ class ReservationController extends Controller
             ->get();
 
         return Inertia::render('Reservations/Index', [
-            'reservations' => $reservations
+            'reservations' => $reservations,
         ]);
     }
 
@@ -125,7 +123,7 @@ class ReservationController extends Controller
         ]);
 
         // Si pas de véhicule sélectionné mais suggestion disponible, utiliser la suggestion
-        if (!$request->vehicle_id && $request->suggested_vehicle_id) {
+        if (! $request->vehicle_id && $request->suggested_vehicle_id) {
             $request->merge(['vehicle_id' => $request->suggested_vehicle_id]);
         }
 
@@ -227,11 +225,11 @@ class ReservationController extends Controller
             'vehicle',          // Le véhicule
             'driver',           // Le conducteur
             'passengers.user',  // Les passagers (avec leurs noms)
-            'messages.user'     // Les messages (avec leurs expéditeurs)
+            'messages.user',     // Les messages (avec leurs expéditeurs)
         ]);
 
         return inertia('Reservations/Show', [
-            'reservation' => $reservation
+            'reservation' => $reservation,
         ]);
     }
 
@@ -262,7 +260,7 @@ class ReservationController extends Controller
         // On filtre pour ne garder que ceux qui ont des places libres
         $availableCarpools = $reservations->filter(function ($reservation) {
             // S'il n'y a pas de véhicule ou de places, on ignore
-            if (!$reservation->vehicle || !$reservation->vehicle->nbr_places) {
+            if (! $reservation->vehicle || ! $reservation->vehicle->nbr_places) {
                 return false;
             }
 
@@ -291,7 +289,7 @@ class ReservationController extends Controller
         }
 
         // Vérifier que la réservation est validée, en cours ou à retourner
-        if (!in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
+        if (! in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
             return redirect()->route('reservations.show', $reservation)
                 ->with('error', 'Seules les réservations validées, en cours ou à retourner peuvent être retournées');
         }
@@ -305,7 +303,7 @@ class ReservationController extends Controller
         $reservation->load(['vehicle', 'driver']);
 
         return Inertia::render('Reservations/Return', [
-            'reservation' => $reservation
+            'reservation' => $reservation,
         ]);
     }
 
@@ -322,7 +320,7 @@ class ReservationController extends Controller
         }
 
         // Vérifier que la réservation est validée, en cours ou à retourner
-        if (!in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
+        if (! in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
             return back()->withErrors(['error' => 'Seules les réservations validées, en cours ou à retourner peuvent être retournées']);
         }
 
@@ -330,7 +328,7 @@ class ReservationController extends Controller
         $vehicleKmInitial = $reservation->vehicle->km_initial;
 
         $request->validate([
-            'km_final' => 'required|integer|min:' . $vehicleKmInitial,
+            'km_final' => 'required|integer|min:'.$vehicleKmInitial,
             'emplacement_retour' => 'required|string|max:255',
             'etat_vehicule' => 'required|in:excellent,bon,moyen,mauvais',
             'notes_retour' => 'nullable|string|max:1000',

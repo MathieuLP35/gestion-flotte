@@ -1,6 +1,5 @@
 <?php
 
-use App\Console\Commands\CheckVehicleMaintenance;
 use App\Models\Agence;
 use App\Models\Maintenance;
 use App\Models\Vehicle;

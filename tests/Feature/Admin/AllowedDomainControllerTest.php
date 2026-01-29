@@ -14,6 +14,7 @@ function domainAdminUser(): User
     $agence = Agence::factory()->create();
     $u = User::factory()->create(['agence_id' => $agence->id]);
     $u->assignRole('Super Admin');
+
     return $u;
 }
 

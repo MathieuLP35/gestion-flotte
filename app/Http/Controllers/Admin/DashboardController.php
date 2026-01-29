@@ -81,8 +81,8 @@ class DashboardController extends Controller
         // Graphique : réservations par mois (12 derniers mois)
         $dateFormat = match (DB::getDriverName()) {
             'sqlite' => "strftime('%Y-%m', date_debut)",
-            'pgsql'  => "to_char(date_debut, 'YYYY-MM')",
-            default  => "DATE_FORMAT(date_debut, '%Y-%m')", // MySQL / MariaDB
+            'pgsql' => "to_char(date_debut, 'YYYY-MM')",
+            default => "DATE_FORMAT(date_debut, '%Y-%m')", // MySQL / MariaDB
         };
         $chart12m = (clone $baseReservations)
             ->where('date_debut', '>=', now()->subMonths(11)->startOfMonth())

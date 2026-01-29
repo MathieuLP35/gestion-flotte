@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TranslationController extends Controller
 {
@@ -15,7 +15,7 @@ class TranslationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $path = resource_path('lang/fr.json');
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return response()->json([]);
         }
 

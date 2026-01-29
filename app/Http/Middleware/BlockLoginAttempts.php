@@ -3,9 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class BlockLoginAttempts
 {
@@ -13,7 +13,7 @@ class BlockLoginAttempts
     {
         $email = $request->input('email');
 
-        if (!$email) {
+        if (! $email) {
             return $next($request);
         }
 

@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Carbon;
-use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -57,7 +57,7 @@ class AuthenticatedSessionController extends Controller
 
             // Tenter l’authentification de l’utilisateur
             $credentials = $request->only('email', 'password');
-            if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+            if (! Auth::attempt($credentials, $request->boolean('remember'))) {
                 throw ValidationException::withMessages([
                     'email' => ['Les identifiants fournis sont incorrects.'],
                 ]);
@@ -89,7 +89,6 @@ class AuthenticatedSessionController extends Controller
             throw $e;
         }
     }
-
 
     /**
      * Destroy an authenticated session.

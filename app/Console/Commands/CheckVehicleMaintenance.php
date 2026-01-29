@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\Vehicle;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\MaintenanceAlert;
+use App\Models\Vehicle;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class CheckVehicleMaintenance extends Command
 {
