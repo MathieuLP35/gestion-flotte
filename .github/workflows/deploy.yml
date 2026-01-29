@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  DEPLOY_PATH: /var/www/gestion-flotte
+  DEPLOY_PATH: /opt/stacks/gestion-flotte
   SERVER_HOST: ${{ secrets.SERVER_IP }}
 
 jobs:
