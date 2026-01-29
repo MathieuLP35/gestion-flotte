@@ -61,4 +61,22 @@ describe('Admin/Vehicles/Availability', () => {
     expect(wrapper.text()).toContain('Clio');
     expect(wrapper.text()).toContain('Légende des statuts');
   });
+
+  it('filtre les véhicules via le champ de recherche', async () => {
+    const vehicles = [
+      { id: 1, modele: 'Clio', immatriculation: 'AB-123', emplacement: 'Parking A', nbr_places: 5, energie: 'essence', en_maintenance: 0 },
+      { id: 2, modele: 'Tesla', immatriculation: 'EV-001', emplacement: 'Parking B', nbr_places: 5, energie: 'electrique', en_maintenance: 0 },
+    ];
+
+    const wrapper = mount(VehiclesAvailability, {
+      props: { vehicles, selectedVehicle: null, reservations: [] },
+      global: { stubs: { AdminLayout: stubLayout, Head: true } },
+    });
+
+    const input = wrapper.find('input[placeholder*="Rechercher"]');
+    await input.setValue('tesla');
+
+    expect(wrapper.text()).toContain('Tesla');
+    expect(wrapper.text()).not.toContain('Clio');
+  });
 });

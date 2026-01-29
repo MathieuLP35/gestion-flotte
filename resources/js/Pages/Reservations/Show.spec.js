@@ -43,4 +43,49 @@ describe('Reservations/Show', () => {
     expect(wrapper.text()).toContain('Messagerie du Trajet');
     expect(wrapper.find('form').exists()).toBe(true);
   });
+
+  it('affiche le message vide quand il ne contient aucun message', async () => {
+    vi.mocked(usePage).mockReturnValue({ props: { auth: { user: { id: 1 } } } });
+
+    const wrapper = mount(ReservationsShow, {
+      props: { reservation: { ...reservation, messages: [] } },
+      global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
+    });
+
+    await wrapper.vm.$nextTick();
+    expect(wrapper.text()).toContain('Aucun message. Démarrez la conversation !');
+  });
+
+  it('affiche les messages de l’utilisateur courant et des autres', async () => {
+    vi.mocked(usePage).mockReturnValue({ props: { auth: { user: { id: 1, name: 'Current' } } } });
+
+    const reservationWithMessages = {
+      ...reservation,
+      messages: [
+        {
+          id: 1,
+          body: 'Bonjour',
+          created_at: '2024-01-15T10:00:00',
+          user: { id: 2, name: 'Autre' },
+        },
+        {
+          id: 2,
+          body: 'Salut',
+          created_at: '2024-01-15T10:05:00',
+          user: { id: 1, name: 'Current' },
+        },
+      ],
+    };
+
+    const wrapper = mount(ReservationsShow, {
+      props: { reservation: reservationWithMessages },
+      global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
+    });
+
+    await wrapper.vm.$nextTick();
+    const text = wrapper.text();
+    expect(text).toContain('Bonjour');
+    expect(text).toContain('Salut');
+    expect(text).toContain('Autre');
+  });
 });

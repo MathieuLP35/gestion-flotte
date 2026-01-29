@@ -130,4 +130,18 @@ describe('Dashboard', () => {
     expect(wrapper.find('input#arrivalDate').exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').text()).toContain('Rechercher');
   });
+
+  it('ne plante pas si on soumet la recherche sans lieux sélectionnés', async () => {
+    const wrapper = mount(Dashboard, {
+      props: { reservationsAsDriver: [], reservationsAsPassenger: [] },
+      global: { mocks: { $page: pageProps } },
+    });
+
+    wrapper.vm.form.departure = 'Rennes';
+    wrapper.vm.form.destination = 'Nantes';
+
+    await wrapper.find('form').trigger('submit.prevent');
+
+    expect(wrapper.text()).toContain('Recherche de Covoiturage');
+  });
 });

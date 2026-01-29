@@ -74,4 +74,39 @@ describe('Reservations/Create', () => {
     });
     expect(wrapper.text()).toContain('Réserver ce véhicule');
   });
+
+  it("affiche une erreur si aucun lieu de départ n'est sélectionné", async () => {
+    const wrapper = mount(ReservationsCreate, {
+      props: { vehicles: [] },
+      global: { mocks: { $page: pageProps } },
+    });
+
+    wrapper.vm.form.departure = 'Rennes';
+    wrapper.vm.form.destination = 'Nantes';
+    wrapper.vm.form.date_debut = '2025-02-01T10:00';
+    wrapper.vm.form.date_fin = '2025-02-01T18:00';
+
+    await wrapper.find('form').trigger('submit.prevent');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.form.errors.departure).toBeTruthy();
+  });
+
+  it("affiche une erreur si aucune destination n'est sélectionnée", async () => {
+    const wrapper = mount(ReservationsCreate, {
+      props: { vehicles: [] },
+      global: { mocks: { $page: pageProps } },
+    });
+
+    wrapper.vm.form.departure = 'Rennes';
+    wrapper.vm.form.destination = 'Nantes';
+    wrapper.vm.form.departureSelected = { lat: 1, lng: 2, label: 'Rennes' };
+    wrapper.vm.form.date_debut = '2025-02-01T10:00';
+    wrapper.vm.form.date_fin = '2025-02-01T18:00';
+
+    await wrapper.find('form').trigger('submit.prevent');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.form.errors.destination).toBeTruthy();
+  });
 });

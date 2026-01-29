@@ -49,4 +49,30 @@ describe('Reservations/Edit', () => {
     expect(wrapper.text()).toContain('Messagerie du Trajet');
     expect(wrapper.text()).toContain('Itinéraire du Trajet');
   });
+
+  it('affiche les bons boutons selon le statut des passagers', () => {
+    vi.mocked(usePage).mockReturnValue({ props: { auth: { user: { id: 1 } } } });
+
+    const reservationWithStatuses = {
+      ...reservation,
+      passengers: [
+        { id: 1, user: { name: 'Alice' }, statut: 'en_attente' },
+        { id: 2, user: { name: 'Bob' }, statut: 'confirme' },
+        { id: 3, user: { name: 'Charlie' }, statut: 'refuse' },
+      ],
+    };
+
+    const wrapper = mount(ReservationsEdit, {
+      props: { reservation: reservationWithStatuses, vehicles: [] },
+      global: {
+        stubs: { AuthenticatedLayout: stubLayout, Head: true, MapRoute: { template: '<div></div>' } },
+      },
+    });
+
+    const text = wrapper.text();
+    expect(text).toContain('Accepter');
+    expect(text).toContain('Refuser');
+    expect(text).toContain('Retirer');
+    expect(text).toContain('Ré-accepter');
+  });
 });
