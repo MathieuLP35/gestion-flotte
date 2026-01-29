@@ -3,29 +3,42 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $agence_id
+ * @property string $modele
+ * @property string $immatriculation
+ * @property Agence $agence
+ * @property Collection<int, Maintenance> $maintenances
+ * @property Collection<int, VehicleKey> $keys
+ * @property Collection<int, Reservation> $reservations
+ */
 class Vehicle extends Model
 {
     protected $fillable = [
         'agence_id', 'modele', 'immatriculation', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie',
     ];
 
-    public function agence()
+    public function agence(): BelongsTo
     {
         return $this->belongsTo(Agence::class);
     }
 
-    public function maintenances()
+    public function maintenances(): HasMany
     {
         return $this->hasMany(Maintenance::class);
     }
 
-    public function keys()
+    public function keys(): HasMany
     {
         return $this->hasMany(VehicleKey::class);
     }
 
-    public function reservations()
+    public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }

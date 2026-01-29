@@ -2,9 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin User
+ */
 class UserResource extends JsonResource
 {
     /**
@@ -16,14 +20,20 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var User $user */
+        $user = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'agence_id' => $this->agence_id,
-            'agence' => $this->whenLoaded('agence', fn () => $this->agence ? ['id' => $this->agence->id, 'nom' => $this->agence->nom] : null),
-            'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')->values()->all()),
-            'role_id' => $this->whenLoaded('roles', fn () => $this->roles->first()?->id),
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'agence_id' => $user->agence_id,
+            'agence' => $this->whenLoaded('agence', function () use ($user) {
+                $agence = $user->agence;
+                return $agence !== null ? ['id' => $agence->id, 'nom' => $agence->nom] : null;
+            }),
+            'roles' => $this->whenLoaded('roles', fn () => $user->roles->pluck('name')->values()->all()),
+            'role_id' => $this->whenLoaded('roles', fn () => $user->roles->first()?->getAttribute('id')),
         ];
     }
 }

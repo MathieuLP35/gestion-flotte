@@ -5,5 +5,6 @@ parameters:
     paths:
         - app/
         - database/
-        - tests/
+    excludePaths:
+        - tests/*
     level: 5 # Tu peux monter jusqu'à 9 au fur et à mesure

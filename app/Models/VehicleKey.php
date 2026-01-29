@@ -3,12 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $vehicle_id
+ * @property Vehicle $vehicle
+ */
 class VehicleKey extends Model
 {
     protected $fillable = ['vehicle_id', 'emplacement_clef'];
 
-    public function vehicle()
+    public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }

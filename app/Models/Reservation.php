@@ -3,7 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $vehicle_id
+ * @property int $user_id
+ * @property string $statut
+ * @property Vehicle|null $vehicle
+ * @property User|null $user
+ * @property User|null $driver
+ * @property Collection<int, Passenger> $passengers
+ */
 class Reservation extends Model
 {
     protected $fillable = [
@@ -19,22 +32,22 @@ class Reservation extends Model
         'date_retour' => 'datetime',
     ];
 
-    public function vehicle()
+    public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function passengers()
+    public function passengers(): HasMany
     {
         return $this->hasMany(Passenger::class);
     }
 
-    public function driver()
+    public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }

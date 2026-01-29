@@ -4,10 +4,20 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property int $id
+ * @property int|null $agence_id
+ * @property Agence|null $agence
+ * @property Collection<int, Reservation> $reservationsAsDriver
+ * @property Collection<int, Passenger> $reservationsAsPassenger
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -47,19 +57,19 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function agence()
+    public function agence(): BelongsTo
     {
         return $this->belongsTo(Agence::class);
     }
 
     // Les trajets où cet utilisateur est le CONDUCTEUR
-    public function reservationsAsDriver()
+    public function reservationsAsDriver(): HasMany
     {
         return $this->hasMany(Reservation::class, 'user_id');
     }
 
     // Les trajets où cet utilisateur est PASSAGER
-    public function reservationsAsPassenger()
+    public function reservationsAsPassenger(): HasMany
     {
         return $this->hasMany(Passenger::class);
     }
