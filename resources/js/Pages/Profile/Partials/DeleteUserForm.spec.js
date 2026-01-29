@@ -29,15 +29,15 @@ beforeEach(() => {
 describe('Profile/Partials/DeleteUserForm', () => {
   it('renders Delete Account section', () => {
     const wrapper = mount(DeleteUserForm);
-    expect(wrapper.text()).toContain('Delete Account');
-    expect(wrapper.text()).toContain('Once your account is deleted');
+    expect(wrapper.text()).toContain('Suppression de compte');
+    expect(wrapper.text()).toContain('Une fois votre compte supprimé');
   });
 
   it('shows DangerButton to open confirmation', () => {
     const wrapper = mount(DeleteUserForm);
     const btn = wrapper.findComponent({ name: 'DangerButton' });
     expect(btn.exists()).toBe(true);
-    expect(btn.text()).toContain('Delete Account');
+    expect(btn.text()).toContain('Supprimer');
   });
 
   it('opens modal when confirmUserDeletion is clicked', async () => {
@@ -46,7 +46,7 @@ describe('Profile/Partials/DeleteUserForm', () => {
     });
     await wrapper.findComponent({ name: 'DangerButton' }).trigger('click');
     await wrapper.vm.$nextTick();
-    expect(wrapper.text()).toContain('Are you sure you want to delete your account?');
+    expect(wrapper.text()).toContain('Êtes-vous sûr de vouloir supprimer votre compte ?');
     expect(wrapper.find('input#password').exists()).toBe(true);
   });
 
@@ -54,7 +54,7 @@ describe('Profile/Partials/DeleteUserForm', () => {
     const wrapper = mount(DeleteUserForm);
     await wrapper.findComponent({ name: 'DangerButton' }).trigger('click');
     await wrapper.vm.$nextTick();
-    expect(wrapper.text()).toContain('Cancel');
+    expect(wrapper.text()).toContain('Annuler');
     expect(wrapper.text()).toContain('Password');
   });
 });

@@ -24,8 +24,8 @@ beforeEach(() => {
 describe('Profile/Partials/UpdatePasswordForm', () => {
   it('renders Update Password section', () => {
     const wrapper = mount(UpdatePasswordForm);
-    expect(wrapper.text()).toContain('Update Password');
-    expect(wrapper.text()).toContain('Ensure your account is using a long');
+    expect(wrapper.text()).toContain('Mettre à jour le mot de passe');
+    expect(wrapper.text()).toContain('Assurez-vous que votre compte utilise un mot de passe long');
   });
 
   it('renders current password, password and confirmation inputs', () => {
@@ -37,10 +37,10 @@ describe('Profile/Partials/UpdatePasswordForm', () => {
 
   it('renders Save button', () => {
     const wrapper = mount(UpdatePasswordForm);
-    const saveBtn = wrapper.findAll('button').find((w) => w.text().includes('Save'));
+    const saveBtn = wrapper.findAll('button').find((w) => w.text().includes('Sauvegarder'));
     expect(saveBtn).toBeDefined();
     expect(saveBtn?.exists()).toBe(true);
-    expect(wrapper.text()).toContain('Save');
+    expect(wrapper.text()).toContain('Sauvegarder');
   });
 
   it('calls form.put on submit', async () => {

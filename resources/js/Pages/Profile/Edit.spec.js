@@ -13,13 +13,13 @@ const pageProps = {
 };
 
 describe('Profile/Edit', () => {
-  it('renders AuthenticatedLayout with header Profile', () => {
+  it('renders AuthenticatedLayout with header Profil', () => {
     const wrapper = mount(ProfileEdit, {
       global: { mocks: { $page: pageProps } },
     });
 
     expect(wrapper.findComponent({ name: 'AuthenticatedLayout' }).exists()).toBe(true);
-    expect(wrapper.text()).toContain('Profile');
+    expect(wrapper.text()).toContain('Profil');
   });
 
   it('renders UpdateProfileInformationForm, UpdatePasswordForm and DeleteUserForm', () => {

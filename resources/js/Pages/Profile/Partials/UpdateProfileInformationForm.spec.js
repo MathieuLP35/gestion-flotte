@@ -37,8 +37,8 @@ beforeEach(() => {
 describe('Profile/Partials/UpdateProfileInformationForm', () => {
   it('renders Profile Information section', () => {
     const wrapper = mount(UpdateProfileInformationForm);
-    expect(wrapper.text()).toContain('Profile Information');
-    expect(wrapper.text()).toContain('Update your account\'s profile');
+    expect(wrapper.text()).toContain('Informations du profil');
+    expect(wrapper.text()).toContain('Mettez à jour les informations de votre profil');
   });
 
   it('renders name and email inputs with user data', () => {
@@ -57,16 +57,16 @@ describe('Profile/Partials/UpdateProfileInformationForm', () => {
 
   it('shows Save button', () => {
     const wrapper = mount(UpdateProfileInformationForm);
-    const saveBtn = wrapper.findAll('button').find((w) => w.text().includes('Save'));
+    const saveBtn = wrapper.findAll('button').find((w) => w.text().includes('Sauvegarder'));
     expect(saveBtn).toBeDefined();
-    expect(saveBtn?.text()).toContain('Save');
+    expect(saveBtn?.text()).toContain('Sauvegarder');
   });
 
   it('shows verification message when mustVerifyEmail and email not verified', () => {
     const wrapper = mount(UpdateProfileInformationForm, {
       props: { mustVerifyEmail: true },
     });
-    expect(wrapper.text()).toContain('Your email address is unverified');
-    expect(wrapper.text()).toContain('re-send the verification email');
+    expect(wrapper.text()).toContain('Votre adresse courriel n\'est pas vérifiée');
+    expect(wrapper.text()).toContain('Cliquez ici pour renvoyer l\'e-mail de vérification');
   });
 });
