@@ -56,6 +56,8 @@ jobs:
 
       - name: Vitest (Vue) + couverture LCOV
         run: npm run coverage:vue
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: 1
 
       # --- 4. SonarCloud (sécurité & dette technique) — config dans sonar-project.properties ---
       - name: SonarCloud
