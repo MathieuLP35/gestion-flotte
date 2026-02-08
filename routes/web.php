@@ -20,6 +20,9 @@ Route::get('/', function () {
     ]);
 })->middleware('guest');
 
+Route::get('/terms', fn () => Inertia::render('Terms'))->name('terms');
+Route::get('/privacy', fn () => Inertia::render('Privacy'))->name('privacy');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
