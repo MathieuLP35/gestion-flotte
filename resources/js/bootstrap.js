@@ -8,12 +8,22 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 window.Pusher = Pusher;
 
-window.Echo = new Echo({
-    broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-    enabledTransports: ['ws', 'wss'],
-});
+const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
+
+if (reverbKey) {
+    window.Echo = new Echo({
+        broadcaster: 'reverb',
+        key: reverbKey,
+        wsHost: import.meta.env.VITE_REVERB_HOST,
+        wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
+        wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+        forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+        enabledTransports: ['ws', 'wss'],
+    });
+} else {
+    // Pas de clé Reverb (ex. build CI sans secrets) : mock pour éviter l'erreur Pusher
+    window.Echo = {
+        private: () => ({ listen: () => ({ stopListening: () => {} }), stopListening: () => {} }),
+        leave: () => {},
+    };
+}
