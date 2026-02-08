@@ -1,9 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { usePage } from '@inertiajs/vue3';
 import PortalLayout from '@/Layouts/PortalLayout.vue';
 
 describe('PortalLayout', () => {
-  it('renders header with logo, login and register links', () => {
+  beforeEach(() => {
+    vi.mocked(usePage).mockReturnValue({ props: { auth: { user: null } } });
+  });
+
+  afterEach(() => {
+    vi.mocked(usePage).mockReset();
+  });
+
+  it('renders header with logo, login and register links when guest', () => {
     const wrapper = mount(PortalLayout, {
       slots: { default: '<div>Contenu principal</div>' },
     });
