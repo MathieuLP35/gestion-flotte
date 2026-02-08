@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $password = Hash::make('password');
-        $baseEmail = env('DEMO_MAIL_RECIPIENT');
+        $baseEmail = config('app.demo_mail_recipient');
 
         $agenceParis = Agence::where('nom', 'Agence Paris Centre')->first();
         $agenceRennes = Agence::where('nom', 'Agence Rennes')->first();

@@ -124,4 +124,15 @@ return [
     ],
 
     'admin_email' => env('ADMIN_EMAIL', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Demo mail recipient (seeders)
+    |--------------------------------------------------------------------------
+    | When set (e.g. in .env as DEMO_MAIL_RECIPIENT), demo user emails use
+    | plus-addressing: your+admin@example.com. Used only in UserSeeder.
+    |
+    */
+
+    'demo_mail_recipient' => env('DEMO_MAIL_RECIPIENT'),
 ];
