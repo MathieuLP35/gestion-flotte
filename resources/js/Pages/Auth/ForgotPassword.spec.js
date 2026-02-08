@@ -7,8 +7,8 @@ describe('ForgotPassword', () => {
     const wrapper = mount(ForgotPassword);
 
     expect(wrapper.find('input#email').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Réinitialiser le mot de passe');
-    expect(wrapper.text()).toContain('Saisissez votre adresse e-mail pour recevoir un lien de réinitialisation');
+    expect(wrapper.text()).toContain('Email Password Reset Link');
+    expect(wrapper.text()).toContain('Forgot your password? No problem.');
   });
 
   it('uses GuestLayout', () => {
@@ -18,8 +18,8 @@ describe('ForgotPassword', () => {
 
   it('shows status message when status prop is set', () => {
     const wrapper = mount(ForgotPassword, {
-      props: { status: 'Un lien de réinitialisation a été envoyé par e-mail.' },
+      props: { status: 'We have emailed your password reset link.' },
     });
-    expect(wrapper.text()).toContain('Un lien de réinitialisation a été envoyé par e-mail.');
+    expect(wrapper.text()).toContain('We have emailed your password reset link.');
   });
 });

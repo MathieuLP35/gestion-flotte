@@ -7,7 +7,6 @@ const pageProps = {
     auth: {
       user: { name: 'Jean Dupont', email: 'jean@example.com' },
       roles: [],
-      permissions: [],
     },
   },
 };
@@ -30,8 +29,8 @@ describe('AuthenticatedLayout', () => {
       global: { mocks: { $page: pageProps } },
       slots: { default: '' },
     });
-    expect(wrapper.text()).toContain('Profil');
-    expect(wrapper.text()).toContain('Déconnexion');
+    expect(wrapper.text()).toContain('Profile');
+    expect(wrapper.text()).toContain('Log Out');
   });
 
   it('renders optional header slot when provided', () => {

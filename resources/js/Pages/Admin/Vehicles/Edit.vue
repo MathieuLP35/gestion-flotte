@@ -94,7 +94,7 @@ function deleteKey(id) {
 
     <AdminLayout>
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 gap-6">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 md:p-8">
                         <h1 class="text-3xl font-bold text-gray-800 mb-6">
@@ -218,7 +218,7 @@ function deleteKey(id) {
                     </div>
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 gap-6 mt-6">
                 <div class="p-6 md:p-8 bg-white">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">
                         Ajouter un seuil de maintenance

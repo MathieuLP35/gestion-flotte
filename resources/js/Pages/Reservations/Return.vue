@@ -55,7 +55,7 @@ const submit = () => {
                         <!-- Informations de la réservation -->
                         <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                             <h3 class="text-lg font-semibold text-gray-800 mb-3">Informations de la réservation</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div>
                                     <span class="font-medium text-gray-600">Véhicule:</span>
                                     <p class="text-gray-900">{{ reservation.vehicle.modele }} ({{ reservation.vehicle.immatriculation }})</p>

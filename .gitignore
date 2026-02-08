@@ -24,4 +24,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-
+.scannerwork
+.vscode
+.fleet
+.nova
+.phpactor.json
+.phpunit.result.cache
+.phpunit.cache
+.phpunit.result.cache
+.idea

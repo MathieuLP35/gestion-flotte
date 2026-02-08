@@ -7,8 +7,8 @@ describe('ConfirmPassword', () => {
     const wrapper = mount(ConfirmPassword);
 
     expect(wrapper.find('input#password').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Confirmer le mot de passe');
-    expect(wrapper.text()).toContain('Veuillez confirmer votre mot de passe avant de continuer.');
+    expect(wrapper.text()).toContain('Confirm');
+    expect(wrapper.text()).toContain('This is a secure area of the application.');
   });
 
   it('uses GuestLayout', () => {

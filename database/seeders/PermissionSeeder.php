@@ -62,5 +62,21 @@ class PermissionSeeder extends Seeder
         if ($user) {
             $user->assignRole('Super Admin');
         }
+
+        // --- RÔLE ADMINISTRATEUR (accès admin sans tout gérer) ---
+        $adminRole = Role::firstOrCreate(['name' => 'Administrateur']);
+        $adminRole->syncPermissions([
+            'admin.view',
+            'agences.view', 'agences.view_all',
+            'vehicles.view', 'vehicles.create', 'vehicles.edit',
+            'reservations.view', 'reservations.create', 'reservations.edit',
+            'users.view', 'users.create', 'users.edit',
+        ]);
+
+        // Second admin (compatible DEMO_MAIL_RECIPIENT : email peut être toi+admin2@...)
+        $admin2 = User::where('name', 'Marie Martin')->first();
+        if ($admin2 && ! $admin2->hasRole('Administrateur')) {
+            $admin2->assignRole('Administrateur');
+        }
     }
 }

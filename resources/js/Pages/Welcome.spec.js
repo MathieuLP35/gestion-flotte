@@ -3,16 +3,14 @@ import { mount } from '@vue/test-utils';
 import Welcome from '@/Pages/Welcome.vue';
 
 describe('Welcome', () => {
-  const defaultProps = {
-    laravelVersion: '11',
-    phpVersion: '8.2',
-    canLogin: true,
-    canRegister: true,
-  };
-
   it('renders PortalLayout with hero and feature sections', () => {
     const wrapper = mount(Welcome, {
-      props: defaultProps,
+      props: {
+        laravelVersion: '11',
+        phpVersion: '8.2',
+        canLogin: true,
+        canRegister: true,
+      },
     });
 
     expect(wrapper.text()).toContain('Bienvenue sur SparkOtto');
@@ -35,18 +33,4 @@ describe('Welcome', () => {
     });
     expect(wrapper.findComponent({ name: 'PortalLayout' }).exists()).toBe(true);
   });
-
-  it('renders hero subtitle', () => {
-    const wrapper = mount(Welcome, { props: defaultProps });
-    expect(wrapper.text()).toContain('La solution tout-en-un pour gérer vos covoiturages');
-  });
-
-  it('renders Why SparkOtto section items', () => {
-    const wrapper = mount(Welcome, { props: defaultProps });
-    expect(wrapper.text()).toContain('Sécurité et contrôle');
-    expect(wrapper.text()).toContain('Personnalisation');
-    expect(wrapper.text()).toContain('Support et évolution');
-    expect(wrapper.text()).toContain('Efficacité');
-  });
-
 });

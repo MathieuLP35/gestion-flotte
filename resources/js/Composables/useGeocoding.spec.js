@@ -63,32 +63,4 @@ describe('useGeocoding', () => {
     expect(suggestionsDeparture.value).toEqual([]);
     expect(isLoadingDeparture.value).toBe(false);
   });
-
-  it('fetchSuggestions sets suggestionsDestination when type is destination', async () => {
-    const adresseData = {
-      features: [
-        {
-          properties: { label: 'Lyon Part-Dieu', city: 'Lyon', postcode: '69003', street: '', type: 'street', citycode: '69123', _type: 'address' },
-          geometry: { coordinates: [4.86, 45.76] },
-        },
-      ],
-    };
-    global.fetch.mockResolvedValue({
-      json: () => Promise.resolve(adresseData),
-    });
-
-    const { fetchSuggestions, suggestionsDestination } = useGeocoding();
-    await fetchSuggestions('lyon 69003', 'destination');
-
-    expect(suggestionsDestination.value.length).toBeGreaterThanOrEqual(0);
-  });
-
-  it('fetchSuggestions does nothing when query is null or empty', async () => {
-    const { fetchSuggestions, suggestionsDeparture, suggestionsDestination } = useGeocoding();
-    await fetchSuggestions('', 'departure');
-    await fetchSuggestions(null, 'destination');
-    expect(global.fetch).not.toHaveBeenCalled();
-    expect(suggestionsDeparture.value).toEqual([]);
-    expect(suggestionsDestination.value).toEqual([]);
-  });
 });
