@@ -48,7 +48,7 @@ class AgenceSeeder extends Seeder
         ];
 
         foreach ($agences as $agence) {
-            Agence::create($agence);
+            Agence::firstOrCreate($agence);
         }
     }
 }

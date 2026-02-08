@@ -13,35 +13,35 @@ class PermissionSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Permissions pour les RÔLES
-        Permission::create(['name' => 'roles.view']);
-        Permission::create(['name' => 'roles.create']);
-        Permission::create(['name' => 'roles.edit']);
-        Permission::create(['name' => 'roles.delete']);
+        // Permissions pour les RÔLES (firstOrCreate pour pouvoir réexécuter le seed)
+        Permission::firstOrCreate(['name' => 'roles.view']);
+        Permission::firstOrCreate(['name' => 'roles.create']);
+        Permission::firstOrCreate(['name' => 'roles.edit']);
+        Permission::firstOrCreate(['name' => 'roles.delete']);
 
         // Permissions pour les UTILISATEURS
-        Permission::create(['name' => 'users.view']);
-        Permission::create(['name' => 'users.create']);
-        Permission::create(['name' => 'users.edit']);
-        Permission::create(['name' => 'users.delete']);
+        Permission::firstOrCreate(['name' => 'users.view']);
+        Permission::firstOrCreate(['name' => 'users.create']);
+        Permission::firstOrCreate(['name' => 'users.edit']);
+        Permission::firstOrCreate(['name' => 'users.delete']);
 
         // Permissions pour les VÉHICULES
-        Permission::create(['name' => 'vehicles.view']);
-        Permission::create(['name' => 'vehicles.create']);
-        Permission::create(['name' => 'vehicles.edit']);
-        Permission::create(['name' => 'vehicles.delete']);
+        Permission::firstOrCreate(['name' => 'vehicles.view']);
+        Permission::firstOrCreate(['name' => 'vehicles.create']);
+        Permission::firstOrCreate(['name' => 'vehicles.edit']);
+        Permission::firstOrCreate(['name' => 'vehicles.delete']);
 
         // Permissions pour les RÉSERVATIONS
-        Permission::create(['name' => 'reservations.view']);
-        Permission::create(['name' => 'reservations.create']);
-        Permission::create(['name' => 'reservations.edit']);
-        Permission::create(['name' => 'reservations.delete']);
+        Permission::firstOrCreate(['name' => 'reservations.view']);
+        Permission::firstOrCreate(['name' => 'reservations.create']);
+        Permission::firstOrCreate(['name' => 'reservations.edit']);
+        Permission::firstOrCreate(['name' => 'reservations.delete']);
 
         // Permissions pour la GESTION DES DOMAINES AUTORISÉS
-        Permission::create(['name' => 'allowed_domains.view']);
-        Permission::create(['name' => 'allowed_domains.create']);
-        Permission::create(['name' => 'allowed_domains.edit']);
-        Permission::create(['name' => 'allowed_domains.delete']);
+        Permission::firstOrCreate(['name' => 'allowed_domains.view']);
+        Permission::firstOrCreate(['name' => 'allowed_domains.create']);
+        Permission::firstOrCreate(['name' => 'allowed_domains.edit']);
+        Permission::firstOrCreate(['name' => 'allowed_domains.delete']);
 
         // Permissions pour la SUGGESTION DE VÉHICULE (paramètres admin)
         Permission::firstOrCreate(['name' => 'vehicle_suggestion.view']);
