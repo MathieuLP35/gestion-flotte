@@ -17,7 +17,7 @@
         @routes
 
         @unless (app()->environment('testing'))
-            @vite(['resources/css/app.css', 'resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endunless
 
         @inertiaHead
