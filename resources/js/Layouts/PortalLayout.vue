@@ -1,10 +1,12 @@
 <!-- resources/js/Layouts/LandingLayout.vue -->
 <script setup>
-import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 
 const mobileMenuOpen = ref(false);
+const page = usePage();
+const isAuthenticated = computed(() => !!page.props.auth?.user);
 </script>
 
 <template>
@@ -22,18 +24,37 @@ const mobileMenuOpen = ref(false);
 
                     <!-- Navigation desktop (tablette + PC) -->
                     <div class="hidden sm:flex items-center space-x-8">
-                        <Link
-                            href="/login"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition"
-                        >
-                            Se connecter
-                        </Link>
-                        <Link
-                            href="/register"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition"
-                        >
-                            S'inscrire
-                        </Link>
+                        <template v-if="isAuthenticated">
+                            <Link
+                                :href="route('dashboard')"
+                                class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition"
+                            >
+                                Dashboard
+                            </Link>
+                            <span class="text-sm font-medium text-gray-700">{{ page.props.auth.user.name }}</span>
+                            <Link
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                                class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition"
+                            >
+                                Déconnexion
+                            </Link>
+                        </template>
+                        <template v-else>
+                            <Link
+                                href="/login"
+                                class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition"
+                            >
+                                Se connecter
+                            </Link>
+                            <Link
+                                href="/register"
+                                class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition"
+                            >
+                                S'inscrire
+                            </Link>
+                        </template>
                     </div>
 
                     <!-- Bouton menu burger (mobile uniquement) -->
@@ -80,20 +101,41 @@ const mobileMenuOpen = ref(false);
                     class="sm:hidden border-t border-gray-200 pt-4 pb-3"
                 >
                     <div class="flex flex-col gap-1">
-                        <Link
-                            href="/login"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-                            @click="mobileMenuOpen = false"
-                        >
-                            Se connecter
-                        </Link>
-                        <Link
-                            href="/register"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-                            @click="mobileMenuOpen = false"
-                        >
-                            S'inscrire
-                        </Link>
+                        <template v-if="isAuthenticated">
+                            <Link
+                                :href="route('dashboard')"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                                @click="mobileMenuOpen = false"
+                            >
+                                Dashboard
+                            </Link>
+                            <span class="block px-3 py-2 text-base font-medium text-gray-800">{{ page.props.auth.user.name }}</span>
+                            <Link
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-left w-full"
+                                @click="mobileMenuOpen = false"
+                            >
+                                Déconnexion
+                            </Link>
+                        </template>
+                        <template v-else>
+                            <Link
+                                href="/login"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                                @click="mobileMenuOpen = false"
+                            >
+                                Se connecter
+                            </Link>
+                            <Link
+                                href="/register"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                                @click="mobileMenuOpen = false"
+                            >
+                                S'inscrire
+                            </Link>
+                        </template>
                     </div>
                 </div>
             </div>
