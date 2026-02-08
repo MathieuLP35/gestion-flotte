@@ -58,6 +58,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Build frontend (Vite) pour la prod
+        run: |
+          npm ci
+          npm run build
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: 1
+
       - name: Configurer SSH
         run: |
           mkdir -p ~/.ssh
