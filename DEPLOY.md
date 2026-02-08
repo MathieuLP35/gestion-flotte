@@ -186,7 +186,7 @@ cd /opt/dockge && docker compose up -d
 
 **Ajouter le stack Gestion Flotte** dans Dockge :
 
-- **Compose file path** : `/var/www/gestion-flotte/docker-compose.prod.yml`
+- **Compose file path** : chemin vers le projet (ex. `/opt/stacks/gestion-flotte/compose.yml` ou `/var/www/gestion-flotte/compose.yml`)
 - **Compose project name** : `gestion-flotte` (ou laisser par défaut)
 
 La CI et `deploy.sh` lancent `docker compose` dans ce répertoire ; Dockge peut afficher le même stack (logs, Redéploy, etc.) si le chemin correspond.
@@ -226,8 +226,8 @@ Les nouvelles pages et le front (Vite) sont intégrés dans l’**image Docker**
    - **En SSH** (même résultat que Dockge Build + Redeploy) :  
      ```bash
      cd /opt/stacks/gestion-flotte   # ou /var/www/gestion-flotte
-     docker compose -f docker-compose.prod.yml --env-file .env build
-     docker compose -f docker-compose.prod.yml --env-file .env up -d
+     docker compose -f compose.yml --env-file .env build
+     docker compose -f compose.yml --env-file .env up -d
      ```  
      Ou lancer le script complet :  
      `./scripts/vps/deploy.sh`
@@ -254,16 +254,16 @@ Volumes : `storage`, `bootstrap/cache`, `postgres_data`.
 cd /var/www/gestion-flotte
 
 # Logs
-docker compose -f docker-compose.prod.yml logs -f app
-docker compose -f docker-compose.prod.yml logs -f queue
-docker compose -f docker-compose.prod.yml logs -f reverb
+docker compose -f compose.yml logs -f app
+docker compose -f compose.yml logs -f queue
+docker compose -f compose.yml logs -f reverb
 
 # Redémarrer un service
-docker compose -f docker-compose.prod.yml restart app
+docker compose -f compose.yml restart app
 
 # Exec
-docker compose -f docker-compose.prod.yml exec app php artisan tinker
-docker compose -f docker-compose.prod.yml exec app php artisan queue:work --once
+docker compose -f compose.yml exec app php artisan tinker
+docker compose -f compose.yml exec app php artisan queue:work --once
 ```
 
 ---
@@ -288,14 +288,14 @@ L’image `gestion-flotte-app:latest` est **construite sur le VPS**, pas tirée 
 
 1. **Ne jamais lancer `docker compose pull`** pour ce stack. Utiliser **`./scripts/vps/deploy.sh`** (build puis up).
 2. **Avec Dockge** : ne pas utiliser le bouton « Pull » ou « Update and pull ». Pour déployer : lancer `./scripts/vps/deploy.sh` en SSH, ou dans Dockge uniquement « Start » après un premier déploiement réussi via `deploy.sh`. Si « Start » dans Dockge déclenche un `pull` avant `up`, privilégier `deploy.sh` pour les déploiements.
-3. Mettre à jour les scripts sur le VPS (`git pull` ou rsync) pour avoir `deploy.sh` et `docker-compose.prod.yml` à jour (avec `pull_policy: never` sur app/reverb/queue).
+3. Mettre à jour les scripts sur le VPS (`git pull` ou rsync) pour avoir `deploy.sh` et `compose.yml` à jour.
 
 ### « DB_PASSWORD variable is not set »
 
 Docker Compose doit être lancé **avec** `--env-file .env` dans le bon répertoire. Vérifier que :
 
 - `/var/www/gestion-flotte/.env` existe et contient `DB_PASSWORD` (et `DB_CONNECTION=pgsql`, `DB_USERNAME`, `DB_DATABASE`) ;
-- les commandes utilisent : `docker compose -f docker-compose.prod.yml --env-file .env ...`
+- les commandes utilisent : `docker compose -f compose.yml --env-file .env ...`
 
 `deploy.sh` le fait automatiquement. Avec Dockge, définir le **working directory** sur `/var/www/gestion-flotte` et que le stack utilise le `.env` (selon la config Dockge).
 

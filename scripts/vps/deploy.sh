@@ -9,7 +9,7 @@
 #
 # Variables (optionnel):
 #   DEPLOY_PATH=/var/www/gestion-flotte
-#   COMPOSE_FILE=docker-compose.prod.yml
+#   COMPOSE_FILE=compose.yml
 # ---------------------------------------------------------------------------
 
 set -e
@@ -21,12 +21,12 @@ else
   SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 fi
 
-COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
+COMPOSE_FILE="${COMPOSE_FILE:-compose.yml}"
 
 # DEPLOY_PATH : si défini, on l'utilise ; sinon on déduit du script ou /var/www/gestion-flotte
 if [ -n "${DEPLOY_PATH:-}" ]; then
   :
-elif [ -f "$SCRIPT_DIR/../../docker-compose.prod.yml" ]; then
+elif [ -f "$SCRIPT_DIR/../../compose.yml" ]; then
   DEPLOY_PATH="$(cd "$SCRIPT_DIR/../.." && pwd)"
 else
   DEPLOY_PATH="/var/www/gestion-flotte"

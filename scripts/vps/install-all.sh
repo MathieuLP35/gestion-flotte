@@ -102,7 +102,7 @@ elif [ -z "$(ls -A . 2>/dev/null)" ]; then
   echo "    Dépôt cloné."
 else
   git clone --depth 1 "$REPO_URL" /tmp/gf-clone-$$
-  cp /tmp/gf-clone-$$/docker-compose.prod.yml . 2>/dev/null || true
+  cp /tmp/gf-clone-$$/compose.yml . 2>/dev/null || true
   cp -r /tmp/gf-clone-$$/docker . 2>/dev/null || true
   cp /tmp/gf-clone-$$/.env.production.example . 2>/dev/null || true
   cp -r /tmp/gf-clone-$$/scripts . 2>/dev/null || true
@@ -148,7 +148,7 @@ echo "----------------------------------------------"
 if [ "$INSTALL_DOCKGE" = 1 ]; then
   echo ""
   echo "  Dockge : ajoutez le stack avec"
-  echo "  Compose path = $DEPLOY_PATH/docker-compose.prod.yml"
+  echo "  Compose path = $DEPLOY_PATH/compose.yml"
   echo "----------------------------------------------"
 fi
 echo ""

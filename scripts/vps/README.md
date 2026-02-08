@@ -24,7 +24,7 @@ Puis : **éditer `.env`** et lancer **`scripts/vps/deploy.sh`** (ou laisser la C
 
 ## 1. `setup-vps.sh` (une fois)
 
-Installe Docker, crée le répertoire de déploiement, récupère `docker-compose.prod.yml`, `docker/`, `scripts/` et un `.env` à éditer.
+Installe Docker, crée le répertoire de déploiement, récupère `compose.yml`, `docker/`, `scripts/` et un `.env` à éditer.
 
 ### Depuis ta machine (SSH)
 
@@ -79,7 +79,7 @@ cd /var/www/gestion-flotte && ./scripts/vps/deploy.sh
 | Variable        | Défaut                     | Rôle                               |
 |-----------------|----------------------------|------------------------------------|
 | `DEPLOY_PATH`   | répertoire du script/../.. | Dossier de déploiement             |
-| `COMPOSE_FILE`  | `docker-compose.prod.yml`  | Fichier Compose à utiliser         |
+| `COMPOSE_FILE`  | `compose.yml`  | Fichier Compose à utiliser (Dockge utilise le même) |
 
 ---
 

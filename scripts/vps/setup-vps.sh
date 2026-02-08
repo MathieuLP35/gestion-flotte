@@ -63,7 +63,7 @@ elif [ -z "$(ls -A . 2>/dev/null)" ]; then
 else
   echo ">>> Récupération docker-compose, docker/, scripts/ depuis le dépôt..."
   git clone --depth 1 "$REPO_URL" /tmp/gf-clone-$$
-  cp /tmp/gf-clone-$$/docker-compose.prod.yml . 2>/dev/null || true
+  cp /tmp/gf-clone-$$/compose.yml . 2>/dev/null || true
   cp -r /tmp/gf-clone-$$/docker . 2>/dev/null || true
   cp /tmp/gf-clone-$$/.env.production.example . 2>/dev/null || true
   cp -r /tmp/gf-clone-$$/scripts . 2>/dev/null || true

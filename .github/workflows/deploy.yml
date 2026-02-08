@@ -86,7 +86,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ env.SERVER_HOST }} \
             "cd ${{ env.DEPLOY_PATH }} && \
-             docker compose -f docker-compose.prod.yml --env-file .env build && \
-             docker compose -f docker-compose.prod.yml --env-file .env up -d && \
+             docker compose -f compose.yml --env-file .env build && \
+             docker compose -f compose.yml --env-file .env up -d && \
              sleep 5 && \
-             docker compose -f docker-compose.prod.yml --env-file .env exec -T app php artisan migrate --force || true"
+             docker compose -f compose.yml --env-file .env exec -T app php artisan migrate --force || true"
