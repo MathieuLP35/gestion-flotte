@@ -35,12 +35,72 @@ sudo usermod -aG docker $USER
 
 ## 2. Préparer le dépôt GitHub
 
+### Clé SSH pour GitHub Actions → VPS
+
+GitHub Actions se connecte au VPS en SSH. Il faut une **paire de clés** : la **clé privée** dans les secrets du repo, et la **clé publique** sur le VPS.
+
+#### Étape 1 : Générer une paire de clés (en local, une seule fois)
+
+Sur ton PC (PowerShell, bash ou WSL) :
+
+```bash
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f deploy_key
+```
+
+Quand il demande « Enter passphrase (empty for no passphrase): », appuie simplement sur **Entrée** deux fois (pas de mot de passe).
+
+Sous **PowerShell**, si tu veux une commande sans interaction, utilise :
+
+```powershell
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f deploy_key -N '""'
+```
+
+Cela crée deux fichiers :
+
+- **`deploy_key`** → clé **privée** (à mettre dans GitHub Secrets)
+- **`deploy_key.pub`** → clé **publique** (à mettre sur le VPS)
+
+#### Étape 2 : Mettre la clé publique sur le VPS
+
+Connecte-toi au VPS avec ton utilisateur habituel (celui que tu utiliseras pour le déploiement, ex. `root` ou `deploy`) :
+
+```bash
+ssh TON_USER@IP_DU_VPS
+```
+
+Sur le VPS, assure-toi que le dossier et le fichier autorisés existent, puis ajoute la clé **publique** :
+
+```bash
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "COLLER_ICI_LE_CONTENU_DE_deploy_key.pub" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Pour récupérer le contenu de `deploy_key.pub` depuis ton PC :
+
+- Sous Windows (PowerShell) : `Get-Content deploy_key.pub`
+- Sous Linux/Mac : `cat deploy_key.pub`
+
+Copie tout le contenu (une ligne du type `ssh-ed25519 AAAAC3... github-actions-deploy`) et colle-le à la place de `COLLER_ICI_LE_CONTENU_DE_deploy_key.pub`.
+
+#### Étape 3 : Mettre la clé privée dans GitHub
+
+1. Repo GitHub → **Settings** → **Secrets and variables** → **Actions**
+2. **New repository secret**
+3. Name : **`SSH_PRIVATE_KEY`**
+4. Value : **tout le contenu** du fichier **`deploy_key`** (clé privée), du début à la fin, y compris les lignes `-----BEGIN ... KEY-----` et `-----END ... KEY-----`.
+
+Ajoute aussi le secret **`SSH_USER`** (valeur = l’utilisateur SSH du VPS, ex. `root` ou `deploy`).
+
+Après ça, le workflow de déploiement pourra se connecter au VPS sans mot de passe.
+
 ### Secrets (Settings → Secrets and variables → Actions)
 
-| Secret            | Description                                  |
-|-------------------|----------------------------------------------|
-| `SSH_PRIVATE_KEY` | Clé privée SSH pour `SSH_USER@IP`   |
-| `SSH_USER`        | Utilisateur SSH (ex. `root`, `deploy`)       |
+| Secret            | Description                                                                 |
+|-------------------|-----------------------------------------------------------------------------|
+| `SSH_PRIVATE_KEY` | Contenu complet du fichier `deploy_key` (clé privée générée à l’étape 1).  |
+| `SSH_USER`        | Utilisateur SSH sur le VPS (ex. `root`, `deploy`) — celui dont `authorized_keys` a reçu la clé publique. |
 
 Pas de registry : l’image est construite sur le VPS. Les **build args Vite** (`VITE_APP_NAME`, `REVERB_*`) viennent du **`.env`** sur le serveur.
 
@@ -144,6 +204,35 @@ La CI et `deploy.sh` lancent `docker compose` dans ce répertoire ; Dockge peut 
 3. Sur le VPS : **`docker compose build`** → **`up -d`** → **`migrate --force`**
 
 Rien à faire à la main si les secrets GitHub et le `.env` sur le serveur sont corrects.
+
+### Rebuild pour voir les nouvelles pages (Terms, Privacy, etc.)
+
+Les nouvelles pages et le front (Vite) sont intégrés dans l’**image Docker** au moment du **build**. Un simple redémarrage des conteneurs ne suffit pas : il faut **reconstruire l’image** puis relancer le stack.
+
+**Option 1 – Déclencher la CI (recommandé)**  
+- Pousser sur `main` ou lancer le workflow « Deploy Production » (Actions → workflow_dispatch).  
+- La CI fait : rsync du code → `docker compose build` → `up -d` → migrate.  
+- Les nouvelles pages sont alors en production.
+
+**Option 2 – Rebuild manuel (avec Dockge ou SSH)**  
+
+1. **Mettre le code à jour sur le serveur**  
+   - Si la CI déploie vers `/opt/stacks/gestion-flotte` : déclencher un déploiement (push ou workflow_dispatch) pour que le rsync envoie le nouveau code.  
+   - Si le projet est en git sur le serveur (`/var/www/gestion-flotte` ou `/opt/stacks/gestion-flotte`) :  
+     `cd /opt/stacks/gestion-flotte && git pull`
+
+2. **Rebuild + up**  
+   - **Avec Dockge** : ouvrir le stack « Gestion Flotte », utiliser le bouton **« Build »** ou **« Compose - Build »** (selon la version) pour reconstruire l’image, puis **« Start »** / **« Redeploy »**.  
+   - **En SSH** (même résultat que Dockge Build + Redeploy) :  
+     ```bash
+     cd /opt/stacks/gestion-flotte   # ou /var/www/gestion-flotte
+     docker compose -f docker-compose.prod.yml --env-file .env build
+     docker compose -f docker-compose.prod.yml --env-file .env up -d
+     ```  
+     Ou lancer le script complet :  
+     `./scripts/vps/deploy.sh`
+
+**À ne pas faire** : dans Dockge, ne pas utiliser « Update and pull » / « Pull » (l’image est buildée localement, pas sur un registry).
 
 ---
 
