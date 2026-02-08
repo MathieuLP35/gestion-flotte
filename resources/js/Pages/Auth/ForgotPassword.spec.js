@@ -7,8 +7,8 @@ describe('ForgotPassword', () => {
     const wrapper = mount(ForgotPassword);
 
     expect(wrapper.find('input#email').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Email Password Reset Link');
-    expect(wrapper.text()).toContain('Forgot your password? No problem.');
+    expect(wrapper.text()).toContain('Réinitialiser le mot de passe');
+    expect(wrapper.text()).toContain('Saisissez votre adresse e-mail');
   });
 
   it('uses GuestLayout', () => {

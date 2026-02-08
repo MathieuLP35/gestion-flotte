@@ -6,9 +6,9 @@ describe('VerifyEmail', () => {
   it('renders verification message and Resend button', () => {
     const wrapper = mount(VerifyEmail);
 
-    expect(wrapper.text()).toContain('Thanks for signing up!');
-    expect(wrapper.text()).toContain('Resend Verification Email');
-    expect(wrapper.text()).toContain('Log Out');
+    expect(wrapper.text()).toContain('Merci de vous être inscrit !');
+    expect(wrapper.text()).toContain("Renvoyer l'e-mail de vérification");
+    expect(wrapper.text()).toContain('Déconnexion');
   });
 
   it('uses GuestLayout', () => {
@@ -20,6 +20,6 @@ describe('VerifyEmail', () => {
     const wrapper = mount(VerifyEmail, {
       props: { status: 'verification-link-sent' },
     });
-    expect(wrapper.text()).toContain('A new verification link has been sent');
+    expect(wrapper.text()).toContain('Un nouveau lien de vérification');
   });
 });

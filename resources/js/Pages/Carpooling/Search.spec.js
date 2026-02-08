@@ -8,7 +8,7 @@ vi.mock('@/Composables/useDate', () => ({
 
 const pageProps = {
   props: {
-    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [] },
+    auth: { user: { name: 'User', email: 'u@u.com' }, roles: [], permissions: [] },
   },
 };
 

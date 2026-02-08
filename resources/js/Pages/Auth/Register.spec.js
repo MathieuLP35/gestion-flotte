@@ -10,7 +10,7 @@ describe('Register', () => {
     expect(wrapper.find('input#email').exists()).toBe(true);
     expect(wrapper.find('input#password').exists()).toBe(true);
     expect(wrapper.find('input#password_confirmation').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Register');
+    expect(wrapper.text()).toContain("S'inscrire");
   });
 
   it('uses GuestLayout', () => {
@@ -20,7 +20,7 @@ describe('Register', () => {
 
   it('shows link to login (Already registered?)', () => {
     const wrapper = mount(Register);
-    expect(wrapper.text()).toContain('Already registered?');
+    expect(wrapper.text()).toContain('Déjà inscrit ?');
     expect(wrapper.find('a[href="/r/login"]').exists()).toBe(true);
   });
 });

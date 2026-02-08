@@ -9,7 +9,7 @@ describe('Login', () => {
     expect(wrapper.find('input#email').exists()).toBe(true);
     expect(wrapper.find('input#password').exists()).toBe(true);
     expect(wrapper.find('form').find('button').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Log in');
+    expect(wrapper.text()).toContain('Connexion');
   });
 
   it('uses GuestLayout', () => {
@@ -19,13 +19,13 @@ describe('Login', () => {
 
   it('shows Forgot your password link when canResetPassword is true', () => {
     const wrapper = mount(Login, { props: { canResetPassword: true } });
-    expect(wrapper.text()).toContain('Forgot your password?');
+    expect(wrapper.text()).toContain('Mot de passe oublié ?');
     expect(wrapper.find('a[href="/r/password/request"]').exists()).toBe(true);
   });
 
   it('hides Forgot your password link when canResetPassword is false', () => {
     const wrapper = mount(Login, { props: { canResetPassword: false } });
-    expect(wrapper.text()).not.toContain('Forgot your password?');
+    expect(wrapper.text()).not.toContain('Mot de passe oublié ?');
   });
 
   it('renders Head with title Log in', () => {

@@ -34,7 +34,7 @@ describe('Admin/Vehicles/Calendar', () => {
     expect(wrapper.text()).toContain('Clio');
     expect(wrapper.text()).toContain('AB-123');
     expect(wrapper.text()).toContain('5000');
-    expect(wrapper.text()).toContain('Retour à la liste');
+    expect(wrapper.text()).toContain('Retour aux véhicules');
   });
 
   it('renders legend and calendar container', () => {

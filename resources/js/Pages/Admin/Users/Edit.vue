@@ -13,7 +13,7 @@ const props = defineProps({
     roles: Array,
 });
 
-const roleId = ref(props.user?.role_id ?? null);
+const roleId = ref(props.user?.role_id ?? props.user?.roles?.[0]?.id ?? null);
 
 const editUser = (id) => {
     router.put(route('admin.users.update', id), {
