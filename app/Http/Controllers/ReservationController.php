@@ -34,13 +34,13 @@ class ReservationController extends Controller
     {
         $userId = Auth::id();
 
-        // 1. Les trajets où je suis CONDUCTEUR
+        // Les trajets où je suis CONDUCTEUR
         $reservationsAsDriver = Reservation::with(['vehicle', 'passengers.user'])
             ->where('user_id', $userId)
             ->orderBy('date_debut', 'desc')
             ->get();
 
-        // 2. Les trajets où je suis PASSAGER
+        // Les trajets où je suis PASSAGER
         // On passe par le modèle Passenger pour récupérer les infos
         $reservationsAsPassenger = Passenger::with(['reservation.driver', 'reservation.vehicle'])
             ->where('user_id', $userId)

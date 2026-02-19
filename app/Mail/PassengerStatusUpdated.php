@@ -45,7 +45,7 @@ class PassengerStatusUpdated extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        // On pointe vers une vue Markdown (recommandé)
+        // On pointe vers une vue Markdown
         return new Content(
             markdown: 'emails.passengers.status_updated',
         );

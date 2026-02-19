@@ -20,7 +20,6 @@ class AllowedDomainController extends Controller
         return Inertia::render('Admin/Domains/Index', [
             'domains' => AllowedDomain::orderBy('name')->get(),
             'can' => [
-                // Gate::allows() est parfaitement reconnu par les IDE
                 'create' => Gate::allows('allowed_domains.create'),
                 'edit' => Gate::allows('allowed_domains.edit'),
                 'delete' => Gate::allows('allowed_domains.delete'),
@@ -30,7 +29,6 @@ class AllowedDomainController extends Controller
 
     public function store(Request $request)
     {
-        // Vérification du droit de création
         $this->authorize('allowed_domains.create');
 
         $request->validate([
@@ -66,7 +64,6 @@ class AllowedDomainController extends Controller
 
     public function destroy(AllowedDomain $domain)
     {
-        // Ta façon de faire que tu aimes (et qui fonctionne en L12)
         $this->authorize('allowed_domains.delete');
 
         $domain->delete();

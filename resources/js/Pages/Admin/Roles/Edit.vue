@@ -11,8 +11,8 @@ const props = defineProps({
 });
 
 const form = useForm({
-    name: props.role.data.name, 
-    permissions: [...(props.role.data.permissions || [])], 
+    name: props.role.data.name,
+    permissions: [...(props.role.data.permissions || [])],
 });
 
 const submit = () => {
@@ -31,7 +31,6 @@ const submit = () => {
     <div class="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Modifier le rôle</h1>
         <form @submit.prevent="submit" class="space-y-6">
-            <pre>{{ role }}</pre>
             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <label for="name" class="block text-sm font-medium text-gray-700">Nom du rôle</label>
                 <input

@@ -21,12 +21,12 @@ class PassengerPolicy
      */
     public function delete(User $user, Passenger $passenger): bool
     {
-        // 1. Le passager LUI-MÊME a le droit (pour annuler sa place)
+        // Le passager LUI-MÊME a le droit (pour annuler sa place)
         if ($user->id === $passenger->user_id) {
             return true;
         }
 
-        // 2. Le CONDUCTEUR du trajet a le droit (pour le retirer)
+        // Le CONDUCTEUR du trajet a le droit (pour le retirer)
         return $user->id === $passenger->reservation->user_id;
     }
 }

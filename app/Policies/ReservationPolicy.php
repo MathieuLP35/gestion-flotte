@@ -12,12 +12,12 @@ class ReservationPolicy
      */
     public function view(User $user, Reservation $reservation): bool
     {
-        // 1. Le conducteur a le droit
+        // Le conducteur a le droit
         if ($user->id === $reservation->user_id) {
             return true;
         }
 
-        // 2. Un passager confirmé ou en attente a le droit
+        // Un passager confirmé ou en attente a le droit
         return $reservation->passengers()
             ->where('user_id', $user->id)
             ->whereIn('statut', ['confirme', 'en_attente'])

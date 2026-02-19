@@ -19,7 +19,6 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 2. VOS POLICIES SONT DÉJÀ ENREGISTRÉES ICI
         Reservation::class => ReservationPolicy::class,
         Passenger::class => PassengerPolicy::class,
     ];
@@ -31,8 +30,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // C'est le "passe-droit" (Master Key)
-        // Il s'exécute AVANT toutes les autres Policies.
         Gate::before(function (User $user, string $ability) {
             // Si l'utilisateur a ce rôle, il a tous les droits.
             if ($user->hasRole('Super Admin')) {

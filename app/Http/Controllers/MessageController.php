@@ -13,7 +13,6 @@ class MessageController extends Controller
     // RÉCUPÈRE tous les messages pour une réservation
     public function index(Reservation $reservation)
     {
-        // !! IMPORTANT !!
         $this->authorize('view', $reservation);
 
         // On charge les messages avec l'utilisateur qui les a envoyés
@@ -25,7 +24,6 @@ class MessageController extends Controller
     // ENVOIE un nouveau message
     public function store(Request $request, Reservation $reservation)
     {
-        // !! IMPORTANT !!
         $this->authorize('view', $reservation);
 
         $request->validate(['body' => 'required|string|max:2000']);

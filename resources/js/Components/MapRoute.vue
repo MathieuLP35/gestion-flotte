@@ -15,31 +15,25 @@ const props = defineProps({
 const mapContainer = ref(null);
 let map = null;
 
-function openGPS() {
+const openGPS = () => {
     const lat = props.endCoords[0];
     const lng = props.endCoords[1];
-    const label = "Destination"; // Nom affiché sur le marqueur GPS
+    const label = "Destination";
     
-    // Détection de l'appareil
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
 
     if (isIOS) {
-        // Sur iOS : 'maps://' ouvre Apple Maps, qui propose souvent Google Maps/Waze si installés
-        // Format : maps://?q=LAT,LNG
         window.location.href = `maps://?q=${label}&ll=${lat},${lng}`;
     } 
     else if (isAndroid) {
-        // Sur Android : 'geo:' déclenche le "Intent Chooser" du système
-        // Cela affiche la liste : Google Maps, Waze, Citymapper, etc.
         window.location.href = `geo:0,0?q=${lat},${lng}(${label})`;
     } 
     else {
-        // Sur PC / Desktop : On ouvre Google Maps dans un nouvel onglet
         const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
         window.open(url, '_blank');
     }
-}
+};
 
 onMounted(() => {
 

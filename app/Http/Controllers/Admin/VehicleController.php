@@ -14,7 +14,6 @@ class VehicleController extends Controller
 {
     use AuthorizesRequests;
 
-    // Redirection vers la page disponibilités (remplace l'ancienne liste)
     public function index()
     {
         $this->authorize('vehicles.view');
@@ -22,7 +21,7 @@ class VehicleController extends Controller
         return redirect()->route('admin.vehicles.availability');
     }
 
-    // Formulaire de création
+
     public function create()
     {
         $this->authorize('vehicles.create');
@@ -52,7 +51,6 @@ class VehicleController extends Controller
             abort(403);
         }
 
-        // Charger les réservations du véhicule avec les informations nécessaires
         $reservations = $vehicle->reservations()
             ->with(['driver', 'passengers'])
             ->orderBy('date_debut', 'asc')
@@ -106,7 +104,7 @@ class VehicleController extends Controller
     public function store(Request $request)
     {
         $this->authorize('vehicles.create');
-        // 1. Validation (on ajoute nbr_cles)
+
         $validated = $request->validate([
             'modele' => 'required|string|max:255',
             'immatriculation' => 'required|string|unique:vehicles',
@@ -120,14 +118,12 @@ class VehicleController extends Controller
         $validated['agence_id'] = Auth::user()->agence_id;
         $validated['en_maintenance'] = false;
 
-        // 2. On stocke le véhicule dans une variable pour récupérer son ID
         $vehicle = Vehicle::create($validated);
 
-        // 3. Boucle pour créer les clés correspondantes
         for ($i = 1; $i <= $request->nbr_cles; $i++) {
             VehicleKey::create([
                 'vehicle_id' => $vehicle->id,
-                'emplacement_clef' => "{$validated['immatriculation']} (Clé {$i})", // Valeur par défaut
+                'emplacement_clef' => "{$validated['immatriculation']} (Clé {$i})",
             ]);
         }
 

@@ -31,7 +31,7 @@ class VehicleSuggestionSetting extends Model
     public const ENERGIES = ['electrique', 'hybride', 'essence', 'diesel'];
 
     /**
-     * Retourne la configuration (une seule ligne globale). Crée la ligne avec les défauts si absente.
+     * Retourne la configuration. Crée la ligne avec les défauts si absente.
      */
     public static function get(): self
     {
