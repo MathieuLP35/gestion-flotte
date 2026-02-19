@@ -56,11 +56,16 @@ describe('useGeocoding', () => {
     expect(suggestionsDeparture.value[0].source).toBe('adresse_gouv');
   });
 
-  it('fetchSuggestions clears suggestions and sets loading false on fetch error', async () => {
-    global.fetch.mockRejectedValue(new Error('Network error'));
-    const { fetchSuggestions, suggestionsDeparture, isLoadingDeparture } = useGeocoding();
-    await fetchSuggestions('paris 75001', 'departure');
-    expect(suggestionsDeparture.value).toEqual([]);
-    expect(isLoadingDeparture.value).toBe(false);
-  });
+    it('fetchSuggestions clears suggestions and sets loading false on fetch error', async () => {
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        global.fetch.mockRejectedValue(new Error('Network error'));
+        const { fetchSuggestions, suggestionsDeparture, isLoadingDeparture } = useGeocoding();
+        await fetchSuggestions('paris 75001', 'departure');
+
+        expect(suggestionsDeparture.value).toEqual([]);
+        expect(isLoadingDeparture.value).toBe(false);
+        expect(consoleSpy).toHaveBeenCalled();
+        consoleSpy.mockRestore();
+    });
 });

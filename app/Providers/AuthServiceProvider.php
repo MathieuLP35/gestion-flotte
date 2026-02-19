@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-// 1. IMPORTEZ VOS MODÈLES ET POLICIES
 use App\Models\Passenger;
 use App\Models\Reservation;
 use App\Models\User;

@@ -1,84 +1,118 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import AdminDashboardMap from '@/Components/AdminDashboardMap.vue';
+import L from 'leaflet';
 
-const mockMap = { setView: vi.fn(), fitBounds: vi.fn(), remove: vi.fn() };
+// Configuration des mocks
+const mockMap = {
+    setView: vi.fn().mockReturnThis(),
+    fitBounds: vi.fn().mockReturnThis(),
+    remove: vi.fn(),
+    addLayer: vi.fn().mockReturnThis(),
+    removeLayer: vi.fn().mockReturnThis()
+};
+
 const mockTileLayer = { addTo: vi.fn().mockReturnThis() };
-const mockLayerGroup = { addTo: vi.fn().mockReturnThis(), removeLayer: vi.fn() };
 
+const mockClusterGroup = {
+    addLayer: vi.fn(),
+    clearLayers: vi.fn(),
+    getAllChildMarkers: vi.fn(() => []),
+    getChildCount: vi.fn(() => 0),
+};
+
+// Mock de Leaflet
 vi.mock('leaflet', () => ({
-  default: {
-    map: vi.fn(() => mockMap),
-    tileLayer: vi.fn(() => mockTileLayer),
-    layerGroup: vi.fn(() => mockLayerGroup),
-    marker: vi.fn(() => ({ addTo: vi.fn().mockReturnThis(), bindPopup: vi.fn().mockReturnThis() })),
-    divIcon: vi.fn(() => ({})),
-    Icon: { Default: { prototype: {}, mergeOptions: vi.fn() } },
-  },
+    default: {
+        map: vi.fn(() => mockMap),
+        tileLayer: vi.fn(() => mockTileLayer),
+        markerClusterGroup: vi.fn(() => mockClusterGroup),
+        marker: vi.fn(() => ({
+            addTo: vi.fn().mockReturnThis(),
+            bindPopup: vi.fn().mockReturnThis(),
+            options: {}
+        })),
+        divIcon: vi.fn(() => ({})),
+        point: vi.fn((x, y) => ({ x, y })),
+        Icon: { Default: { prototype: {}, mergeOptions: vi.fn() } },
+    },
 }));
 
+// Mock de markercluster pour éviter les erreurs d'import CSS/JS
+vi.mock('leaflet.markercluster', () => ({}));
+
 describe('AdminDashboardMap', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('renders title Carte des trajets', () => {
-    const wrapper = mount(AdminDashboardMap, {
-      props: { reservations: [] },
-    });
-    expect(wrapper.text()).toContain('Carte des trajets');
-    expect(wrapper.text()).toContain('Départ');
-    expect(wrapper.text()).toContain('Destination');
-  });
-
-  it('renders map container', () => {
-    const wrapper = mount(AdminDashboardMap, {
-      props: { reservations: [] },
-    });
-    expect(wrapper.find('.rounded-xl').exists()).toBe(true);
-  });
-
-  it('accepts reservations prop', () => {
-    const wrapper = mount(AdminDashboardMap, {
-      props: {
-        reservations: [
-          { id: 1, depart: 'Paris', destination: 'Lyon', statut: 'validé' },
-        ],
-      },
-    });
-    expect(wrapper.props('reservations')).toHaveLength(1);
-    expect(wrapper.props('reservations')[0].depart).toBe('Paris');
-  });
-
-  it('initialise la carte avec la vue par défaut quand il ne trouve pas de coordonnées', () => {
-    mount(AdminDashboardMap, {
-      props: { reservations: [] },
+    beforeEach(() => {
+        vi.clearAllMocks();
+        document.body.innerHTML = '';
     });
 
-    expect(mockMap.setView).toHaveBeenCalledWith([46.8, 2.5], 6);
-  });
-
-  it('place des marqueurs et ajuste les bornes quand des coordonnées sont fournies', () => {
-    mount(AdminDashboardMap, {
-      props: {
-        reservations: [
-          {
-            id: 1,
-            depart: 'Paris',
-            destination: 'Lyon',
-            statut: 'validé',
-            depart_latitude: '48.8566',
-            depart_longitude: '2.3522',
-            destination_latitude: '45.7640',
-            destination_longitude: '4.8357',
-          },
-        ],
-      },
+    it('affiche le titre et la légende', () => {
+        const wrapper = mount(AdminDashboardMap, {
+            props: { reservations: [] },
+        });
+        expect(wrapper.text()).toContain('Carte des trajets');
+        expect(wrapper.text()).toContain('Départ');
+        expect(wrapper.text()).toContain('Arrivée');
     });
 
-    // Ici, le simple montage avec des coordonnées suffit à exécuter buildMarkers
-    // et donc la branche qui gère les bornes et les marqueurs.
-    // L'objectif est la couverture de code, pas de vérifier Leaflet en détail.
-    expect(true).toBe(true);
-  });
+    it('gère l\'ouverture et la fermeture du plein écran', async () => {
+        const wrapper = mount(AdminDashboardMap, {
+            props: { reservations: [] },
+            global: {
+                stubs: {
+                    // On ne stub PAS teleport pour qu'il rende vraiment son contenu
+                    Teleport: false
+                }
+            }
+        });
+
+        // 1. Ouvrir
+        const btn = wrapper.find('button[title="Agrandir la carte"]');
+        await btn.trigger('click');
+
+        expect(wrapper.vm.isFullScreen).toBe(true);
+        await nextTick();
+        await nextTick(); // Parfois deux ticks sont nécessaires pour le portail
+
+        // On cherche dans le body global
+        expect(document.body.innerHTML).toContain('Vue détaillée des trajets');
+
+        // 2. Fermer
+        const closeBtn = document.body.querySelector('button');
+        if (closeBtn) {
+            closeBtn.click();
+            await nextTick();
+            expect(wrapper.vm.isFullScreen).toBe(false);
+        }
+    });
+
+    it('initialise la carte avec MarkerCluster', () => {
+        mount(AdminDashboardMap, {
+            props: { reservations: [] },
+        });
+
+        // Utilisation directe de l'import mocké
+        expect(L.markerClusterGroup).toHaveBeenCalled();
+        expect(mockMap.addLayer).toHaveBeenCalled();
+    });
+
+    it('ajuste les bornes quand des coordonnées sont présentes', async () => {
+        mount(AdminDashboardMap, {
+            props: {
+                reservations: [
+                    {
+                        id: 1,
+                        depart_latitude: 48.8,
+                        depart_longitude: 2.3,
+                        destination_latitude: 45.7,
+                        destination_longitude: 4.8,
+                    },
+                ],
+            },
+        });
+
+        expect(mockMap.fitBounds).toHaveBeenCalled();
+    });
 });
