@@ -6,7 +6,7 @@ use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Vehicle;
 
-it('construit le mail ReservationStatusChanged', function () {
+it('construit le mail ReservationStatusChanged', function (): void {
     $agence = Agence::factory()->create();
     $u = User::factory()->create(['agence_id' => $agence->id]);
     $v = Vehicle::create([

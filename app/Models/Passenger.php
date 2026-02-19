@@ -16,11 +16,17 @@ class Passenger extends Model
 {
     protected $fillable = ['reservation_id', 'user_id', 'statut'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Reservation, $this>
+     */
     public function reservation(): BelongsTo
     {
         return $this->belongsTo(Reservation::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -23,21 +23,33 @@ class Vehicle extends Model
         'agence_id', 'modele', 'immatriculation', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Agence, $this>
+     */
     public function agence(): BelongsTo
     {
         return $this->belongsTo(Agence::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Maintenance, $this>
+     */
     public function maintenances(): HasMany
     {
         return $this->hasMany(Maintenance::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<VehicleKey, $this>
+     */
     public function keys(): HasMany
     {
         return $this->hasMany(VehicleKey::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Reservation, $this>
+     */
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
@@ -89,12 +101,12 @@ class Vehicle extends Model
 
         // Vérifier la disponibilité si des dates sont fournies
         if ($dateDebut && $dateFin) {
-            $query->whereDoesntHave('reservations', function ($q) use ($dateDebut, $dateFin) {
+            $query->whereDoesntHave('reservations', function ($q) use ($dateDebut, $dateFin): void {
                 $q->where('statut', 'validé')
-                    ->where(function ($query) use ($dateDebut, $dateFin) {
+                    ->where(function ($query) use ($dateDebut, $dateFin): void {
                         $query->whereBetween('date_debut', [$dateDebut, $dateFin])
                             ->orWhereBetween('date_fin', [$dateDebut, $dateFin])
-                            ->orWhere(function ($q) use ($dateDebut, $dateFin) {
+                            ->orWhere(function ($q) use ($dateDebut, $dateFin): void {
                                 $q->where('date_debut', '<=', $dateDebut)
                                     ->where('date_fin', '>=', $dateFin);
                             });

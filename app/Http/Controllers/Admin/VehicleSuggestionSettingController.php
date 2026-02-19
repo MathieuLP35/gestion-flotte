@@ -5,15 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\VehicleSuggestionSetting;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class VehicleSuggestionSettingController extends Controller
 {
     use AuthorizesRequests;
 
-    public function edit()
+    /**
+     * @return Response
+     */
+    public function edit() : Response
     {
         $this->authorize('vehicle_suggestion.view');
 
@@ -32,7 +37,11 @@ class VehicleSuggestionSettingController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function update(Request $request) : RedirectResponse
     {
         $this->authorize('vehicle_suggestion.edit');
 

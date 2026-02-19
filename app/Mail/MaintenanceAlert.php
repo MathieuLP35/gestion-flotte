@@ -18,6 +18,11 @@ class MaintenanceAlert extends Mailable implements ShouldQueue
         public Maintenance $maintenance
     ) {}
 
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
         return $this->subject('Alerte entretien – '.$this->vehicle->modele.' ('.$this->vehicle->immatriculation.')')

@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\VehicleKey;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class KeyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): void
     {
         //
     }
@@ -22,15 +24,18 @@ class KeyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): void
     {
         //
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
@@ -43,7 +48,7 @@ class KeyController extends Controller
             return redirect()->back()->with('error', 'Véhicule non trouvé.');
         }
 
-        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -59,19 +64,22 @@ class KeyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(VehicleKey $vehicleKey)
+    public function show(VehicleKey $vehicleKey): void
     {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
+     *
+     * @param VehicleKey $key
+     * @return Response
      */
-    public function edit(VehicleKey $key)
+    public function edit(VehicleKey $key): Response
     {
         $key->load('vehicle');
 
-        if (! Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -82,10 +90,14 @@ class KeyController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param Request $request
+     * @param VehicleKey $key
+     * @return RedirectResponse
      */
-    public function update(Request $request, VehicleKey $key)
+    public function update(Request $request, VehicleKey $key): RedirectResponse
     {
-        if (! Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -103,22 +115,22 @@ class KeyController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param VehicleKey $key
+     * @return RedirectResponse
      */
-    public function destroy($vehicleKey)
+    public function destroy(VehicleKey $key): RedirectResponse
     {
-        $key = VehicleKey::find($vehicleKey);
-        if ($key) {
-            $key->load('vehicle');
-            if (! Auth::user()->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()->agence_id) {
-                abort(403);
-            }
-            $vehicleId = $key->vehicle_id;
-            $key->delete();
+        $key->load('vehicle');
 
-            return redirect()->route('admin.vehicles.edit', $vehicleId)
-                ->with('success', 'Clé supprimée avec succès.');
+        if (! Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
+            abort(403);
         }
 
-        return redirect()->back()->with('error', 'Clé non trouvée.');
+        $vehicleId = $key->vehicle_id;
+        $key->delete();
+
+        return redirect()->route('admin.vehicles.edit', $vehicleId)
+            ->with('success', 'Clé supprimée avec succès.');
     }
 }

@@ -19,6 +19,11 @@ class PassengerRemovedFromTrip extends Mailable implements ShouldQueue
         $this->reservation->loadMissing(['vehicle', 'driver']);
     }
 
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
         return $this->subject('Vous avez été retiré d’un trajet covoiturage')

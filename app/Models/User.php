@@ -57,23 +57,35 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Agence, $this>
+     */
     public function agence(): BelongsTo
     {
         return $this->belongsTo(Agence::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Reservation, $this>
+     */
     // Les trajets où cet utilisateur est le CONDUCTEUR
     public function reservationsAsDriver(): HasMany
     {
         return $this->hasMany(Reservation::class, 'user_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Passenger, $this>
+     */
     // Les trajets où cet utilisateur est PASSAGER
     public function reservationsAsPassenger(): HasMany
     {
         return $this->hasMany(Passenger::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Message, $this>
+     */
     public function messages()
     {
         return $this->hasMany(Message::class);

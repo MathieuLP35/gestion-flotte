@@ -6,33 +6,45 @@ use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\VehicleKey;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class VehicleController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    /**
+     * @return RedirectResponse
+     */
+    public function index(): RedirectResponse
     {
         $this->authorize('vehicles.view');
 
         return redirect()->route('admin.vehicles.availability');
     }
 
-
-    public function create()
+    /**
+     * @return Response
+     */
+    public function create(): Response
     {
         $this->authorize('vehicles.create');
 
         return Inertia::render('Admin/Vehicles/Create');
     }
 
-    public function show(Vehicle $vehicle)
+    /**
+     * @param Vehicle $vehicle
+     * @return Response
+     */
+    public function show(Vehicle $vehicle): Response
     {
         $this->authorize('vehicles.view');
-        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+
+        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -42,12 +54,14 @@ class VehicleController extends Controller
     }
 
     /**
-     * Affiche le calendrier de disponibilités d'un véhicule
+     * @param Vehicle $vehicle
+     * @return Response
      */
-    public function calendar(Vehicle $vehicle)
+    public function calendar(Vehicle $vehicle): Response
     {
         $this->authorize('vehicles.view');
-        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+
+        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -63,14 +77,16 @@ class VehicleController extends Controller
     }
 
     /**
-     * Affiche la page de disponibilités avec tous les véhicules
+     * @param Request $request
+     * @return Response
      */
-    public function availability(Request $request)
+    public function availability(Request $request): Response
     {
         $this->authorize('vehicles.view');
+
         $query = Vehicle::query()->orderBy('modele', 'asc');
-        if (! Auth::user()->can('agences.view_all')) {
-            $query->where('agence_id', Auth::user()->agence_id);
+        if (! Auth::user()?->can('agences.view_all')) {
+            $query->where('agence_id', Auth::user()?->agence_id);
         }
         $vehicles = $query->get();
 
@@ -78,7 +94,6 @@ class VehicleController extends Controller
         $selectedVehicle = null;
         $reservations = collect();
 
-        // Si aucun véhicule n'est sélectionné, prendre le premier par défaut
         if (! $selectedVehicleId && $vehicles->isNotEmpty()) {
             $selectedVehicleId = $vehicles->first()->id;
         }
@@ -100,8 +115,11 @@ class VehicleController extends Controller
         ]);
     }
 
-    // Enregistre un nouveau véhicule
-    public function store(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('vehicles.create');
 
@@ -115,42 +133,50 @@ class VehicleController extends Controller
             'energie' => 'required|in:essence,diesel,hybride,electrique',
         ]);
 
-        $validated['agence_id'] = Auth::user()->agence_id;
+        $validated['agence_id'] = Auth::user()?->agence_id;
         $validated['en_maintenance'] = false;
 
         $vehicle = Vehicle::create($validated);
 
-        for ($i = 1; $i <= $request->nbr_cles; $i++) {
+        for ($i = 1; $i <= (int) $request->nbr_cles; $i++) {
             VehicleKey::create([
                 'vehicle_id' => $vehicle->id,
                 'emplacement_clef' => "{$validated['immatriculation']} (Clé {$i})",
             ]);
         }
 
-        return redirect()->route('admin.vehicles.availability')->with('success', 'Véhicule et clés créés avec succès');
+        return redirect()->route('admin.vehicles.availability')->with('success', 'Véhicule créé');
     }
 
-    // Formulaire d’édition d’un véhicule
-    public function edit(Vehicle $vehicle)
+    /**
+     * @param Vehicle $vehicle
+     * @return Response
+     */
+    public function edit(Vehicle $vehicle): Response
     {
         $this->authorize('vehicles.edit');
-        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+
+        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
-        $vehicle->load('maintenances');
-        $vehicle->load('keys');
+        $vehicle->load(['maintenances', 'keys']);
 
         return Inertia::render('Admin/Vehicles/Edit', [
             'vehicle' => $vehicle,
         ]);
     }
 
-    // Met à jour un véhicule
-    public function update(Request $request, Vehicle $vehicle)
+    /**
+     * @param Request $request
+     * @param Vehicle $vehicle
+     * @return RedirectResponse
+     */
+    public function update(Request $request, Vehicle $vehicle): RedirectResponse
     {
         $this->authorize('vehicles.edit');
-        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+
+        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -166,19 +192,23 @@ class VehicleController extends Controller
 
         $vehicle->update($validated);
 
-        return redirect()->route('admin.vehicles.availability')->with('success', 'Véhicule mis à jour');
+        return redirect()->route('admin.vehicles.availability')->with('success', 'Mis à jour');
     }
 
-    // Supprime un véhicule
-    public function destroy(Vehicle $vehicle)
+    /**
+     * @param Vehicle $vehicle
+     * @return RedirectResponse
+     */
+    public function destroy(Vehicle $vehicle): RedirectResponse
     {
         $this->authorize('vehicles.delete');
-        if (! Auth::user()->can('agences.view_all') && $vehicle->agence_id !== Auth::user()->agence_id) {
+
+        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
         $vehicle->delete();
 
-        return redirect()->route('admin.vehicles.availability')->with('success', 'Véhicule supprimé');
+        return redirect()->route('admin.vehicles.availability')->with('success', 'Supprimé');
     }
 }

@@ -5,7 +5,7 @@ use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Vehicle;
 
-it('searchCarpoolings retourne les réservations covoiturage correspondantes', function () {
+it('searchCarpoolings retourne les réservations covoiturage correspondantes', function (): void {
     $agence = Agence::factory()->create();
     $u = User::factory()->create(['agence_id' => $agence->id]);
     $v = Vehicle::create([
@@ -23,22 +23,22 @@ it('searchCarpoolings retourne les réservations covoiturage correspondantes', f
     expect($r)->toHaveCount(1);
 });
 
-it('canBeReturned retourne true si statut autorisé et pas encore retourné', function () {
+it('canBeReturned retourne true si statut autorisé et pas encore retourné', function (): void {
     $r = new Reservation(['statut' => 'validé', 'date_retour' => null]);
     expect($r->canBeReturned())->toBeTrue();
 });
 
-it('canBeReturned retourne false si date_retour renseignée', function () {
+it('canBeReturned retourne false si date_retour renseignée', function (): void {
     $r = new Reservation(['statut' => 'validé', 'date_retour' => now()]);
     expect($r->canBeReturned())->toBeFalse();
 });
 
-it('isReturned retourne true si date_retour renseignée', function () {
+it('isReturned retourne true si date_retour renseignée', function (): void {
     $r = new Reservation(['date_retour' => now()]);
     expect($r->isReturned())->toBeTrue();
 });
 
-it('isReturned retourne false si date_retour null', function () {
+it('isReturned retourne false si date_retour null', function (): void {
     $r = new Reservation(['date_retour' => null]);
     expect($r->isReturned())->toBeFalse();
 });

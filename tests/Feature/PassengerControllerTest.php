@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Mail;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Mail::fake();
 });
 
@@ -27,7 +27,7 @@ function reservationWithDriver(): array
     return [$driver, $r, $agence];
 }
 
-it('ajoute une demande de passager', function () {
+it('ajoute une demande de passager', function (): void {
     [$driver, $r, $agence] = reservationWithDriver();
     $passager = User::factory()->create(['agence_id' => $agence->id, 'email_verified_at' => now()]);
 
@@ -39,7 +39,7 @@ it('ajoute une demande de passager', function () {
     $this->assertDatabaseHas('passengers', ['reservation_id' => $r->id, 'user_id' => $passager->id, 'statut' => 'en_attente']);
 });
 
-it('refuse un doublon passager', function () {
+it('refuse un doublon passager', function (): void {
     [$driver, $r, $agence] = reservationWithDriver();
     $passager = User::factory()->create(['agence_id' => $agence->id, 'email_verified_at' => now()]);
     Passenger::create(['reservation_id' => $r->id, 'user_id' => $passager->id, 'statut' => 'en_attente']);
@@ -52,7 +52,7 @@ it('refuse un doublon passager', function () {
     expect(Passenger::where('reservation_id', $r->id)->where('user_id', $passager->id)->count())->toBe(1);
 });
 
-it('met à jour le statut d\'un passager', function () {
+it('met à jour le statut d\'un passager', function (): void {
     [$driver, $r, $agence] = reservationWithDriver();
     $passager = User::factory()->create(['agence_id' => $agence->id, 'email_verified_at' => now()]);
     $p = Passenger::create(['reservation_id' => $r->id, 'user_id' => $passager->id, 'statut' => 'en_attente']);
@@ -66,7 +66,7 @@ it('met à jour le statut d\'un passager', function () {
     expect($p->statut)->toBe('confirme');
 });
 
-it('supprime un passager', function () {
+it('supprime un passager', function (): void {
     [$driver, $r, $agence] = reservationWithDriver();
     $passager = User::factory()->create(['agence_id' => $agence->id, 'email_verified_at' => now()]);
     $p = Passenger::create(['reservation_id' => $r->id, 'user_id' => $passager->id, 'statut' => 'en_attente']);

@@ -19,6 +19,11 @@ class ReservationStatusChanged extends Mailable implements ShouldQueue
         $this->reservation = $reservation->loadMissing(['vehicle', 'driver']);
     }
 
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
         $subject = match ($this->reservation->statut) {

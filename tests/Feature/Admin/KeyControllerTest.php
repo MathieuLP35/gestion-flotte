@@ -6,7 +6,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleKey;
 use Spatie\Permission\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
 });
 
@@ -23,7 +23,7 @@ function keyAdminAndVehicle(): array
     return [$user, $v];
 }
 
-it('ajoute une clé', function () {
+it('ajoute une clé', function (): void {
     [$user, $v] = keyAdminAndVehicle();
 
     $response = $this->actingAs($user)->post(route('admin.keys.store'), [
@@ -35,7 +35,7 @@ it('ajoute une clé', function () {
     $this->assertDatabaseHas('vehicle_keys', ['vehicle_id' => $v->id, 'emplacement_clef' => 'Tiroir A']);
 });
 
-it('affiche le formulaire d\'édition d\'une clé', function () {
+it('affiche le formulaire d\'édition d\'une clé', function (): void {
     [$user, $v] = keyAdminAndVehicle();
     $key = VehicleKey::create(['vehicle_id' => $v->id, 'emplacement_clef' => 'Box 1']);
 
@@ -45,7 +45,7 @@ it('affiche le formulaire d\'édition d\'une clé', function () {
     $response->assertInertia(fn ($page) => $page->component('Admin/Keys/Edit')->has('vehicleKey'));
 });
 
-it('met à jour une clé', function () {
+it('met à jour une clé', function (): void {
     [$user, $v] = keyAdminAndVehicle();
     $key = VehicleKey::create(['vehicle_id' => $v->id, 'emplacement_clef' => 'Box 1']);
 
@@ -58,7 +58,7 @@ it('met à jour une clé', function () {
     expect($key->emplacement_clef)->toBe('Box 2');
 });
 
-it('supprime une clé', function () {
+it('supprime une clé', function (): void {
     [$user, $v] = keyAdminAndVehicle();
     $key = VehicleKey::create(['vehicle_id' => $v->id, 'emplacement_clef' => 'Box 1']);
 

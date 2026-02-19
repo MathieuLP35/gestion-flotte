@@ -5,7 +5,7 @@ use App\Models\Reservation;
 use App\Models\User;
 use App\Policies\PassengerPolicy;
 
-it('autorise le conducteur à modifier le passager', function () {
+it('autorise le conducteur à modifier le passager', function (): void {
     $driver = User::factory()->create();
     $r = new Reservation(['user_id' => $driver->id]);
     $r->id = 1;
@@ -16,7 +16,7 @@ it('autorise le conducteur à modifier le passager', function () {
     expect($policy->update($driver, $p))->toBeTrue();
 });
 
-it('autorise le passager à se supprimer lui-même', function () {
+it('autorise le passager à se supprimer lui-même', function (): void {
     $user = User::factory()->create();
     $p = new Passenger(['user_id' => $user->id, 'reservation_id' => 1]);
     $p->setRelation('reservation', new Reservation(['user_id' => 999]));
@@ -25,7 +25,7 @@ it('autorise le passager à se supprimer lui-même', function () {
     expect($policy->delete($user, $p))->toBeTrue();
 });
 
-it('autorise le conducteur à supprimer un passager', function () {
+it('autorise le conducteur à supprimer un passager', function (): void {
     $driver = User::factory()->create();
     $p = new Passenger(['user_id' => 999, 'reservation_id' => 1]);
     $p->setRelation('reservation', new Reservation(['user_id' => $driver->id]));

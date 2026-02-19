@@ -22,7 +22,7 @@ function userWithCovoiturage(): array
     return [$user, $r];
 }
 
-it('recherche des covoiturages', function () {
+it('recherche des covoiturages', function (): void {
     [$user, $r] = userWithCovoiturage();
 
     $response = $this->actingAs($user)->post(route('carpooling.search'), [

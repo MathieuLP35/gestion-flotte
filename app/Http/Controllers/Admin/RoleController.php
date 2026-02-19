@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RoleResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Response;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -14,9 +16,9 @@ class RoleController extends Controller
     use AuthorizesRequests;
 
     /**
-     * Affiche la liste des rôles.
+     * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $this->authorize('roles.view');
 
@@ -28,11 +30,10 @@ class RoleController extends Controller
     }
 
     /**
-     * Affiche le formulaire de création de rôle.
+     * @return Response
      */
-    public function create()
+    public function create(): Response
     {
-
         $this->authorize('roles.create');
 
         return inertia('Admin/Roles/Create', [
@@ -41,11 +42,11 @@ class RoleController extends Controller
     }
 
     /**
-     * Enregistre le nouveau rôle.
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-
         $this->authorize('roles.create');
 
         $request->validate([
@@ -60,11 +61,11 @@ class RoleController extends Controller
     }
 
     /**
-     * Affiche le formulaire d'édition.
+     * @param Role $role
+     * @return Response
      */
-    public function edit(Role $role)
+    public function edit(Role $role): Response
     {
-
         $this->authorize('roles.edit');
 
         return inertia('Admin/Roles/Edit', [
@@ -74,11 +75,12 @@ class RoleController extends Controller
     }
 
     /**
-     * Met à jour le rôle.
+     * @param Request $request
+     * @param Role $role
+     * @return RedirectResponse
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, Role $role): RedirectResponse
     {
-
         $this->authorize('roles.edit');
 
         $request->validate([
@@ -93,9 +95,10 @@ class RoleController extends Controller
     }
 
     /**
-     * Supprime le rôle.
+     * @param Role $role
+     * @return RedirectResponse
      */
-    public function destroy(Role $role)
+    public function destroy(Role $role): RedirectResponse
     {
         $this->authorize('roles.delete');
 

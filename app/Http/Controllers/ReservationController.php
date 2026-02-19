@@ -6,20 +6,33 @@ use App\Mail\ReservationStatusChanged;
 use App\Models\Passenger;
 use App\Models\Reservation;
 use App\Models\Vehicle;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use Inertia\Response;
 
+/**
+ * Controller gérant les réservations de véhicules.
+ */
 class ReservationController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    /**
+     * Affiche la liste des réservations de l'utilisateur connecté.
+     * * @return Response
+     */
+    public function index(): Response
     {
+        /** @var User $user */
         $user = Auth::user();
+
         $reservations = Reservation::with('vehicle')
             ->where('user_id', $user->id)
             ->orderBy('date_debut', 'desc')
@@ -30,24 +43,25 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function dashboard()
+    /**
+     * Affiche le tableau de bord avec les trajets conducteur et passager.
+     * * @return Response
+     */
+    public function dashboard(): Response
     {
         $userId = Auth::id();
 
-        // Les trajets où je suis CONDUCTEUR
         $reservationsAsDriver = Reservation::with(['vehicle', 'passengers.user'])
             ->where('user_id', $userId)
             ->orderBy('date_debut', 'desc')
             ->get();
 
-        // Les trajets où je suis PASSAGER
-        // On passe par le modèle Passenger pour récupérer les infos
         $reservationsAsPassenger = Passenger::with(['reservation.driver', 'reservation.vehicle'])
             ->where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return inertia('Dashboard', [
+        return Inertia::render('Dashboard', [
             'reservationsAsDriver' => $reservationsAsDriver,
             'reservationsAsPassenger' => $reservationsAsPassenger,
             'geocoding' => [
@@ -56,9 +70,15 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function create()
+    /**
+     * @return Response
+     */
+    public function create(): Response
     {
-        $vehicles = Vehicle::where('agence_id', Auth::user()->agence_id)
+        /** @var User $user */
+        $user = Auth::user();
+
+        $vehicles = Vehicle::where('agence_id', $user->agence_id)
             ->where('en_maintenance', false)
             ->get();
 
@@ -68,9 +88,11 @@ class ReservationController extends Controller
     }
 
     /**
-     * API pour suggérer un véhicule basé sur la distance
+     * API pour suggérer un véhicule basé sur la distance.
+     * * @param Request $request
+     * @return JsonResponse
      */
-    public function suggestVehicle(Request $request)
+    public function suggestVehicle(Request $request): JsonResponse
     {
         $request->validate([
             'depart_lat' => 'required|numeric',
@@ -88,16 +110,18 @@ class ReservationController extends Controller
             (float) $request->dest_lng
         );
 
-        // Normaliser les dates (datetime-local envoie "YYYY-MM-DDTHH:mm") pour la requête SQL
         $dateDebut = $request->filled('date_debut')
-            ? Carbon::parse($request->date_debut)->format('Y-m-d H:i:s')
+            ? Carbon::parse((string)$request->date_debut)->format('Y-m-d H:i:s')
             : null;
         $dateFin = $request->filled('date_fin')
-            ? Carbon::parse($request->date_fin)->format('Y-m-d H:i:s')
+            ? Carbon::parse((string)$request->date_fin)->format('Y-m-d H:i:s')
             : null;
 
+        /** @var User $user */
+        $user = Auth::user();
+
         $suggestedVehicle = Vehicle::suggestBestVehicle(
-            Auth::user()->agence_id,
+            $user->agence_id,
             $distance,
             $dateDebut,
             $dateFin
@@ -109,7 +133,11 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
@@ -122,24 +150,21 @@ class ReservationController extends Controller
             'destinationSelected' => 'sometimes|array',
         ]);
 
-        // Si pas de véhicule sélectionné mais suggestion disponible, utiliser la suggestion
-        if (! $request->vehicle_id && $request->suggested_vehicle_id) {
-            $request->merge(['vehicle_id' => $request->suggested_vehicle_id]);
-        }
-
+        /** @var Vehicle $vehicle */
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
+        /** @var User $user */
+        $user = Auth::user();
 
-        if ($vehicle->agence_id !== Auth::user()->agence_id || $vehicle->en_maintenance) {
+        if ($vehicle->agence_id !== $user->agence_id || $vehicle->en_maintenance) {
             abort(403, 'Véhicule indisponible');
         }
 
-        // Vérifier conflit sur réservation
         $conflict = Reservation::where('vehicle_id', $vehicle->id)
             ->where('statut', 'validé')
-            ->where(function ($query) use ($request) {
+            ->where(function ($query) use ($request): void {
                 $query->whereBetween('date_debut', [$request->date_debut, $request->date_fin])
                     ->orWhereBetween('date_fin', [$request->date_debut, $request->date_fin])
-                    ->orWhere(function ($q) use ($request) {
+                    ->orWhere(function ($q) use ($request): void {
                         $q->where('date_debut', '<=', $request->date_debut)
                             ->where('date_fin', '>=', $request->date_fin);
                     });
@@ -151,7 +176,7 @@ class ReservationController extends Controller
 
         $reservation = Reservation::create([
             'vehicle_id' => $vehicle->id,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'depart' => $request->departure,
             'destination' => $request->destination,
             'date_debut' => $request->date_debut,
@@ -164,26 +189,32 @@ class ReservationController extends Controller
             'destination_longitude' => ($request->destinationSelected ?? [])['lng'] ?? null,
         ]);
 
-        Mail::to(Auth::user()->email)->queue(new ReservationStatusChanged($reservation));
+        Mail::to($user->email)->queue(new ReservationStatusChanged($reservation));
 
         return redirect()->route('dashboard')->with('success', 'Réservation créée en attente de validation');
     }
 
-    public function edit(Reservation $reservation)
+    /**
+     * @param Reservation $reservation
+     * @return Response
+     */
+    public function edit(Reservation $reservation): Response
     {
-
         $this->authorize('update', $reservation);
-
-        // On charge les passagers et leurs utilisateurs
         $reservation->load(['vehicle', 'driver', 'passengers.user']);
 
-        return inertia('Reservations/Edit', [
+        return Inertia::render('Reservations/Edit', [
             'reservation' => $reservation,
-            'vehicles' => Vehicle::all(['id', 'modele', 'immatriculation']), // On envoie les véhicules pour le <select>
+            'vehicles' => Vehicle::all(['id', 'modele', 'immatriculation']),
         ]);
     }
 
-    public function update(Request $request, Reservation $reservation)
+    /**
+     * @param Request $request
+     * @param Reservation $reservation
+     * @return RedirectResponse
+     */
+    public function update(Request $request, Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
 
@@ -199,41 +230,44 @@ class ReservationController extends Controller
         $oldStatut = $reservation->statut;
         $reservation->update($request->only(['vehicle_id', 'departure', 'destination', 'date_debut', 'date_fin', 'statut']));
 
-        if ($oldStatut !== $reservation->statut) {
+        if ($oldStatut !== $reservation->statut && $reservation->user) {
             Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
         }
 
         return redirect()->route('reservations.index')->with('success', 'Réservation mise à jour');
     }
 
-    public function destroy(Reservation $reservation)
+    /**
+     * @param Reservation $reservation
+     * @return RedirectResponse
+     */
+    public function destroy(Reservation $reservation): RedirectResponse
     {
         $this->authorize('delete', $reservation);
-
         $reservation->delete();
 
         return redirect()->route('dashboard')->with('success', 'Réservation supprimée');
     }
 
-    public function show(Reservation $reservation)
+    /**
+     * @param Reservation $reservation
+     * @return Response
+     */
+    public function show(Reservation $reservation): Response
     {
-
         $this->authorize('view', $reservation);
+        $reservation->load(['vehicle', 'driver', 'passengers.user', 'messages.user']);
 
-        // On charge TOUT ce dont la page aura besoin
-        $reservation->load([
-            'vehicle',          // Le véhicule
-            'driver',           // Le conducteur
-            'passengers.user',  // Les passagers (avec leurs noms)
-            'messages.user',     // Les messages (avec leurs expéditeurs)
-        ]);
-
-        return inertia('Reservations/Show', [
+        return Inertia::render('Reservations/Show', [
             'reservation' => $reservation,
         ]);
     }
 
-    public function checkCarpool(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function checkCarpool(Request $request): JsonResponse
     {
         $request->validate([
             'date_debut' => 'required|date',
@@ -242,12 +276,10 @@ class ReservationController extends Controller
             'destination' => 'required|string|max:255',
         ]);
 
-        $dateDebut = Carbon::parse($request->date_debut);
-        $departure = strtolower(trim($request->departure));
-        $destination = strtolower(trim($request->destination));
+        $dateDebut = Carbon::parse((string)$request->date_debut);
+        $departure = strtolower(trim((string)$request->departure));
+        $destination = strtolower(trim((string)$request->destination));
 
-        // On cherche des trajets validés, qui partent +/- 1 heure
-        // autour de la date demandée, et qui vont au même endroit.
         $reservations = Reservation::with(['driver', 'vehicle', 'passengers'])
             ->where('statut', 'validé')
             ->whereRaw('LOWER(destination) = ?', [$destination])
@@ -257,47 +289,34 @@ class ReservationController extends Controller
             ->where('user_id', '!=', Auth::id())
             ->get();
 
-        // On filtre pour ne garder que ceux qui ont des places libres
-        $availableCarpools = $reservations->filter(function ($reservation) {
-            // S'il n'y a pas de véhicule ou de places, on ignore
+        $availableCarpools = $reservations->filter(function (Reservation $reservation): bool {
             if (! $reservation->vehicle || ! $reservation->vehicle->nbr_places) {
                 return false;
             }
-
-            // +1 pour le conducteur
             $currentOccupants = $reservation->passengers->where('statut', 'confirme')->count() + 1;
-
             return $reservation->vehicle->nbr_places > $currentOccupants;
         });
 
         return response()->json([
             'carpool_available' => $availableCarpools->count() > 0,
-            'reservations' => $availableCarpools->values(), // Retourne les trajets en JSON
+            'reservations' => $availableCarpools->values(),
         ]);
     }
 
     /**
-     * Affiche le formulaire de retour du véhicule
+     * @param Reservation $reservation
+     * @return Response|RedirectResponse
      */
     public function showReturnForm(Reservation $reservation)
     {
         $this->authorize('view', $reservation);
 
-        // Vérifier que l'utilisateur est le conducteur
         if ($reservation->user_id !== Auth::id()) {
-            abort(403, 'Vous n\'êtes pas autorisé à effectuer le retour de ce véhicule');
+            abort(403);
         }
 
-        // Vérifier que la réservation est validée, en cours ou à retourner
         if (! in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
-            return redirect()->route('reservations.show', $reservation)
-                ->with('error', 'Seules les réservations validées, en cours ou à retourner peuvent être retournées');
-        }
-
-        // Vérifier que le véhicule n'a pas déjà été retourné
-        if ($reservation->date_retour !== null) {
-            return redirect()->route('reservations.show', $reservation)
-                ->with('error', 'Ce véhicule a déjà été retourné');
+            return redirect()->route('reservations.show', $reservation)->with('error', 'Statut invalide');
         }
 
         $reservation->load(['vehicle', 'driver']);
@@ -308,23 +327,18 @@ class ReservationController extends Controller
     }
 
     /**
-     * Traite le retour du véhicule
+     * @param Request $request
+     * @param Reservation $reservation
+     * @return RedirectResponse
      */
-    public function returnVehicle(Request $request, Reservation $reservation)
+    public function returnVehicle(Request $request, Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
 
-        // Vérifier que l'utilisateur est le conducteur
-        if ($reservation->user_id !== Auth::id()) {
-            abort(403, 'Vous n\'êtes pas autorisé à effectuer le retour de ce véhicule');
+        if (!$reservation->vehicle) {
+            abort(404);
         }
 
-        // Vérifier que la réservation est validée, en cours ou à retourner
-        if (! in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
-            return back()->withErrors(['error' => 'Seules les réservations validées, en cours ou à retourner peuvent être retournées']);
-        }
-
-        // Récupérer le km_initial du véhicule pour la validation
         $vehicleKmInitial = $reservation->vehicle->km_initial;
 
         $request->validate([
@@ -334,7 +348,6 @@ class ReservationController extends Controller
             'notes_retour' => 'nullable|string|max:1000',
         ]);
 
-        // Mettre à jour la réservation avec les informations de retour
         $reservation->update([
             'date_retour' => now(),
             'km_final' => $request->km_final,
@@ -344,79 +357,48 @@ class ReservationController extends Controller
             'statut' => 'terminé',
         ]);
 
-        // Mettre à jour l'emplacement et le kilométrage du véhicule
-        // On utilise le km_initial calculé (qui peut être restauré si c'est une modification)
         $reservation->vehicle->update([
             'emplacement' => $request->emplacement_retour,
             'km_initial' => $request->km_final,
+            'en_maintenance' => $request->etat_vehicule === 'mauvais'
         ]);
 
-        // Si l'état du véhicule est mauvais, le mettre en maintenance
-        if ($request->etat_vehicule === 'mauvais') {
-            $reservation->vehicle->update([
-                'en_maintenance' => true,
-            ]);
+        if ($reservation->user) {
+            Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
         }
 
-        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
-
-        return redirect()->route('reservations.show', $reservation)
-            ->with('success', 'Véhicule retourné avec succès');
+        return redirect()->route('reservations.show', $reservation)->with('success', 'Retour effectué');
     }
 
     /**
-     * Lance le trajet (change le statut de "validé" à "en cours")
+     * @param Reservation $reservation
+     * @return RedirectResponse
      */
-    public function startTrip(Reservation $reservation)
+    public function startTrip(Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
+        $reservation->update(['statut' => 'en cours']);
 
-        // Vérifier que l'utilisateur est le conducteur
-        if ($reservation->user_id !== Auth::id()) {
-            abort(403, 'Vous n\'êtes pas autorisé à lancer ce trajet');
+        if ($reservation->user) {
+            Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
         }
 
-        // Vérifier que la réservation est validée
-        if ($reservation->statut !== 'validé') {
-            return back()->withErrors(['error' => 'Seules les réservations validées peuvent être lancées']);
-        }
-
-        // Mettre à jour le statut
-        $reservation->update([
-            'statut' => 'en cours',
-        ]);
-
-        // Envoyer un email de notification
-        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
-
-        return back()->with('success', 'Trajet lancé avec succès');
+        return back()->with('success', 'Trajet lancé');
     }
 
     /**
-     * Termine le trajet (change le statut de "en cours" à "à retourner")
+     * @param Reservation $reservation
+     * @return RedirectResponse
      */
-    public function endTrip(Reservation $reservation)
+    public function endTrip(Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
+        $reservation->update(['statut' => 'à retourner']);
 
-        // Vérifier que l'utilisateur est le conducteur
-        if ($reservation->user_id !== Auth::id()) {
-            abort(403, 'Vous n\'êtes pas autorisé à terminer ce trajet');
+        if ($reservation->user) {
+            Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
         }
 
-        // Vérifier que la réservation est en cours
-        if ($reservation->statut !== 'en cours') {
-            return back()->withErrors(['error' => 'Seuls les trajets en cours peuvent être terminés']);
-        }
-
-        // Mettre à jour le statut
-        $reservation->update([
-            'statut' => 'à retourner',
-        ]);
-
-        // Envoyer un email de notification
-        Mail::to($reservation->user->email)->send(new ReservationStatusChanged($reservation));
-
-        return back()->with('success', 'Trajet terminé. Vous pouvez maintenant retourner le véhicule.');
+        return back()->with('success', 'Trajet terminé');
     }
 }

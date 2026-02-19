@@ -6,7 +6,7 @@ use App\Models\Vehicle;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
     foreach (['vehicles.view', 'vehicles.create', 'vehicles.edit', 'vehicles.delete'] as $name) {
@@ -24,7 +24,7 @@ function adminWithAgence(): array
     return [$user, $agence];
 }
 
-it('redirige l\'index véhicules vers la page disponibilités', function () {
+it('redirige l\'index véhicules vers la page disponibilités', function (): void {
     [$user] = adminWithAgence();
 
     $response = $this->actingAs($user)->get(route('admin.vehicles.index'));
@@ -32,7 +32,7 @@ it('redirige l\'index véhicules vers la page disponibilités', function () {
     $response->assertRedirect(route('admin.vehicles.availability'));
 });
 
-it('affiche le formulaire de création', function () {
+it('affiche le formulaire de création', function (): void {
     [$user] = adminWithAgence();
 
     $response = $this->actingAs($user)->get(route('admin.vehicles.create'));
@@ -41,7 +41,7 @@ it('affiche le formulaire de création', function () {
     $response->assertInertia(fn ($page) => $page->component('Admin/Vehicles/Create'));
 });
 
-it('affiche un véhicule', function () {
+it('affiche un véhicule', function (): void {
     [$user, $agence] = adminWithAgence();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-456',
@@ -55,7 +55,7 @@ it('affiche un véhicule', function () {
     $response->assertInertia(fn ($page) => $page->component('Admin/Vehicles/Show', false)->where('vehicle.id', $v->id));
 });
 
-it('refuse de voir un véhicule d\'une autre agence', function () {
+it('refuse de voir un véhicule d\'une autre agence', function (): void {
     [$user] = adminWithAgence();
     $autre = Agence::factory()->create();
     $v = Vehicle::create([
@@ -68,7 +68,7 @@ it('refuse de voir un véhicule d\'une autre agence', function () {
     $response->assertForbidden();
 });
 
-it('crée un véhicule avec des clés', function () {
+it('crée un véhicule avec des clés', function (): void {
     [$user, $agence] = adminWithAgence();
 
     $response = $this->actingAs($user)->post(route('admin.vehicles.store'), [
@@ -86,7 +86,7 @@ it('crée un véhicule avec des clés', function () {
     expect(\App\Models\VehicleKey::where('vehicle_id', Vehicle::where('immatriculation', 'AB-789-CD')->first()->id)->count())->toBe(2);
 });
 
-it('affiche le formulaire d\'édition', function () {
+it('affiche le formulaire d\'édition', function (): void {
     [$user, $agence] = adminWithAgence();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-111',
@@ -99,7 +99,7 @@ it('affiche le formulaire d\'édition', function () {
     $response->assertInertia(fn ($page) => $page->component('Admin/Vehicles/Edit')->has('vehicle'));
 });
 
-it('met à jour un véhicule', function () {
+it('met à jour un véhicule', function (): void {
     [$user, $agence] = adminWithAgence();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-222',
@@ -121,7 +121,7 @@ it('met à jour un véhicule', function () {
     expect($v->modele)->toBe('Clio 5')->and($v->emplacement)->toBe('Y');
 });
 
-it('supprime un véhicule', function () {
+it('supprime un véhicule', function (): void {
     [$user, $agence] = adminWithAgence();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-333',
@@ -134,7 +134,7 @@ it('supprime un véhicule', function () {
     $this->assertDatabaseMissing('vehicles', ['id' => $v->id]);
 });
 
-it('affiche le calendrier d\'un véhicule', function () {
+it('affiche le calendrier d\'un véhicule', function (): void {
     [$user, $agence] = adminWithAgence();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-444',
@@ -147,7 +147,7 @@ it('affiche le calendrier d\'un véhicule', function () {
     $response->assertInertia(fn ($page) => $page->component('Admin/Vehicles/Calendar')->has('vehicle')->has('reservations'));
 });
 
-it('affiche la page disponibilités', function () {
+it('affiche la page disponibilités', function (): void {
     [$user, $agence] = adminWithAgence();
     Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'Clio', 'immatriculation' => 'AB-555',

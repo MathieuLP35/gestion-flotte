@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::before(function (User $user, string $ability) {
+        Gate::before(function (User $user, string $ability): ?true {
             // Si l'utilisateur a ce rôle, il a tous les droits.
             if ($user->hasRole('Super Admin')) {
                 return true;

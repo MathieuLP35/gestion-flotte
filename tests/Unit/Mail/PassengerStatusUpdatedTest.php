@@ -7,7 +7,7 @@ use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Vehicle;
 
-it('construit le mail PassengerStatusUpdated avec sujet adapté au statut confirme', function () {
+it('construit le mail PassengerStatusUpdated avec sujet adapté au statut confirme', function (): void {
     $agence = Agence::factory()->create();
     $driver = User::factory()->create(['agence_id' => $agence->id]);
     $v = Vehicle::create([
@@ -24,7 +24,7 @@ it('construit le mail PassengerStatusUpdated avec sujet adapté au statut confir
     expect($mailable->envelope()->subject)->toContain('confirmée');
 });
 
-it('construit le mail PassengerStatusUpdated avec sujet pour refuse', function () {
+it('construit le mail PassengerStatusUpdated avec sujet pour refuse', function (): void {
     $agence = Agence::factory()->create();
     $driver = User::factory()->create(['agence_id' => $agence->id]);
     $v = Vehicle::create([

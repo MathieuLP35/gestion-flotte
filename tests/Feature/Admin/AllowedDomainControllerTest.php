@@ -5,7 +5,7 @@ use App\Models\AllowedDomain;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(PermissionSeeder::class);
 });
 
@@ -18,7 +18,7 @@ function domainAdminUser(): User
     return $u;
 }
 
-it('affiche la liste des domaines', function () {
+it('affiche la liste des domaines', function (): void {
     AllowedDomain::create(['name' => 'example.com']);
 
     $response = $this->actingAs(domainAdminUser())->get(route('admin.domains.index'));
@@ -31,7 +31,7 @@ it('affiche la liste des domaines', function () {
     );
 });
 
-it('ajoute un domaine', function () {
+it('ajoute un domaine', function (): void {
     $response = $this->actingAs(domainAdminUser())->post(route('admin.domains.store'), [
         'name' => 'nouveau.com',
     ]);
@@ -40,7 +40,7 @@ it('ajoute un domaine', function () {
     $this->assertDatabaseHas('allowed_domains', ['name' => 'nouveau.com']);
 });
 
-it('supprime un domaine', function () {
+it('supprime un domaine', function (): void {
     $d = AllowedDomain::create(['name' => 'todelete.com']);
 
     $response = $this->actingAs(domainAdminUser())->delete(route('admin.domains.destroy', $d));

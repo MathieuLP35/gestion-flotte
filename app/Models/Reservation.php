@@ -32,31 +32,49 @@ class Reservation extends Model
         'date_retour' => 'datetime',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Vehicle, $this>
+     */
     public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Passenger, $this>
+     */
     public function passengers(): HasMany
     {
         return $this->hasMany(Passenger::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Message, $this>
+     */
     public function messages()
     {
         return $this->hasMany(Message::class)->orderBy('created_at', 'asc');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, Reservation>
+     */
     public static function searchCarpoolings(string $departure, string $destination, string $departureDate, ?string $arrivalDate = null)
     {
         $query = self::where('covoiturage', 1)

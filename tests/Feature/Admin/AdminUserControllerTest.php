@@ -4,11 +4,11 @@ use App\Models\Agence;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(PermissionSeeder::class);
 });
 
-it('affiche la liste des utilisateurs', function () {
+it('affiche la liste des utilisateurs', function (): void {
     $agence = Agence::factory()->create();
     $admin = User::factory()->create(['agence_id' => $agence->id]);
     $admin->assignRole('Super Admin');
@@ -22,7 +22,7 @@ it('affiche la liste des utilisateurs', function () {
     );
 });
 
-it('affiche un utilisateur', function () {
+it('affiche un utilisateur', function (): void {
     $agence = Agence::factory()->create();
     $admin = User::factory()->create(['agence_id' => $agence->id]);
     $admin->assignRole('Super Admin');
@@ -38,7 +38,7 @@ it('affiche un utilisateur', function () {
     );
 });
 
-it('affiche le formulaire d\'édition d\'un utilisateur', function () {
+it('affiche le formulaire d\'édition d\'un utilisateur', function (): void {
     $agence = Agence::factory()->create();
     $admin = User::factory()->create(['agence_id' => $agence->id]);
     $admin->assignRole('Super Admin');
@@ -55,7 +55,7 @@ it('affiche le formulaire d\'édition d\'un utilisateur', function () {
     );
 });
 
-it('met à jour un utilisateur', function () {
+it('met à jour un utilisateur', function (): void {
     $agence = Agence::factory()->create();
     $admin = User::factory()->create(['agence_id' => $agence->id]);
     $admin->assignRole('Super Admin');
@@ -73,7 +73,7 @@ it('met à jour un utilisateur', function () {
     expect($target->name)->toBe('Nouveau Nom');
 });
 
-it('supprime un utilisateur', function () {
+it('supprime un utilisateur', function (): void {
     $agence = Agence::factory()->create();
     $admin = User::factory()->create(['agence_id' => $agence->id]);
     $admin->assignRole('Super Admin');

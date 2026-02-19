@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Vite;
 use App\Providers\AppServiceProvider;
+use Illuminate\Support\Facades\Vite;
 
-it('configures vite prefetching with correct concurrency', function () {
+it('configures vite prefetching with correct concurrency', function (): void {
     Vite::spy();
 
     // On instancie et on boot manuellement pour le test
@@ -13,7 +13,7 @@ it('configures vite prefetching with correct concurrency', function () {
     // Utilisation d'une closure pour vérifier l'argument nommé 'concurrency'
     Vite::shouldHaveReceived('prefetch')
         ->once()
-        ->withArgs(function ($concurrency) {
+        ->withArgs(function ($concurrency): bool {
             return $concurrency === 3;
         });
 });

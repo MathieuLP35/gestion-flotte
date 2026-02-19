@@ -6,12 +6,12 @@ use App\Models\Vehicle;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Mail::fake();
     Config::set('app.admin_email', 'admin@test.com');
 });
 
-it('envoie un mail d\'alerte quand km_initial >= km_alert_threshold', function () {
+it('envoie un mail d\'alerte quand km_initial >= km_alert_threshold', function (): void {
     $agence = Agence::factory()->create();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'C', 'immatriculation' => 'AB-CMD',
@@ -26,7 +26,7 @@ it('envoie un mail d\'alerte quand km_initial >= km_alert_threshold', function (
     Mail::assertQueued(\App\Mail\MaintenanceAlert::class);
 });
 
-it('n\'envoie pas de mail si km_initial < km_alert_threshold', function () {
+it('n\'envoie pas de mail si km_initial < km_alert_threshold', function (): void {
     $agence = Agence::factory()->create();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'C', 'immatriculation' => 'AB-CMD2',

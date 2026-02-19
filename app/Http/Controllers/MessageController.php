@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
     use AuthorizesRequests;
 
-    // RÉCUPÈRE tous les messages pour une réservation
-    public function index(Reservation $reservation)
+    /**
+     * @param Reservation $reservation
+     * @return JsonResponse
+     */
+    public function index(Reservation $reservation): JsonResponse
     {
         $this->authorize('view', $reservation);
 
@@ -21,8 +25,12 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
-    // ENVOIE un nouveau message
-    public function store(Request $request, Reservation $reservation)
+    /**
+     * @param Request $request
+     * @param Reservation $reservation
+     * @return JsonResponse
+     */
+    public function store(Request $request, Reservation $reservation): JsonResponse
     {
         $this->authorize('view', $reservation);
 
@@ -30,7 +38,7 @@ class MessageController extends Controller
 
         $message = $reservation->messages()->create([
             'user_id' => auth()->id(),
-            'body' => $request->body,
+            'body' => (string) $request->body,
         ]);
 
         broadcast(new \App\Events\MessageSent($message->load('user')))->toOthers();

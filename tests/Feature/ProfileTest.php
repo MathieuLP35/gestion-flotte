@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-it('displays the profile page', function () {
+it('displays the profile page', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/profile');
@@ -10,7 +10,7 @@ it('displays the profile page', function () {
     $response->assertOk();
 });
 
-it('can update profile information', function () {
+it('can update profile information', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->patch('/profile', [
@@ -27,7 +27,7 @@ it('can update profile information', function () {
         ->and($user->email_verified_at)->toBeNull();
 });
 
-it('keeps email verification status when email is unchanged', function () {
+it('keeps email verification status when email is unchanged', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->patch('/profile', [
@@ -40,7 +40,7 @@ it('keeps email verification status when email is unchanged', function () {
     expect($user->refresh()->email_verified_at)->not->toBeNull();
 });
 
-it('allows user to delete their account', function () {
+it('allows user to delete their account', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->delete('/profile', [
@@ -53,7 +53,7 @@ it('allows user to delete their account', function () {
     expect($user->fresh())->toBeNull();
 });
 
-it('requires correct password to delete account', function () {
+it('requires correct password to delete account', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "468fe74e4d74228b9142fe7c46e801d0",
+    "content-hash": "dd252e42f087b9d5e11f21348f947ba6",
     "packages": [
         {
             "name": "brick/math",
@@ -9869,6 +9869,66 @@
             "time": "2021-02-03T23:26:27+00:00"
         },
         {
+            "name": "rector/rector",
+            "version": "2.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rectorphp/rector.git",
+                "reference": "9442f4037de6a5347ae157fe8e6c7cda9d909070"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9442f4037de6a5347ae157fe8e6c7cda9d909070",
+                "reference": "9442f4037de6a5347ae157fe8e6c7cda9d909070",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0",
+                "phpstan/phpstan": "^2.1.36"
+            },
+            "conflict": {
+                "rector/rector-doctrine": "*",
+                "rector/rector-downgrade-php": "*",
+                "rector/rector-phpunit": "*",
+                "rector/rector-symfony": "*"
+            },
+            "suggest": {
+                "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
+            },
+            "bin": [
+                "bin/rector"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+            "homepage": "https://getrector.com/",
+            "keywords": [
+                "automation",
+                "dev",
+                "migration",
+                "refactoring"
+            ],
+            "support": {
+                "issues": "https://github.com/rectorphp/rector/issues",
+                "source": "https://github.com/rectorphp/rector/tree/2.3.5"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/tomasvotruba",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-01-28T15:22:48+00:00"
+        },
+        {
             "name": "sebastian/cli-parser",
             "version": "3.0.2",
             "source": {
@@ -11163,5 +11223,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

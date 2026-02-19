@@ -5,7 +5,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 
-it('renders the email verification screen', function () {
+it('renders the email verification screen', function (): void {
     $user = User::factory()->unverified()->create();
 
     $response = $this->actingAs($user)->get('/verify-email');
@@ -13,7 +13,7 @@ it('renders the email verification screen', function () {
     $response->assertStatus(200);
 });
 
-it('verifies email when using valid signed url', function () {
+it('verifies email when using valid signed url', function (): void {
     $user = User::factory()->unverified()->create();
 
     Event::fake();
@@ -31,7 +31,7 @@ it('verifies email when using valid signed url', function () {
     $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
 });
 
-it('does not verify email with invalid hash', function () {
+it('does not verify email with invalid hash', function (): void {
     $user = User::factory()->unverified()->create();
 
     $verificationUrl = URL::temporarySignedRoute(
@@ -45,7 +45,7 @@ it('does not verify email with invalid hash', function () {
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
 });
 
-it('redirige vers dashboard si l\'email est déjà vérifié (verify-email)', function () {
+it('redirige vers dashboard si l\'email est déjà vérifié (verify-email)', function (): void {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $response = $this->actingAs($user)->get(route('verification.notice'));
@@ -53,7 +53,7 @@ it('redirige vers dashboard si l\'email est déjà vérifié (verify-email)', fu
     $response->assertRedirect();
 });
 
-it('envoie un nouveau lien de vérification', function () {
+it('envoie un nouveau lien de vérification', function (): void {
     $user = User::factory()->unverified()->create();
 
     $response = $this->actingAs($user)->post(route('verification.send'));
@@ -62,7 +62,7 @@ it('envoie un nouveau lien de vérification', function () {
     $response->assertSessionHas('status', 'verification-link-sent');
 });
 
-it('redirige vers dashboard si déjà vérifié (verification send)', function () {
+it('redirige vers dashboard si déjà vérifié (verification send)', function (): void {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $response = $this->actingAs($user)->post(route('verification.send'));

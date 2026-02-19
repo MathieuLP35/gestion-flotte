@@ -5,15 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AllowedDomain;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class AllowedDomainController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    /**
+     * @return Response
+     */
+    public function index(): Response
     {
         $this->authorize('allowed_domains.view');
 
@@ -27,7 +32,11 @@ class AllowedDomainController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('allowed_domains.create');
 
@@ -40,7 +49,11 @@ class AllowedDomainController extends Controller
         return back()->with('success', 'Domaine ajouté.');
     }
 
-    public function edit(AllowedDomain $domain)
+    /**
+     * @param AllowedDomain $domain
+     * @return Response
+     */
+    public function edit(AllowedDomain $domain): Response
     {
         $this->authorize('allowed_domains.edit');
 
@@ -49,7 +62,12 @@ class AllowedDomainController extends Controller
         ]);
     }
 
-    public function update(Request $request, AllowedDomain $domain)
+    /**
+     * @param Request $request
+     * @param AllowedDomain $domain
+     * @return RedirectResponse
+     */
+    public function update(Request $request, AllowedDomain $domain): RedirectResponse
     {
         $this->authorize('allowed_domains.edit');
 
@@ -62,7 +80,11 @@ class AllowedDomainController extends Controller
         return redirect()->route('admin.domains.index')->with('success', 'Domaine mis à jour.');
     }
 
-    public function destroy(AllowedDomain $domain)
+    /**
+     * @param AllowedDomain $domain
+     * @return RedirectResponse
+     */
+    public function destroy(AllowedDomain $domain): RedirectResponse
     {
         $this->authorize('allowed_domains.delete');
 

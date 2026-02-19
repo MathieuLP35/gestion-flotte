@@ -13,7 +13,7 @@ class CheckVehicleMaintenance extends Command
 
     protected $description = 'Vérifie si un véhicule nécessite un entretien';
 
-    public function handle()
+    public function handle(): void
     {
         $vehicles = Vehicle::with('maintenances')->get();
 

@@ -8,12 +8,18 @@ class Message extends Model
 {
     protected $fillable = ['reservation_id', 'user_id', 'body'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     // Un message appartient à un utilisateur (expéditeur)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Reservation, $this>
+     */
     // Un message appartient à une réservation
     public function reservation()
     {

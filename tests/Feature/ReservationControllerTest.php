@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Mail;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Mail::fake();
 });
 
@@ -22,7 +22,7 @@ function userWithAgence(): array
     return [$user, $agence, $v];
 }
 
-it('affiche la liste des réservations du conducteur', function () {
+it('affiche la liste des réservations du conducteur', function (): void {
     [$user, , $v] = userWithAgence();
     Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -36,7 +36,7 @@ it('affiche la liste des réservations du conducteur', function () {
     $response->assertInertia(fn ($page) => $page->component('Reservations/Index', false)->has('reservations'));
 });
 
-it('affiche le tableau de bord avec réservations conducteur et passager', function () {
+it('affiche le tableau de bord avec réservations conducteur et passager', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -54,7 +54,7 @@ it('affiche le tableau de bord avec réservations conducteur et passager', funct
     );
 });
 
-it('affiche le formulaire de création de réservation', function () {
+it('affiche le formulaire de création de réservation', function (): void {
     [$user, , $v] = userWithAgence();
 
     $response = $this->actingAs($user)->get(route('reservations.create'));
@@ -63,7 +63,7 @@ it('affiche le formulaire de création de réservation', function () {
     $response->assertInertia(fn ($page) => $page->component('Reservations/Create')->has('vehicles'));
 });
 
-it('suggère un véhicule', function () {
+it('suggère un véhicule', function (): void {
     [$user, $agence, $v] = userWithAgence();
 
     $response = $this->actingAs($user)->get(route('reservations.suggestVehicle').'?'.http_build_query([
@@ -79,7 +79,7 @@ it('suggère un véhicule', function () {
     $response->assertJsonStructure(['suggestedVehicle', 'distance']);
 });
 
-it('crée une réservation', function () {
+it('crée une réservation', function (): void {
     [$user, , $v] = userWithAgence();
     $debut = now()->addDays(2)->setTime(10, 0);
     $fin = now()->addDays(2)->setTime(18, 0);
@@ -96,7 +96,7 @@ it('crée une réservation', function () {
     $this->assertDatabaseHas('reservations', ['user_id' => $user->id, 'vehicle_id' => $v->id]);
 });
 
-it('affiche une réservation', function () {
+it('affiche une réservation', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -109,7 +109,7 @@ it('affiche une réservation', function () {
     $response->assertInertia(fn ($page) => $page->component('Reservations/Show')->where('reservation.id', $r->id));
 });
 
-it('affiche le formulaire d\'édition', function () {
+it('affiche le formulaire d\'édition', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -122,7 +122,7 @@ it('affiche le formulaire d\'édition', function () {
     $response->assertInertia(fn ($page) => $page->component('Reservations/Edit')->has('reservation')->has('vehicles'));
 });
 
-it('met à jour une réservation', function () {
+it('met à jour une réservation', function (): void {
     [$user, , $v] = userWithAgence();
     $debut = now()->addDays(3)->setTime(10, 0);
     $fin = now()->addDays(3)->setTime(18, 0);
@@ -143,7 +143,7 @@ it('met à jour une réservation', function () {
     $response->assertRedirect(route('reservations.index'));
 });
 
-it('supprime une réservation', function () {
+it('supprime une réservation', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -156,7 +156,7 @@ it('supprime une réservation', function () {
     $this->assertDatabaseMissing('reservations', ['id' => $r->id]);
 });
 
-it('vérifie les covoiturages disponibles', function () {
+it('vérifie les covoiturages disponibles', function (): void {
     [$user, , $v] = userWithAgence();
     $autre = User::factory()->create(['agence_id' => $v->agence_id, 'email_verified_at' => now()]);
     Reservation::create([
@@ -175,7 +175,7 @@ it('vérifie les covoiturages disponibles', function () {
     $response->assertJsonStructure(['carpool_available', 'reservations']);
 });
 
-it('affiche le formulaire de retour', function () {
+it('affiche le formulaire de retour', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -188,7 +188,7 @@ it('affiche le formulaire de retour', function () {
     $response->assertInertia(fn ($page) => $page->component('Reservations/Return')->has('reservation'));
 });
 
-it('traite le retour du véhicule', function () {
+it('traite le retour du véhicule', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -207,7 +207,7 @@ it('traite le retour du véhicule', function () {
     expect($r->statut)->toBe('terminé')->and($r->date_retour)->not->toBeNull();
 });
 
-it('lance le trajet', function () {
+it('lance le trajet', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',
@@ -221,7 +221,7 @@ it('lance le trajet', function () {
     expect($r->statut)->toBe('en cours');
 });
 
-it('termine le trajet', function () {
+it('termine le trajet', function (): void {
     [$user, , $v] = userWithAgence();
     $r = Reservation::create([
         'vehicle_id' => $v->id, 'user_id' => $user->id, 'depart' => 'Lyon', 'destination' => 'Paris',

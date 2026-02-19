@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-it('updates password with valid current password', function () {
+it('updates password with valid current password', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
@@ -19,7 +19,7 @@ it('updates password with valid current password', function () {
     expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
 });
 
-it('requires correct current password to update password', function () {
+it('requires correct current password to update password', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)

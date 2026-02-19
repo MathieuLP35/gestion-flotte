@@ -5,7 +5,7 @@ use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Spatie\Permission\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(PermissionSeeder::class);
 });
 
@@ -18,7 +18,7 @@ function roleAdminUser(): User
     return $u;
 }
 
-it('affiche la liste des rôles', function () {
+it('affiche la liste des rôles', function (): void {
     $response = $this->actingAs(roleAdminUser())->get(route('admin.roles.index'));
 
     $response->assertOk();
@@ -28,7 +28,7 @@ it('affiche la liste des rôles', function () {
     );
 });
 
-it('affiche le formulaire de création de rôle', function () {
+it('affiche le formulaire de création de rôle', function (): void {
     $response = $this->actingAs(roleAdminUser())->get(route('admin.roles.create'));
 
     $response->assertOk();
@@ -38,7 +38,7 @@ it('affiche le formulaire de création de rôle', function () {
     );
 });
 
-it('crée un rôle', function () {
+it('crée un rôle', function (): void {
     $response = $this->actingAs(roleAdminUser())->post(route('admin.roles.store'), [
         'name' => 'Editeur',
         'permissions' => ['roles.view'],
@@ -48,7 +48,7 @@ it('crée un rôle', function () {
     $this->assertDatabaseHas('roles', ['name' => 'Editeur']);
 });
 
-it('affiche le formulaire d\'édition d\'un rôle', function () {
+it('affiche le formulaire d\'édition d\'un rôle', function (): void {
     $role = Role::create(['name' => 'RoleEdit', 'guard_name' => 'web']);
 
     $response = $this->actingAs(roleAdminUser())->get(route('admin.roles.edit', $role));
@@ -61,7 +61,7 @@ it('affiche le formulaire d\'édition d\'un rôle', function () {
     );
 });
 
-it('met à jour un rôle', function () {
+it('met à jour un rôle', function (): void {
     $role = Role::create(['name' => 'RoleUpd', 'guard_name' => 'web']);
 
     $response = $this->actingAs(roleAdminUser())->put(route('admin.roles.update', $role), [
@@ -74,7 +74,7 @@ it('met à jour un rôle', function () {
     expect($role->name)->toBe('RoleUpdModifié');
 });
 
-it('supprime un rôle', function () {
+it('supprime un rôle', function (): void {
     $role = Role::create(['name' => 'RoleDel', 'guard_name' => 'web']);
 
     $response = $this->actingAs(roleAdminUser())->delete(route('admin.roles.destroy', $role));

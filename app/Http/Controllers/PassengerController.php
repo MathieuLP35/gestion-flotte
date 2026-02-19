@@ -8,6 +8,7 @@ use App\Mail\PassengerStatusUpdated;
 use App\Models\Passenger;
 use App\Models\Reservation;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -16,7 +17,11 @@ class PassengerController extends Controller
 {
     use AuthorizesRequests;
 
-    public function store(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'reservation_id' => 'required|exists:reservations,id',
@@ -24,26 +29,23 @@ class PassengerController extends Controller
 
         $reservation = Reservation::with(['vehicle', 'passengers'])->findOrFail($request->reservation_id);
 
-        // Le conducteur ne peut pas s'ajouter comme passager
         if ($reservation->user_id === Auth::id()) {
             return back()->with('error', 'Vous êtes le conducteur de ce trajet.');
         }
 
-        // Seules les réservations en covoiturage et validées acceptent de nouvelles demandes
         if (! $reservation->covoiturage) {
             return back()->with('error', 'Ce trajet n\'accepte pas les passagers.');
         }
+
         if ($reservation->statut !== 'validé') {
             return back()->with('error', 'Les demandes ne sont possibles que pour les trajets validés.');
         }
 
-        // Vérifier qu'il reste des places (conducteur + 1 par place, nbr_places inclut le conducteur)
         $occupants = 1 + $reservation->passengers->whereIn('statut', ['confirme', 'en_attente'])->count();
         if ($reservation->vehicle && $reservation->vehicle->nbr_places && $occupants >= $reservation->vehicle->nbr_places) {
             return back()->with('error', 'Ce trajet est complet.');
         }
 
-        // Vérifier qu'il n'est pas déjà passager de ce trajet
         $existing = Passenger::where('reservation_id', $request->reservation_id)
             ->where('user_id', Auth::id())
             ->exists();
@@ -59,37 +61,48 @@ class PassengerController extends Controller
         ]);
 
         $passenger->load('reservation.driver');
+
+        // Suppression du check superflu (Ligne 65 du rapport)
         Mail::to($passenger->reservation->driver->email)->queue(new PassengerRequestReceived($passenger));
 
         return redirect()->route('dashboard')->with('success', 'Votre demande de covoiturage a été envoyée.');
     }
 
-    public function update(Request $request, Passenger $passenger)
+    /**
+     * @param Request $request
+     * @param Passenger $passenger
+     * @return RedirectResponse
+     */
+    public function update(Request $request, Passenger $passenger): RedirectResponse
     {
-
         $this->authorize('update', $passenger);
 
         $request->validate([
             'statut' => 'required|in:confirme,refuse',
         ]);
 
-        $passenger->update(['statut' => $request->statut]);
+        $passenger->update(['statut' => (string) $request->statut]);
 
-        // Email au passager
+        // Suppression du check superflu (Ligne 87 du rapport)
         Mail::to($passenger->user->email)->send(new PassengerStatusUpdated($passenger));
 
         return back()->with('success', 'Statut du passager mis à jour.');
     }
 
-    // Retirer un passager (ou annuler sa propre place)
-    public function destroy(Passenger $passenger)
+    /**
+     * @param Passenger $passenger
+     * @return RedirectResponse
+     */
+    public function destroy(Passenger $passenger): RedirectResponse
     {
         $this->authorize('delete', $passenger);
 
         if (Auth::id() !== $passenger->user_id) {
+            // Suppression des checks superflus (Ligne 106 du rapport)
             $email = $passenger->user->email;
             $userName = $passenger->user->name;
             $reservation = $passenger->reservation;
+
             $passenger->delete();
             Mail::to($email)->send(new PassengerRemovedFromTrip($reservation, $userName));
         } else {

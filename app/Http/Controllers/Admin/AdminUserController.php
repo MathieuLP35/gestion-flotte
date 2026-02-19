@@ -11,7 +11,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class AdminUserController extends Controller
 {
@@ -20,7 +22,7 @@ class AdminUserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() : Response
     {
         $this->authorize('users.view');
 
@@ -39,12 +41,13 @@ class AdminUserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create() {}
+    public function create() : void
+    {}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         //
     }
@@ -52,7 +55,7 @@ class AdminUserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $user) : Response
     {
         $this->authorize('users.view');
         if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
@@ -68,7 +71,7 @@ class AdminUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $user) : Response
     {
         $this->authorize('users.edit');
         if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
@@ -87,7 +90,7 @@ class AdminUserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user) : RedirectResponse
     {
         $this->authorize('users.edit');
         if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {
@@ -117,7 +120,7 @@ class AdminUserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user) : RedirectResponse
     {
         $this->authorize('users.delete');
         if (! Auth::user()->can('agences.view_all') && $user->agence_id !== Auth::user()->agence_id) {

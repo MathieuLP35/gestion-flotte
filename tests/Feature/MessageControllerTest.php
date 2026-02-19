@@ -21,7 +21,7 @@ function reservationForMessage(): array
     return [$user, $r];
 }
 
-it('récupère les messages d\'une réservation', function () {
+it('récupère les messages d\'une réservation', function (): void {
     [$user, $r] = reservationForMessage();
 
     $response = $this->actingAs($user)->get(route('messages.index', $r));
@@ -31,7 +31,7 @@ it('récupère les messages d\'une réservation', function () {
     expect($data)->toBeArray();
 });
 
-it('envoie un message dans une réservation', function () {
+it('envoie un message dans une réservation', function (): void {
     [$user, $r] = reservationForMessage();
 
     $response = $this->actingAs($user)->post(route('messages.store', $r), [

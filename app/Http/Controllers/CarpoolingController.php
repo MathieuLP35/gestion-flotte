@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Inertia\Response;
 
 class CarpoolingController extends Controller
 {
-    public function search(Request $request)
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function search(Request $request) : Response
     {
         $validated = $request->validate([
             'departure' => 'required|string|max:255',

@@ -2,13 +2,13 @@
 
 use App\Models\AllowedDomain;
 
-it('renders the registration screen', function () {
+it('renders the registration screen', function (): void {
     $response = $this->get('/register');
 
     $response->assertStatus(200);
 });
 
-it('allows new users to register', function () {
+it('allows new users to register', function (): void {
     AllowedDomain::create(['name' => 'example.com']);
 
     $response = $this->post('/register', [

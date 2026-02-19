@@ -25,7 +25,7 @@ class TranslationController extends Controller
         if ($keysParam === null || $keysParam === '') {
             $filtered = array_filter(
                 $all,
-                fn ($key) => str_starts_with((string) $key, 'permissions.'),
+                fn ($key): bool => str_starts_with((string) $key, 'permissions.'),
                 ARRAY_FILTER_USE_KEY
             );
 
@@ -36,7 +36,7 @@ class TranslationController extends Controller
         if (empty($keys)) {
             $filtered = array_filter(
                 $all,
-                fn ($key) => str_starts_with((string) $key, 'permissions.'),
+                fn ($key): bool => str_starts_with((string) $key, 'permissions.'),
                 ARRAY_FILTER_USE_KEY
             );
 

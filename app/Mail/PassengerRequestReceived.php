@@ -18,6 +18,11 @@ class PassengerRequestReceived extends Mailable implements ShouldQueue
         $this->passenger->loadMissing(['user', 'reservation.vehicle', 'reservation.driver']);
     }
 
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
         return $this->subject('Nouvelle demande de covoiturage pour votre trajet')

@@ -5,7 +5,7 @@ use App\Models\Agence;
 use App\Models\Maintenance;
 use App\Models\Vehicle;
 
-it('construit le mail MaintenanceAlert', function () {
+it('construit le mail MaintenanceAlert', function (): void {
     $agence = Agence::factory()->create();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'C', 'immatriculation' => 'AB-ALT',

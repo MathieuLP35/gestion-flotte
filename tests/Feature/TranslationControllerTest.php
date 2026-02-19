@@ -4,16 +4,16 @@ use App\Models\Agence;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(PermissionSeeder::class);
 });
 
-it('retourne 401 pour /api/translations si non authentifié', function () {
+it('retourne 401 pour /api/translations si non authentifié', function (): void {
     $response = $this->getJson('/api/translations');
     $response->assertStatus(401);
 });
 
-it('retourne les clés permissions.* pour un utilisateur authentifié', function () {
+it('retourne les clés permissions.* pour un utilisateur authentifié', function (): void {
     $agence = Agence::factory()->create();
     $user = User::factory()->create(['agence_id' => $agence->id]);
     $user->assignRole('Super Admin');
@@ -23,11 +23,11 @@ it('retourne les clés permissions.* pour un utilisateur authentifié', function
     $response->assertOk();
     $data = $response->json();
     expect($data)->toBeArray();
-    $invalid = array_filter(array_keys($data), fn ($k) => ! str_starts_with((string) $k, 'permissions.'));
+    $invalid = array_filter(array_keys($data), fn (int|string $k): bool => ! str_starts_with((string) $k, 'permissions.'));
     expect($invalid)->toBeEmpty();
 });
 
-it('retourne uniquement les clés demandées avec ?keys=', function () {
+it('retourne uniquement les clés demandées avec ?keys=', function (): void {
     $agence = Agence::factory()->create();
     $user = User::factory()->create(['agence_id' => $agence->id]);
     $user->assignRole('Super Admin');

@@ -6,11 +6,11 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Spatie\Permission\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
 });
 
-it('affiche le tableau de bord admin avec les stats', function () {
+it('affiche le tableau de bord admin avec les stats', function (): void {
     $agence = Agence::factory()->create();
     $user = User::factory()->create(['agence_id' => $agence->id]);
     $user->assignRole('Super Admin');
@@ -38,7 +38,7 @@ it('affiche le tableau de bord admin avec les stats', function () {
     );
 });
 
-it('refuse l\'accès au tableau de bord admin sans rôle Super Admin', function () {
+it('refuse l\'accès au tableau de bord admin sans rôle Super Admin', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get(route('admin.dashboard'));

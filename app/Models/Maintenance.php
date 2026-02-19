@@ -14,6 +14,9 @@ class Maintenance extends Model
 {
     protected $fillable = ['vehicle_id', 'km_alert_threshold', 'date_dernier_entretien'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Vehicle, $this>
+     */
     public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);

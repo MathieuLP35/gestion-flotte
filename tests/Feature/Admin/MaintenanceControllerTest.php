@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Spatie\Permission\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
 });
 
@@ -23,7 +23,7 @@ function maintenanceAdminAndVehicle(): array
     return [$user, $v];
 }
 
-it('ajoute un seuil de maintenance', function () {
+it('ajoute un seuil de maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
 
     $response = $this->actingAs($user)->post(route('admin.maintenances.store'), [
@@ -36,7 +36,7 @@ it('ajoute un seuil de maintenance', function () {
     $this->assertDatabaseHas('maintenances', ['vehicle_id' => $v->id, 'km_alert_threshold' => 15000]);
 });
 
-it('refuse d\'ajouter une maintenance pour un véhicule d\'une autre agence', function () {
+it('refuse d\'ajouter une maintenance pour un véhicule d\'une autre agence', function (): void {
     [$user] = maintenanceAdminAndVehicle();
     $autre = Agence::factory()->create();
     $vAutre = Vehicle::create([
@@ -53,7 +53,7 @@ it('refuse d\'ajouter une maintenance pour un véhicule d\'une autre agence', fu
     $response->assertForbidden();
 });
 
-it('affiche le formulaire d\'édition d\'une maintenance', function () {
+it('affiche le formulaire d\'édition d\'une maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
     $m = Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 10000, 'date_dernier_entretien' => '2024-01-01']);
 
@@ -63,7 +63,7 @@ it('affiche le formulaire d\'édition d\'une maintenance', function () {
     $response->assertInertia(fn ($page) => $page->component('Admin/Maintenances/Edit')->has('maintenance')->has('vehicles'));
 });
 
-it('met à jour une maintenance', function () {
+it('met à jour une maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
     $m = Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 10000, 'date_dernier_entretien' => null]);
 
@@ -78,7 +78,7 @@ it('met à jour une maintenance', function () {
     expect($m->km_alert_threshold)->toBe(20000);
 });
 
-it('supprime une maintenance', function () {
+it('supprime une maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
     $m = Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 10000, 'date_dernier_entretien' => null]);
 

@@ -7,7 +7,7 @@ use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Vehicle;
 
-it('diffuse sur le canal privé de la réservation', function () {
+it('diffuse sur le canal privé de la réservation', function (): void {
     $agence = Agence::factory()->create();
     $u = User::factory()->create(['agence_id' => $agence->id]);
     $v = Vehicle::create([

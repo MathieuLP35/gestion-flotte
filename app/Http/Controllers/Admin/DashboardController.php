@@ -9,10 +9,14 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function index()
+    /**
+     * @return Response
+     */
+    public function index() : Response
     {
         $user = Auth::user();
         $hasGlobalView = $user?->can('agences.view_all');
@@ -101,9 +105,9 @@ class DashboardController extends Controller
 
         // Réservations avec coordonnées pour la carte (départ et/ou destination)
         $mapReservations = (clone $baseReservations)
-            ->where(function ($q) {
+            ->where(function ($q): void {
                 $q->whereNotNull('depart_latitude')->whereNotNull('depart_longitude')
-                    ->orWhere(function ($q2) {
+                    ->orWhere(function ($q2): void {
                         $q2->whereNotNull('destination_latitude')->whereNotNull('destination_longitude');
                     });
             })

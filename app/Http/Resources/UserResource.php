@@ -28,7 +28,7 @@ class UserResource extends JsonResource
             'name' => $user->name,
             'email' => $user->email,
             'agence_id' => $user->agence_id,
-            'agence' => $this->whenLoaded('agence', function () use ($user) {
+            'agence' => $this->whenLoaded('agence', function () use ($user): ?array {
                 $agence = $user->agence;
 
                 return $agence !== null ? ['id' => $agence->id, 'nom' => $agence->nom] : null;

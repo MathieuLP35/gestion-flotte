@@ -4,7 +4,7 @@ use App\Models\AllowedDomain;
 use App\Rules\AllowedDomainRule;
 use Illuminate\Support\Facades\Validator;
 
-it('passe si le domaine est autorisé', function () {
+it('passe si le domaine est autorisé', function (): void {
     AllowedDomain::create(['name' => 'example.com']);
 
     $rule = new AllowedDomainRule;
@@ -16,7 +16,7 @@ it('passe si le domaine est autorisé', function () {
     expect($v->passes())->toBeTrue();
 });
 
-it('échoue si le domaine n\'est pas autorisé', function () {
+it('échoue si le domaine n\'est pas autorisé', function (): void {
     $rule = new AllowedDomainRule;
     $v = Validator::make(
         ['email' => 'user@interdit.com'],

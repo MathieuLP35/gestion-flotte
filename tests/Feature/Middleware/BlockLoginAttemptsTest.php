@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Cache;
 
-it('passe la requête si pas d\'email', function () {
+it('passe la requête si pas d\'email', function (): void {
     $response = $this->post(route('login'), [
         'password' => 'password',
     ]);
@@ -13,29 +13,29 @@ it('passe la requête si pas d\'email', function () {
     // Ici on teste le middleware en l'invoquant directement.
     $middleware = new \App\Http\Middleware\BlockLoginAttempts;
     $request = \Illuminate\Http\Request::create('/test', 'POST', []);
-    $next = fn ($r) => new \Illuminate\Http\Response('ok');
+    $next = fn ($r): \Illuminate\Http\Response => new \Illuminate\Http\Response('ok');
     $result = $middleware->handle($request, $next);
     expect($result->getContent())->toBe('ok');
 });
 
-it('bloque si le compte est verrouillé', function () {
+it('bloque si le compte est verrouillé', function (): void {
     $middleware = new \App\Http\Middleware\BlockLoginAttempts;
     $request = \Illuminate\Http\Request::create('/test', 'POST', ['email' => 'locked@test.com']);
     Cache::put('login_locked_locked@test.com', now()->addMinutes(30), now()->addMinutes(30));
 
-    $next = fn ($r) => new \Illuminate\Http\Response('ok');
+    $next = fn ($r): \Illuminate\Http\Response => new \Illuminate\Http\Response('ok');
     $result = $middleware->handle($request, $next);
 
     expect($result->isRedirection())->toBeTrue();
     Cache::forget('login_locked_locked@test.com');
 });
 
-it('passe si la clé de verrouillage a expiré', function () {
+it('passe si la clé de verrouillage a expiré', function (): void {
     $middleware = new \App\Http\Middleware\BlockLoginAttempts;
     $request = \Illuminate\Http\Request::create('/test', 'POST', ['email' => 'expired@test.com']);
     Cache::put('login_locked_expired@test.com', now()->subMinute(), now()->subMinute());
 
-    $next = fn ($r) => new \Illuminate\Http\Response('ok');
+    $next = fn ($r): \Illuminate\Http\Response => new \Illuminate\Http\Response('ok');
     $result = $middleware->handle($request, $next);
 
     expect($result->getContent())->toBe('ok');
