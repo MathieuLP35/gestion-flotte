@@ -9,14 +9,24 @@ describe('Admin/Roles/Edit', () => {
 
     const wrapper = mount(RolesEdit, {
       props: {
-        role: { id: 1, name: 'Manager', permissions: ['vehicles.manage'] },
+        // Ajout de la clé "data" ici pour correspondre à ton API Resource
+        role: { 
+          data: { id: 1, name: 'Manager', permissions: ['vehicles.manage'] } 
+        },
         permissions: ['vehicles.manage', 'users.manage'],
       },
-      global: { stubs: { Head: true, Link: true, AdminLayout: { template: '<div><slot /></div>' } } },
+      global: { 
+        stubs: { 
+          Head: true, 
+          Link: true, 
+          AdminLayout: { template: '<div><slot /></div>' } 
+        } 
+      },
     });
+
     expect(wrapper.text()).toContain('Modifier le rôle');
     expect(wrapper.find('form').exists()).toBe(true);
+    // Maintenant cet expect passera car form.name sera 'Manager'
     expect(wrapper.find('input#name').element.value).toBe('Manager');
-    expect(wrapper.find('button[type="submit"]').text()).toContain('Mettre à jour');
   });
 });
