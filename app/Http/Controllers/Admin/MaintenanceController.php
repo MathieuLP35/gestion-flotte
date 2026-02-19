@@ -13,10 +13,6 @@ use Inertia\Response;
 
 class MaintenanceController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -36,13 +32,9 @@ class MaintenanceController extends Controller
         return back()->with('success', 'Seuil de maintenance ajouté');
     }
 
-    /**
-     * @param Maintenance $maintenance
-     * @return Response
-     */
     public function edit(Maintenance $maintenance): Response
     {
-        if (!Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
+        if (! Auth::user()->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()->agence_id) {
             abort(403);
         }
 
@@ -53,11 +45,6 @@ class MaintenanceController extends Controller
         return Inertia::render('Admin/Maintenances/Edit', ['maintenance' => $maintenance, 'vehicles' => $vehicles]);
     }
 
-    /**
-     * @param Request $request
-     * @param Maintenance $maintenance
-     * @return RedirectResponse
-     */
     public function update(Request $request, Maintenance $maintenance): RedirectResponse
     {
         if (! Auth::user()?->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()?->agence_id) {
@@ -75,10 +62,6 @@ class MaintenanceController extends Controller
         return redirect()->route('admin.vehicles.edit', $maintenance->vehicle_id)->with('success', 'Seuil de maintenance mis à jour');
     }
 
-    /**
-     * @param Maintenance $maintenance
-     * @return RedirectResponse
-     */
     public function destroy(Maintenance $maintenance): RedirectResponse
     {
         if (! Auth::user()?->can('agences.view_all') && $maintenance->vehicle->agence_id !== Auth::user()?->agence_id) {

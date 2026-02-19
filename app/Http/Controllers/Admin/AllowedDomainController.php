@@ -15,9 +15,6 @@ class AllowedDomainController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @return Response
-     */
     public function index(): Response
     {
         $this->authorize('allowed_domains.view');
@@ -32,10 +29,6 @@ class AllowedDomainController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $this->authorize('allowed_domains.create');
@@ -49,10 +42,6 @@ class AllowedDomainController extends Controller
         return back()->with('success', 'Domaine ajouté.');
     }
 
-    /**
-     * @param AllowedDomain $domain
-     * @return Response
-     */
     public function edit(AllowedDomain $domain): Response
     {
         $this->authorize('allowed_domains.edit');
@@ -62,11 +51,6 @@ class AllowedDomainController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param AllowedDomain $domain
-     * @return RedirectResponse
-     */
     public function update(Request $request, AllowedDomain $domain): RedirectResponse
     {
         $this->authorize('allowed_domains.edit');
@@ -80,10 +64,6 @@ class AllowedDomainController extends Controller
         return redirect()->route('admin.domains.index')->with('success', 'Domaine mis à jour.');
     }
 
-    /**
-     * @param AllowedDomain $domain
-     * @return RedirectResponse
-     */
     public function destroy(AllowedDomain $domain): RedirectResponse
     {
         $this->authorize('allowed_domains.delete');

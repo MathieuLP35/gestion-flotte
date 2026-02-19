@@ -15,9 +15,6 @@ class AgenceController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @return Response
-     */
     public function index(): Response
     {
         $this->authorize('agences.view');
@@ -32,9 +29,6 @@ class AgenceController extends Controller
         ]);
     }
 
-    /**
-     * @return Response
-     */
     public function create(): Response
     {
         $this->authorize('agences.view');
@@ -42,10 +36,6 @@ class AgenceController extends Controller
         return Inertia::render('Admin/Agences/Create');
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $this->authorize('agences.view');
@@ -59,10 +49,6 @@ class AgenceController extends Controller
         return redirect()->route('admin.agences.index')->with('success', 'Agence créée.');
     }
 
-    /**
-     * @param Agence $agence
-     * @return Response
-     */
     public function edit(Agence $agence): Response
     {
         $this->authorize('agences.view');
@@ -75,11 +61,6 @@ class AgenceController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Agence $agence
-     * @return RedirectResponse
-     */
     public function update(Request $request, Agence $agence): RedirectResponse
     {
         $this->authorize('agences.view');
@@ -96,10 +77,6 @@ class AgenceController extends Controller
         return redirect()->route('admin.agences.index')->with('success', 'Agence mise à jour.');
     }
 
-    /**
-     * @param Agence $agence
-     * @return RedirectResponse
-     */
     public function destroy(Agence $agence): RedirectResponse
     {
         $this->authorize('agences.view');

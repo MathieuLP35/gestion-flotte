@@ -15,10 +15,7 @@ class VehicleSuggestionSettingController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @return Response
-     */
-    public function edit() : Response
+    public function edit(): Response
     {
         $this->authorize('vehicle_suggestion.view');
 
@@ -37,11 +34,7 @@ class VehicleSuggestionSettingController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function update(Request $request) : RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
         $this->authorize('vehicle_suggestion.edit');
 

@@ -16,9 +16,6 @@ class VehicleController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @return RedirectResponse
-     */
     public function index(): RedirectResponse
     {
         $this->authorize('vehicles.view');
@@ -26,9 +23,6 @@ class VehicleController extends Controller
         return redirect()->route('admin.vehicles.availability');
     }
 
-    /**
-     * @return Response
-     */
     public function create(): Response
     {
         $this->authorize('vehicles.create');
@@ -36,10 +30,6 @@ class VehicleController extends Controller
         return Inertia::render('Admin/Vehicles/Create');
     }
 
-    /**
-     * @param Vehicle $vehicle
-     * @return Response
-     */
     public function show(Vehicle $vehicle): Response
     {
         $this->authorize('vehicles.view');
@@ -53,10 +43,6 @@ class VehicleController extends Controller
         ]);
     }
 
-    /**
-     * @param Vehicle $vehicle
-     * @return Response
-     */
     public function calendar(Vehicle $vehicle): Response
     {
         $this->authorize('vehicles.view');
@@ -76,10 +62,6 @@ class VehicleController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
     public function availability(Request $request): Response
     {
         $this->authorize('vehicles.view');
@@ -115,10 +97,6 @@ class VehicleController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $this->authorize('vehicles.create');
@@ -148,10 +126,6 @@ class VehicleController extends Controller
         return redirect()->route('admin.vehicles.availability')->with('success', 'Véhicule créé');
     }
 
-    /**
-     * @param Vehicle $vehicle
-     * @return Response
-     */
     public function edit(Vehicle $vehicle): Response
     {
         $this->authorize('vehicles.edit');
@@ -167,11 +141,6 @@ class VehicleController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Vehicle $vehicle
-     * @return RedirectResponse
-     */
     public function update(Request $request, Vehicle $vehicle): RedirectResponse
     {
         $this->authorize('vehicles.edit');
@@ -195,10 +164,6 @@ class VehicleController extends Controller
         return redirect()->route('admin.vehicles.availability')->with('success', 'Mis à jour');
     }
 
-    /**
-     * @param Vehicle $vehicle
-     * @return RedirectResponse
-     */
     public function destroy(Vehicle $vehicle): RedirectResponse
     {
         $this->authorize('vehicles.delete');

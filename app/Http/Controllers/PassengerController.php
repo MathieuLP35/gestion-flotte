@@ -17,10 +17,6 @@ class PassengerController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -68,11 +64,6 @@ class PassengerController extends Controller
         return redirect()->route('dashboard')->with('success', 'Votre demande de covoiturage a été envoyée.');
     }
 
-    /**
-     * @param Request $request
-     * @param Passenger $passenger
-     * @return RedirectResponse
-     */
     public function update(Request $request, Passenger $passenger): RedirectResponse
     {
         $this->authorize('update', $passenger);
@@ -89,10 +80,6 @@ class PassengerController extends Controller
         return back()->with('success', 'Statut du passager mis à jour.');
     }
 
-    /**
-     * @param Passenger $passenger
-     * @return RedirectResponse
-     */
     public function destroy(Passenger $passenger): RedirectResponse
     {
         $this->authorize('delete', $passenger);

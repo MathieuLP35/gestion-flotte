@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Mail\ReservationStatusChanged;
 use App\Models\Passenger;
 use App\Models\Reservation;
-use App\Models\Vehicle;
 use App\Models\User;
+use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -26,7 +26,6 @@ class ReservationController extends Controller
 
     /**
      * Affiche la liste des réservations de l'utilisateur connecté.
-     * * @return Response
      */
     public function index(): Response
     {
@@ -45,7 +44,6 @@ class ReservationController extends Controller
 
     /**
      * Affiche le tableau de bord avec les trajets conducteur et passager.
-     * * @return Response
      */
     public function dashboard(): Response
     {
@@ -70,9 +68,6 @@ class ReservationController extends Controller
         ]);
     }
 
-    /**
-     * @return Response
-     */
     public function create(): Response
     {
         /** @var User $user */
@@ -89,8 +84,6 @@ class ReservationController extends Controller
 
     /**
      * API pour suggérer un véhicule basé sur la distance.
-     * * @param Request $request
-     * @return JsonResponse
      */
     public function suggestVehicle(Request $request): JsonResponse
     {
@@ -111,10 +104,10 @@ class ReservationController extends Controller
         );
 
         $dateDebut = $request->filled('date_debut')
-            ? Carbon::parse((string)$request->date_debut)->format('Y-m-d H:i:s')
+            ? Carbon::parse((string) $request->date_debut)->format('Y-m-d H:i:s')
             : null;
         $dateFin = $request->filled('date_fin')
-            ? Carbon::parse((string)$request->date_fin)->format('Y-m-d H:i:s')
+            ? Carbon::parse((string) $request->date_fin)->format('Y-m-d H:i:s')
             : null;
 
         /** @var User $user */
@@ -133,10 +126,6 @@ class ReservationController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -194,10 +183,6 @@ class ReservationController extends Controller
         return redirect()->route('dashboard')->with('success', 'Réservation créée en attente de validation');
     }
 
-    /**
-     * @param Reservation $reservation
-     * @return Response
-     */
     public function edit(Reservation $reservation): Response
     {
         $this->authorize('update', $reservation);
@@ -209,11 +194,6 @@ class ReservationController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Reservation $reservation
-     * @return RedirectResponse
-     */
     public function update(Request $request, Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
@@ -237,10 +217,6 @@ class ReservationController extends Controller
         return redirect()->route('reservations.index')->with('success', 'Réservation mise à jour');
     }
 
-    /**
-     * @param Reservation $reservation
-     * @return RedirectResponse
-     */
     public function destroy(Reservation $reservation): RedirectResponse
     {
         $this->authorize('delete', $reservation);
@@ -249,10 +225,6 @@ class ReservationController extends Controller
         return redirect()->route('dashboard')->with('success', 'Réservation supprimée');
     }
 
-    /**
-     * @param Reservation $reservation
-     * @return Response
-     */
     public function show(Reservation $reservation): Response
     {
         $this->authorize('view', $reservation);
@@ -263,10 +235,6 @@ class ReservationController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function checkCarpool(Request $request): JsonResponse
     {
         $request->validate([
@@ -276,9 +244,9 @@ class ReservationController extends Controller
             'destination' => 'required|string|max:255',
         ]);
 
-        $dateDebut = Carbon::parse((string)$request->date_debut);
-        $departure = strtolower(trim((string)$request->departure));
-        $destination = strtolower(trim((string)$request->destination));
+        $dateDebut = Carbon::parse((string) $request->date_debut);
+        $departure = strtolower(trim((string) $request->departure));
+        $destination = strtolower(trim((string) $request->destination));
 
         $reservations = Reservation::with(['driver', 'vehicle', 'passengers'])
             ->where('statut', 'validé')
@@ -294,6 +262,7 @@ class ReservationController extends Controller
                 return false;
             }
             $currentOccupants = $reservation->passengers->where('statut', 'confirme')->count() + 1;
+
             return $reservation->vehicle->nbr_places > $currentOccupants;
         });
 
@@ -304,7 +273,6 @@ class ReservationController extends Controller
     }
 
     /**
-     * @param Reservation $reservation
      * @return Response|RedirectResponse
      */
     public function showReturnForm(Reservation $reservation)
@@ -326,16 +294,11 @@ class ReservationController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Reservation $reservation
-     * @return RedirectResponse
-     */
     public function returnVehicle(Request $request, Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
 
-        if (!$reservation->vehicle) {
+        if (! $reservation->vehicle) {
             abort(404);
         }
 
@@ -360,7 +323,7 @@ class ReservationController extends Controller
         $reservation->vehicle->update([
             'emplacement' => $request->emplacement_retour,
             'km_initial' => $request->km_final,
-            'en_maintenance' => $request->etat_vehicule === 'mauvais'
+            'en_maintenance' => $request->etat_vehicule === 'mauvais',
         ]);
 
         if ($reservation->user) {
@@ -370,10 +333,6 @@ class ReservationController extends Controller
         return redirect()->route('reservations.show', $reservation)->with('success', 'Retour effectué');
     }
 
-    /**
-     * @param Reservation $reservation
-     * @return RedirectResponse
-     */
     public function startTrip(Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);
@@ -386,10 +345,6 @@ class ReservationController extends Controller
         return back()->with('success', 'Trajet lancé');
     }
 
-    /**
-     * @param Reservation $reservation
-     * @return RedirectResponse
-     */
     public function endTrip(Reservation $reservation): RedirectResponse
     {
         $this->authorize('update', $reservation);

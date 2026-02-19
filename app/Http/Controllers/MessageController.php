@@ -11,10 +11,6 @@ class MessageController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @param Reservation $reservation
-     * @return JsonResponse
-     */
     public function index(Reservation $reservation): JsonResponse
     {
         $this->authorize('view', $reservation);
@@ -25,11 +21,6 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
-    /**
-     * @param Request $request
-     * @param Reservation $reservation
-     * @return JsonResponse
-     */
     public function store(Request $request, Reservation $reservation): JsonResponse
     {
         $this->authorize('view', $reservation);

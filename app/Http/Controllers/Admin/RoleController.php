@@ -15,9 +15,6 @@ class RoleController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * @return Response
-     */
     public function index(): Response
     {
         $this->authorize('roles.view');
@@ -29,9 +26,6 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * @return Response
-     */
     public function create(): Response
     {
         $this->authorize('roles.create');
@@ -41,10 +35,6 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $this->authorize('roles.create');
@@ -60,10 +50,6 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index')->with('success', 'Rôle créé.');
     }
 
-    /**
-     * @param Role $role
-     * @return Response
-     */
     public function edit(Role $role): Response
     {
         $this->authorize('roles.edit');
@@ -74,11 +60,6 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Role $role
-     * @return RedirectResponse
-     */
     public function update(Request $request, Role $role): RedirectResponse
     {
         $this->authorize('roles.edit');
@@ -94,10 +75,6 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index')->with('success', 'Rôle mis à jour.');
     }
 
-    /**
-     * @param Role $role
-     * @return RedirectResponse
-     */
     public function destroy(Role $role): RedirectResponse
     {
         $this->authorize('roles.delete');

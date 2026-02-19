@@ -13,10 +13,7 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    /**
-     * @return Response
-     */
-    public function index() : Response
+    public function index(): Response
     {
         $user = Auth::user();
         $hasGlobalView = $user?->can('agences.view_all');

@@ -28,10 +28,10 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
-     * @param \App\Http\Requests\Auth\LoginRequest $request
-     * @return RedirectResponse
+     *
+     * @param  \App\Http\Requests\Auth\LoginRequest  $request
      */
-    public function store(Request $request) : RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $email = $request->input('email');
         $attemptsKey = 'login_attempts_'.$email;
