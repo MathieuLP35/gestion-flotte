@@ -1,59 +1,122 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo.png" width="300" alt="SparkOtto Logo">
 </p>
 
-## About Laravel
+<p align="center">
+    <a href="https://github.com/votre-nom/sparkotto/actions"><img src="https://img.shields.io/badge/CI%2FCD-Passing-brightgreen?style=flat-square&logo=github-actions" alt="Build Status"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel" alt="Laravel 12"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=flat-square&logo=vuedotjs" alt="Vue 3"></a>
+    <a href="#"><img src="https://img.shields.io/badge/PHP-8.4-777BB4?style=flat-square&logo=php" alt="PHP 8.4"></a>
+    <a href="#"><img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql" alt="PostgreSQL"></a>
+    <a href="#"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"></a>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚗 À propos de SparkOtto
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**SparkOtto** est une application web innovante dédiée à la **gestion de flotte automobile et au covoiturage d'entreprise**. 
+Conçue pour simplifier la logistique de mobilité interne, elle permet aux collaborateurs de réserver des véhicules, de proposer des trajets partagés et de communiquer en temps réel, le tout au sein d'une interface fluide et réactive.
 
-## Learning Laravel
+### ✨ Fonctionnalités Principales
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- 📅 **Réservation simplifiée** : Planification et gestion des emprunts de véhicules de la flotte.
+- 🤝 **Covoiturage collaboratif** : Système d'intégration de passagers (demande, acceptation, refus) sur des trajets existants.
+- 💬 **Messagerie Temps Réel** : Chat intégré pour chaque trajet via **Laravel Reverb** (WebSockets).
+- 🔑 **Gestion des clés** : Suivi précis des remises et retours de clés.
+- 🔋 **Suivi technique** : Monitoring du kilométrage, de l'état des véhicules et du type d'énergie (Électrique, Hybride, Thermique).
+- 🗺️ **Cartographie** : Visualisation des itinéraires avec calcul des distances de départ et de destination.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🛠 Stack Technique
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+SparkOtto repose sur une architecture **Monolithique (Monorepo)** ultra-moderne, couplant la robustesse de Laravel à la réactivité de Vue.js grâce à Inertia.js.
 
-### Premium Partners
+- **Backend** : [Laravel 12](https://laravel.com) (PHP 8.4)
+- **Frontend** : [Vue.js 3](https://vuejs.org) (Composition API) & [Tailwind CSS](https://tailwindcss.com)
+- **Connecteur** : [Inertia.js](https://inertiajs.com) (Single Page Application sans API REST complexe)
+- **WebSockets** : [Laravel Reverb](https://reverb.laravel.com) (Temps réel natif)
+- **Base de données** : [PostgreSQL](https://www.postgresql.org) (Haute performance et intégrité relationnelle)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 🚀 Installation & Lancement en Local
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Pour faire tourner SparkOtto sur votre machine de développement, suivez ces étapes précisément :
 
-## Code of Conduct
+### Étape 1 : Pré-requis
+Assurez-vous d'avoir installé sur votre machine :
+- **PHP 8.4+** et **Composer**
+- **Node.js** (v18+) et **NPM**
+- **PostgreSQL** (Service actif en local ou via Docker)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Étape 2 : Récupération du projet
+Clonez le dépôt depuis GitHub et placez-vous dans le dossier :
+```bash
+git clone [https://github.com/votre-nom/sparkotto.git](https://github.com/votre-nom/sparkotto.git)
+cd sparkotto
+```
 
-## Security Vulnerabilities
+### Étape 3 : Installation des dépendances
+Installez les bibliothèques Backend (PHP) et Frontend (JS) :
+```bash
+composer install
+npm install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Étape 4 : Configuration de l'environnement
+Copiez le fichier d'exemple et générez la clé de sécurité unique de votre application :
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## License
+### Étape 5 : Configuration de la Base de Données
+Ouvrez votre fichier .env et configurez vos accès PostgreSQL (modifiez les valeurs selon votre configuration locale) :
+```bash
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=sparkotto
+DB_USERNAME=votre_utilisateur
+DB_PASSWORD=votre_mot_de_passe
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Étape 6 : Configuration de la Base de Données
+Lancez la création des tables dans la base de données et injectez les données de test (Seeders) :
+```bash
+php artisan migrate --seed
+```
+
+### Étape 7 : Démarrage de l'interface (Frontend / Vite)
+Dans un premier terminal, lancez le compilateur à chaud pour Vue.js et Tailwind :
+```bash
+npm run dev
+```
+
+### Étape 8 : Démarrage du serveur web (Backend / Laravel)
+Dans un deuxième terminal, lancez le serveur PHP pour rendre l'application accessible :
+```bash
+php artisan serve
+```
+
+### Étape 9 : Démarrage de la messagerie en direct (Reverb)
+Dans un troisième terminal, lancez le serveur WebSocket pour activer le temps réel (indispensable pour le chat) :
+```bash
+php artisan reverb:start
+```
+
+### Étape 10 : Démarrage des files d'attente (Queues)
+Dans un quatrième terminal, lancez le "Worker" qui traitera l'envoi des messages en arrière-plan sans bloquer l'application :
+```bash
+php artisan queue:work
+```
+---
+
+## 🤝 Contribution
+Toute contribution est la bienvenue ! N'hésitez pas à ouvrir une Issue pour signaler un bug ou proposer une fonctionnalité, ou à soumettre une Pull Request. Assurez-vous que votre code passe les tests locaux (php artisan test et npm run test) avant toute soumission.
+
+## 📄 Licence
+Ce projet est sous licence open-source MIT.
+
