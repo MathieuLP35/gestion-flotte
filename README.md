@@ -33,11 +33,11 @@ Conçue pour simplifier la logistique de mobilité interne, elle permet aux coll
 
 SparkOtto repose sur une architecture **Monolithique (Monorepo)** ultra-moderne, couplant la robustesse de Laravel à la réactivité de Vue.js grâce à Inertia.js.
 
-- **Backend** : [Laravel 12](https://laravel.com) (PHP 8.4)
-- **Frontend** : [Vue.js 3](https://vuejs.org) (Composition API) & [Tailwind CSS](https://tailwindcss.com)
-- **Connecteur** : [Inertia.js](https://inertiajs.com) (Single Page Application sans API REST complexe)
-- **WebSockets** : [Laravel Reverb](https://reverb.laravel.com) (Temps réel natif)
-- **Base de données** : [PostgreSQL](https://www.postgresql.org) (Haute performance et intégrité relationnelle)
+- **Backend** : [Laravel 12](https://laravel.com)
+- **Frontend** : [Vue.js 3](https://vuejs.org) & [Tailwind CSS](https://tailwindcss.com)
+- **Connecteur** : [Inertia.js](https://inertiajs.com)
+- **WebSockets** : [Laravel Reverb](https://reverb.laravel.com) 
+- **Base de données** : [PostgreSQL](https://www.postgresql.org) 
 
 ---
 
@@ -49,7 +49,7 @@ Pour faire tourner SparkOtto sur votre machine de développement, suivez ces ét
 Assurez-vous d'avoir installé sur votre machine :
 - **PHP 8.4+** et **Composer**
 - **Node.js** (v18+) et **NPM**
-- **PostgreSQL** (Service actif en local ou via Docker)
+- **PostgreSQL**
 
 ### Étape 2 : Récupération du projet
 Clonez le dépôt depuis GitHub et placez-vous dans le dossier :
