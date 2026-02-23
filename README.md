@@ -117,6 +117,17 @@ php artisan queue:work
 ## 🤝 Contribution
 Toute contribution est la bienvenue ! N'hésitez pas à ouvrir une Issue pour signaler un bug ou proposer une fonctionnalité, ou à soumettre une Pull Request. Assurez-vous que votre code passe les tests locaux (php artisan test et npm run test) avant toute soumission.
 
+
+## 👥 Équipe Initiale & Contributeurs
+
+Ce projet a initialement vu le jour dans le cadre d'un projet académique. Un grand merci aux personnes ayant participé à sa genèse :
+
+* 💻 **[@Mathieu LE PETITCORPS](https://github.com/MathieuLP35)** — Créateur & Développeur Principal (Full-Stack)
+* 🛠️ **[@AxelM-dev](https://github.com/axelm-dev)** — Développement, Déploiement & CI/CD
+* 🎨 **[@ClaireM-arch](https://github.com/cmgtc)** — Architecture & Idéation (Schémas d'architecture et réflexion produit)
+
+---
+
 ## 📄 Licence
 Ce projet est sous licence open-source MIT.
 
