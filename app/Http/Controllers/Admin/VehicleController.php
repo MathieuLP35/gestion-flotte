@@ -71,7 +71,7 @@ class VehicleController extends Controller
                 $query->where('statut', 'en attente');
             }])
             ->orderBy('modele', 'asc');
-            
+
         if (! Auth::user()?->can('agences.view_all')) {
             $query->where('agence_id', Auth::user()?->agence_id);
         }
