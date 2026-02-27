@@ -76,7 +76,7 @@ class PermissionSeeder extends Seeder
 
         // Second admin (compatible DEMO_MAIL_RECIPIENT : email peut être toi+admin2@...)
         $admin2 = User::where('name', 'Marie Martin')->first();
-        if ($admin2 && !$admin2->hasRole('Administrateur')) {
+        if ($admin2 && ! $admin2->hasRole('Administrateur')) {
             $admin2->assignRole('Administrateur');
         }
     }
