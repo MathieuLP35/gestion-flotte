@@ -67,8 +67,8 @@ class VehicleController extends Controller
         $this->authorize('vehicles.view');
 
         $query = Vehicle::query()
-            ->withCount(['reservations as pending_reservations_count' => function ($query) {
-                $query->where('statut', 'en attente');
+            ->withCount(['reservations as pending_reservations_count' => function ($q) {
+                $q->where('statut', 'en attente');
             }])
             ->orderBy('modele', 'asc');
 

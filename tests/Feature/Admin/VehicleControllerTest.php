@@ -159,3 +159,53 @@ it('affiche la page disponibilités', function (): void {
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page->component('Admin/Vehicles/Availability')->has('vehicles')->has('reservations'));
 });
+
+it('refuse edition d\'un véhicule d\'une autre agence', function (): void {
+    [$user] = adminWithAgence();
+    $autre = Agence::factory()->create();
+    $v = Vehicle::create([
+        'agence_id' => $autre->id, 'modele' => 'Autre', 'immatriculation' => 'ED-999',
+        'km_initial' => 0, 'emplacement' => 'Y', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
+    ]);
+
+    $response = $this->actingAs($user)->get(route('admin.vehicles.edit', $v));
+    $response->assertForbidden();
+});
+
+it('refuse mise à jour d\'un véhicule d\'une autre agence', function (): void {
+    [$user] = adminWithAgence();
+    $autre = Agence::factory()->create();
+    $v = Vehicle::create([
+        'agence_id' => $autre->id, 'modele' => 'Autre', 'immatriculation' => 'UP-999',
+        'km_initial' => 0, 'emplacement' => 'Y', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
+    ]);
+
+    $response = $this->actingAs($user)->put(route('admin.vehicles.update', $v), [
+        'modele' => 'O', 'immatriculation' => 'A', 'km_initial' => 0, 'emplacement' => 'Y', 'nbr_places' => 5, 'energie' => 'essence',
+    ]);
+    $response->assertForbidden();
+});
+
+it('refuse suppression d\'un véhicule d\'une autre agence', function (): void {
+    [$user] = adminWithAgence();
+    $autre = Agence::factory()->create();
+    $v = Vehicle::create([
+        'agence_id' => $autre->id, 'modele' => 'Autre', 'immatriculation' => 'DE-999',
+        'km_initial' => 0, 'emplacement' => 'Y', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
+    ]);
+
+    $response = $this->actingAs($user)->delete(route('admin.vehicles.destroy', $v));
+    $response->assertForbidden();
+});
+
+it('refuse de voir le calendrier d\'un véhicule d\'une autre agence', function (): void {
+    [$user] = adminWithAgence();
+    $autre = Agence::factory()->create();
+    $v = Vehicle::create([
+        'agence_id' => $autre->id, 'modele' => 'Autre', 'immatriculation' => 'CA-999',
+        'km_initial' => 0, 'emplacement' => 'Y', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
+    ]);
+
+    $response = $this->actingAs($user)->get(route('admin.vehicles.calendar', $v));
+    $response->assertForbidden();
+});
