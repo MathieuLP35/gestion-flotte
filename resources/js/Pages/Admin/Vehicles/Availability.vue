@@ -20,9 +20,9 @@
             {{ page.props.flash.success }}
           </div>
 
-          <div class="flex flex-col lg:flex-row h-[calc(100vh-200px)]">
+          <div class="flex flex-col lg:flex-row lg:h-[calc(100vh-200px)] min-h-screen lg:min-h-0">
             <!-- Sidebar avec la liste des véhicules -->
-            <div class="w-full lg:w-96 border-r border-gray-200 bg-gray-50 overflow-y-auto">
+            <div class="w-full lg:w-96 lg:border-r border-b lg:border-b-0 border-gray-200 bg-gray-50 overflow-y-auto max-h-[50vh] lg:max-h-full shrink-0 shadow-inner lg:shadow-none">
               <div class="p-4">
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Véhicules</h2>
                 
@@ -225,8 +225,8 @@
     </div>
 
     <!-- Modal pour afficher les détails de la réservation -->
-    <div v-if="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" @click="showModal = false">
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @click.stop>
+    <div v-if="showModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-start justify-center pt-10 sm:pt-20 px-4 pb-10" @click="showModal = false">
+      <div class="relative w-full max-w-lg p-5 border shadow-2xl rounded-xl bg-white" @click.stop>
         <div class="mt-3">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold text-gray-900">Détails de la réservation</h3>
@@ -489,5 +489,13 @@ watch(() => props.reservations, () => {
 
 .fc-event:hover {
   opacity: 0.8;
+}
+
+/* FullCalendar mobile responsiveness */
+@media (max-width: 640px) {
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 </style>
