@@ -284,8 +284,16 @@
             </div>
           </div>
           
-          <div class="mt-4 flex justify-end">
-            <button @click="showModal = false" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
+          <div class="mt-6 flex justify-between items-center">
+            <div v-if="selectedReservation?.statut === 'en attente' && page.props.auth.permissions.includes('reservations.validate')" class="flex gap-2">
+              <button @click="updateReservationStatus('validé')" class="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700 transition ease-in-out duration-150">
+                Valider
+              </button>
+              <button @click="updateReservationStatus('annulé')" class="px-3 py-2 bg-red-600 text-white text-sm font-semibold rounded-md hover:bg-red-700 transition ease-in-out duration-150">
+                Annuler
+              </button>
+            </div>
+            <button @click="showModal = false" class="px-4 py-2 bg-gray-600 text-white font-semibold rounded-md hover:bg-gray-700 ml-auto transition ease-in-out duration-150">
               Fermer
             </button>
           </div>
@@ -347,6 +355,22 @@ const deleteVehicle = (vehicleId) => {
             preserveState: false,
           });
         }
+      }
+    });
+  }
+};
+
+const updateReservationStatus = (status) => {
+  if (!selectedReservation.value) return;
+  
+  if (confirm(`Êtes-vous sûr de vouloir ${status === 'validé' ? 'valider' : 'annuler'} cette réservation ?`)) {
+    router.put(route('admin.reservations.updateStatus', selectedReservation.value.id), {
+      statut: status
+    }, {
+      preserveScroll: true,
+      onSuccess: () => {
+        showModal.value = false;
+        // The inertia response will automatically reload reservations and rerender the calendar
       }
     });
   }
