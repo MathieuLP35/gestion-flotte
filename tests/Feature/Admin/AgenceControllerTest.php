@@ -2,9 +2,9 @@
 
 use App\Models\Agence;
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function (): void {
     app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
@@ -24,7 +24,7 @@ it('can fetch all agences if user has agences.view_all permission', function () 
     $response = $this->actingAs($admin)->get(route('admin.agences.index'));
 
     $response->assertOk();
-    $response->assertInertia(fn(Assert $page) => $page->component('Admin/Agences/Index'));
+    $response->assertInertia(fn (Assert $page) => $page->component('Admin/Agences/Index'));
 });
 
 it('can only fetch user agency if user does not have view_all permission', function () {
@@ -46,7 +46,7 @@ it('can view create agency page', function () {
     $response = $this->actingAs($admin)->get(route('admin.agences.create'));
 
     $response->assertOk();
-    $response->assertInertia(fn(Assert $page) => $page->component('Admin/Agences/Create'));
+    $response->assertInertia(fn (Assert $page) => $page->component('Admin/Agences/Create'));
 });
 
 it('can store a new agency', function () {

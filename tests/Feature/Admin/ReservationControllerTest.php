@@ -1,13 +1,13 @@
 <?php
 
+use App\Mail\ReservationStatusChanged;
+use App\Models\Agence;
 use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Vehicle;
-use App\Models\Agence;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ReservationStatusChanged;
 
 beforeEach(function (): void {
     app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
@@ -56,8 +56,8 @@ it('can validate a reservation', function () {
     $response->assertRedirect();
     expect($reservation->fresh()->statut)->toBe('validé');
 
-    Mail::assertQueued(ReservationStatusChanged::class , function ($mail) use ($user) {
-            return $mail->hasTo($user->email);
-        }
-        );
-    });
+    Mail::assertQueued(ReservationStatusChanged::class, function ($mail) use ($user) {
+        return $mail->hasTo($user->email);
+    }
+    );
+});
