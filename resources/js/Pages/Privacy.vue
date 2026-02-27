@@ -5,7 +5,9 @@ import { Head } from '@inertiajs/vue3';
 
 <template>
     <PortalLayout>
-        <Head title="Politique de confidentialité" />
+        <Head>
+            <title>Politique de confidentialité</title>
+        </Head>
 
         <div class="bg-white rounded-lg shadow-md py-10 px-6 sm:px-10 max-w-4xl mx-auto">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Politique de confidentialité</h1>

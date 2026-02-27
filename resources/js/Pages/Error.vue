@@ -1,6 +1,8 @@
 <template>
 
-  <Head :title="title" />
+  <Head>
+    <title>{{ title }}</title>
+  </Head>
 
   <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-6">
     <!-- Logo au dessus -->

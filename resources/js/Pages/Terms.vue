@@ -5,7 +5,9 @@ import { Head } from '@inertiajs/vue3';
 
 <template>
     <PortalLayout>
-        <Head title="Conditions d'utilisation" />
+        <Head>
+            <title>Conditions d'utilisation</title>
+        </Head>
 
         <div class="bg-white rounded-lg shadow-md py-10 px-6 sm:px-10 max-w-4xl mx-auto">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Conditions d'utilisation</h1>
