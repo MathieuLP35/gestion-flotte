@@ -79,7 +79,7 @@ const submit = () => {
                         <form @submit.prevent="submit" class="space-y-6">
                             <!-- Kilométrage final -->
                             <div>
-                                <label for="km_final" class="block text-sm font-medium text-gray-700">
+                                <label for="km_final" class="block text-sm font-semibold text-gray-900 mb-2">
                                     Kilométrage final <span class="text-red-500">*</span>
                                 </label>
                                 <input
@@ -88,7 +88,7 @@ const submit = () => {
                                     type="number"
                                     :min="kmInitial"
                                     required
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                                     :class="{ 'border-red-500': form.errors.km_final }"
                                 />
                                 <p v-if="form.errors.km_final" class="mt-1 text-sm text-red-600">
@@ -101,7 +101,7 @@ const submit = () => {
 
                             <!-- Emplacement de retour -->
                             <div>
-                                <label for="emplacement_retour" class="block text-sm font-medium text-gray-700">
+                                <label for="emplacement_retour" class="block text-sm font-semibold text-gray-900 mb-2">
                                     Emplacement de retour <span class="text-red-500">*</span>
                                 </label>
                                 <input
@@ -110,7 +110,7 @@ const submit = () => {
                                     type="text"
                                     required
                                     placeholder="Ex: Agence Paris, Parking central..."
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                                     :class="{ 'border-red-500': form.errors.emplacement_retour }"
                                 />
                                 <p v-if="form.errors.emplacement_retour" class="mt-1 text-sm text-red-600">
@@ -120,14 +120,14 @@ const submit = () => {
 
                             <!-- État du véhicule -->
                             <div>
-                                <label for="etat_vehicule" class="block text-sm font-medium text-gray-700">
+                                <label for="etat_vehicule" class="block text-sm font-semibold text-gray-900 mb-2">
                                     État du véhicule <span class="text-red-500">*</span>
                                 </label>
                                 <select
                                     id="etat_vehicule"
                                     v-model="form.etat_vehicule"
                                     required
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                                     :class="{ 'border-red-500': form.errors.etat_vehicule }"
                                 >
                                     <option value="">Sélectionnez un état</option>
@@ -145,7 +145,7 @@ const submit = () => {
 
                             <!-- Notes de retour -->
                             <div>
-                                <label for="notes_retour" class="block text-sm font-medium text-gray-700">
+                                <label for="notes_retour" class="block text-sm font-semibold text-gray-900 mb-2">
                                     Notes de retour (optionnel)
                                 </label>
                                 <textarea
@@ -153,7 +153,7 @@ const submit = () => {
                                     v-model="form.notes_retour"
                                     rows="4"
                                     placeholder="Ajoutez des observations sur l'état du véhicule, des incidents, etc."
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                                     :class="{ 'border-red-500': form.errors.notes_retour }"
                                 ></textarea>
                                 <p v-if="form.errors.notes_retour" class="mt-1 text-sm text-red-600">

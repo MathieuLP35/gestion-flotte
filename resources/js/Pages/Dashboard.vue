@@ -164,14 +164,18 @@ const searchCarpooling = () => {
                     </div>
                     <div>
                         <label for="departureDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de départ</label>
-                        <input type="date" id="departureDate" v-model="form.departureDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        <div class="relative">
+                        <input type="date" id="departureDate" v-model="form.departureDate" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                        </div>
                         <div v-if="form.errors.departureDate" class="mt-2 text-sm text-red-600">
                             {{ form.errors.departureDate }}
                         </div>
                     </div>
                     <div>
                         <label for="arrivalDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de retour</label>
-                        <input type="date" id="arrivalDate" v-model="form.arrivalDate" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                        <div class="relative">
+                        <input type="date" id="arrivalDate" v-model="form.arrivalDate" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                        </div>
                         <div v-if="form.errors.arrivalDate" class="mt-2 text-sm text-red-600">
                             {{ form.errors.arrivalDate }}
                         </div>

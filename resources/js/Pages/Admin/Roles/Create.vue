@@ -27,7 +27,7 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="space-y-6">
             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <label for="name" class="block text-sm font-medium text-gray-700">Nom du rôle</label>
+                <label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Nom du rôle</label>
                 <input
                     id="name"
                     v-model="form.name"

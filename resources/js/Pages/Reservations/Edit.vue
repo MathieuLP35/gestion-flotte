@@ -203,7 +203,7 @@ onUnmounted(() => {
                                     type="text"
                                     v-model="newMessage"
                                     placeholder="Écrivez votre message..."
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                                 />
                                 <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition">
                                     Envoyer

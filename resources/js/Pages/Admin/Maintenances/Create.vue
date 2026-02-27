@@ -13,8 +13,8 @@
               <form @submit.prevent="submit" class="space-y-6">
                 
                 <div>
-                  <label for="vehicle" class="block text-sm font-medium text-gray-700">Véhicule</label>
-                  <select v-model="form.vehicle_id" id="vehicle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                  <label for="vehicle" class="block text-sm font-semibold text-gray-900 mb-2">Véhicule</label>
+                  <select v-model="form.vehicle_id" id="vehicle" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
                     <option v-for="v in vehicles" :key="v.id" :value="v.id">
                       {{ v.modele }} ({{ v.immatriculation }})
                     </option>
@@ -25,16 +25,18 @@
                 </div>
 
                 <div>
-                  <label for="km_alert_threshold" class="block text-sm font-medium text-gray-700">Seuil kilométrique</label>
-                  <input v-model.number="form.km_alert_threshold" type="number" min="0" id="km_alert_threshold" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required/>
+                  <label for="km_alert_threshold" class="block text-sm font-semibold text-gray-900 mb-2">Seuil kilométrique</label>
+                  <input v-model.number="form.km_alert_threshold" type="number" min="0" id="km_alert_threshold" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required/>
                   <div v-if="form.errors.km_alert_threshold" class="mt-2 text-sm text-red-600">
                     {{ form.errors.km_alert_threshold }}
                   </div>
                 </div>
 
                 <div>
-                  <label for="date_dernier_entretien" class="block text-sm font-medium text-gray-700">Date dernier entretien</label>
-                  <input v-model="form.date_dernier_entretien" type="date" id="date_dernier_entretien" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                  <label for="date_dernier_entretien" class="block text-sm font-semibold text-gray-900 mb-2">Date dernier entretien</label>
+                  <div class="relative">
+                  <input v-model="form.date_dernier_entretien" type="date" id="date_dernier_entretien" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                  </div>
                   <div v-if="form.errors.date_dernier_entretien" class="mt-2 text-sm text-red-600">
                     {{ form.errors.date_dernier_entretien }}
                   </div>

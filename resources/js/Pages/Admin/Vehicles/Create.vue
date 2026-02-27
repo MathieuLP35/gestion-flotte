@@ -13,56 +13,56 @@
               <form @submit.prevent="submit" class="space-y-6">
                 
                 <div>
-                  <label for="modele" class="block text-sm font-medium text-gray-700">Modèle</label>
-                  <input v-model="form.modele" type="text" id="modele" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <label for="modele" class="block text-sm font-semibold text-gray-900 mb-2">Modèle</label>
+                  <input v-model="form.modele" type="text" id="modele" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                   <div v-if="form.errors.modele" class="mt-2 text-sm text-red-600">
                     {{ form.errors.modele }}
                   </div>
                 </div>
 
                 <div>
-                  <label for="immatriculation" class="block text-sm font-medium text-gray-700">Immatriculation</label>
-                  <input v-model="form.immatriculation" type="text" id="immatriculation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <label for="immatriculation" class="block text-sm font-semibold text-gray-900 mb-2">Immatriculation</label>
+                  <input v-model="form.immatriculation" type="text" id="immatriculation" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                   <div v-if="form.errors.immatriculation" class="mt-2 text-sm text-red-600">
                     {{ form.errors.immatriculation }}
                   </div>
                 </div>
 
                 <div>
-                  <label for="km_initial" class="block text-sm font-medium text-gray-700">Kilométrage initial</label>
-                  <input v-model.number="form.km_initial" type="number" min="0" id="km_initial" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <label for="km_initial" class="block text-sm font-semibold text-gray-900 mb-2">Kilométrage initial</label>
+                  <input v-model.number="form.km_initial" type="number" min="0" id="km_initial" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                   <div v-if="form.errors.km_initial" class="mt-2 text-sm text-red-600">
                     {{ form.errors.km_initial }}
                   </div>
                 </div>
 
                 <div>
-                  <label for="emplacement" class="block text-sm font-medium text-gray-700">Emplacement</label>
-                  <input v-model="form.emplacement" type="text" id="emplacement" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <label for="emplacement" class="block text-sm font-semibold text-gray-900 mb-2">Emplacement</label>
+                  <input v-model="form.emplacement" type="text" id="emplacement" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                   <div v-if="form.errors.emplacement" class="mt-2 text-sm text-red-600">
                     {{ form.errors.emplacement }}
                   </div>
                 </div>
 
                 <div>
-                  <label for="nbr_places" class="block text-sm font-medium text-gray-700">Nombre de places</label>
-                  <input v-model.number="form.nbr_places" type="number" min="1" id="nbr_places" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <label for="nbr_places" class="block text-sm font-semibold text-gray-900 mb-2">Nombre de places</label>
+                  <input v-model.number="form.nbr_places" type="number" min="1" id="nbr_places" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                   <div v-if="form.errors.nbr_places" class="mt-2 text-sm text-red-600">
                     {{ form.errors.nbr_places }}
                   </div>
                 </div>
               
                 <div>
-                  <label for="nbr_cles" class="block text-sm font-medium text-gray-700">Nombre de clés</label>
-                  <input v-model.number="form.nbr_cles" type="number" min="1" max="5" id="nbr_cles" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  <label for="nbr_cles" class="block text-sm font-semibold text-gray-900 mb-2">Nombre de clés</label>
+                  <input v-model.number="form.nbr_cles" type="number" min="1" max="5" id="nbr_cles" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                   <div v-if="form.errors.nbr_cles" class="mt-2 text-sm text-red-600">
                     {{ form.errors.nbr_cles }}
                   </div>
                 </div>
                 
                 <div>
-                  <label for="energie" class="block text-sm font-medium text-gray-700">Type d'énergie</label>
-                  <select v-model="form.energie" id="energie" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                  <label for="energie" class="block text-sm font-semibold text-gray-900 mb-2">Type d'énergie</label>
+                  <select v-model="form.energie" id="energie" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
                     <option value="essence">Essence</option>
                     <option value="diesel">Diesel</option>
                     <option value="hybride">Hybride</option>

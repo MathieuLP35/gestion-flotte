@@ -21,7 +21,7 @@ const submit = () => {
 
                 <form @submit.prevent="submit" class="space-y-4">
                     <div>
-                        <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                        <label for="nom" class="block text-sm font-semibold text-gray-900 mb-2">Nom</label>
                         <input
                             id="nom"
                             v-model="form.nom"
@@ -33,7 +33,7 @@ const submit = () => {
                         <p v-if="form.errors.nom" class="mt-1 text-sm text-red-600">{{ form.errors.nom }}</p>
                     </div>
                     <div>
-                        <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse</label>
+                        <label for="adresse" class="block text-sm font-semibold text-gray-900 mb-2">Adresse</label>
                         <input
                             id="adresse"
                             v-model="form.adresse"

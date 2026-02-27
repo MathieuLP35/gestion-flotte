@@ -94,23 +94,27 @@
                   </div>
 
                     <div>
-                      <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                      <input type="datetime-local" v-model="form.date_debut" id="date_debut" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                      <label for="date_debut" class="block text-sm font-semibold text-gray-900 mb-2">Date de début</label>
+                      <div class="relative">
+                      <input type="datetime-local" v-model="form.date_debut" id="date_debut" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                      </div>
                       <div v-if="form.errors.date_debut" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_debut }}
                       </div>
                     </div>
 
                     <div>
-                      <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
-                      <input type="datetime-local" v-model="form.date_fin" id="date_fin" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                      <label for="date_fin" class="block text-sm font-semibold text-gray-900 mb-2">Date de fin</label>
+                      <div class="relative">
+                      <input type="datetime-local" v-model="form.date_fin" id="date_fin" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                      </div>
                       <div v-if="form.errors.date_fin" class="mt-2 text-sm text-red-600">
                         {{ form.errors.date_fin }}
                       </div>
                     </div>
 
                     <div>
-                      <label for="vehicle" class="block text-sm font-medium text-gray-700">Véhicule</label>
+                      <label for="vehicle" class="block text-sm font-semibold text-gray-900 mb-2">Véhicule</label>
                       <div v-if="suggestedVehicleInfo || calculatedDistance" class="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                         <div class="flex items-start">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mt-0.5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

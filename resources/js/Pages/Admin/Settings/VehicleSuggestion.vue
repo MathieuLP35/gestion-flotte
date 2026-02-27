@@ -54,7 +54,7 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
 
                 <form @submit.prevent="submit" class="space-y-6">
                     <div>
-                        <label for="seuil" class="block text-sm font-medium text-gray-700">Seuil « petit trajet » (km)</label>
+                        <label for="seuil" class="block text-sm font-semibold text-gray-900 mb-2">Seuil « petit trajet » (km)</label>
                         <input
                             id="seuil"
                             v-model.number="form.petit_trajet_seuil_km"
@@ -71,7 +71,7 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Priorité pour les petits trajets</label>
+                        <label class="block text-sm font-semibold text-gray-900 mb-2 mb-2">Priorité pour les petits trajets</label>
                         <p class="text-xs text-gray-500 mb-2">Ordre de préférence des types d’énergie (du plus prioritaire au moins). Laissez un rang vide pour l’ignorer.</p>
                         <div class="flex flex-wrap gap-2">
                             <select
@@ -89,7 +89,7 @@ const labels = { electrique: 'Électrique', hybride: 'Hybride', essence: 'Essenc
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Priorité pour les trajets longs</label>
+                        <label class="block text-sm font-semibold text-gray-900 mb-2 mb-2">Priorité pour les trajets longs</label>
                         <p class="text-xs text-gray-500 mb-2">Même principe pour les trajets au‑dessus du seuil.</p>
                         <div class="flex flex-wrap gap-2">
                             <select

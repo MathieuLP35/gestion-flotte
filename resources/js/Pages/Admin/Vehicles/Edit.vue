@@ -103,48 +103,48 @@ function deleteKey(id) {
 
                         <form @submit.prevent="submitVehicle" class="space-y-6">
                             <div>
-                                <label for="modele" class="block text-sm font-medium text-gray-700">Modèle</label>
-                                <input v-model="form.modele" type="text" id="modele" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                                <label for="modele" class="block text-sm font-semibold text-gray-900 mb-2">Modèle</label>
+                                <input v-model="form.modele" type="text" id="modele" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                                 <div v-if="form.errors.modele" class="mt-2 text-sm text-red-600">
                                     {{ form.errors.modele }}
                                 </div>
                             </div>
 
                             <div>
-                                <label for="immatriculation" class="block text-sm font-medium text-gray-700">Immatriculation</label>
-                                <input v-model="form.immatriculation" type="text" id="immatriculation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                                <label for="immatriculation" class="block text-sm font-semibold text-gray-900 mb-2">Immatriculation</label>
+                                <input v-model="form.immatriculation" type="text" id="immatriculation" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                                 <div v-if="form.errors.immatriculation" class="mt-2 text-sm text-red-600">
                                     {{ form.errors.immatriculation }}
                                 </div>
                             </div>
 
                             <div>
-                                <label for="km_initial" class="block text-sm font-medium text-gray-700">Kilométrage initial</label>
-                                <input v-model.number="form.km_initial" type="number" min="0" id="km_initial" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                                <label for="km_initial" class="block text-sm font-semibold text-gray-900 mb-2">Kilométrage initial</label>
+                                <input v-model.number="form.km_initial" type="number" min="0" id="km_initial" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                                 <div v-if="form.errors.km_initial" class="mt-2 text-sm text-red-600">
                                     {{ form.errors.km_initial }}
                                 </div>
                             </div>
 
                             <div>
-                                <label for="emplacement" class="block text-sm font-medium text-gray-700">Emplacement</label>
-                                <input v-model="form.emplacement" type="text" id="emplacement" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                                <label for="emplacement" class="block text-sm font-semibold text-gray-900 mb-2">Emplacement</label>
+                                <input v-model="form.emplacement" type="text" id="emplacement" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                                 <div v-if="form.errors.emplacement" class="mt-2 text-sm text-red-600">
                                     {{ form.errors.emplacement }}
                                 </div>
                             </div>
 
                             <div>
-                                <label for="nbr_places" class="block text-sm font-medium text-gray-700">Nombre de places</label>
-                                <input v-model.number="form.nbr_places" type="number" min="1" id="nbr_places" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                                <label for="nbr_places" class="block text-sm font-semibold text-gray-900 mb-2">Nombre de places</label>
+                                <input v-model.number="form.nbr_places" type="number" min="1" id="nbr_places" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
                                 <div v-if="form.errors.nbr_places" class="mt-2 text-sm text-red-600">
                                     {{ form.errors.nbr_places }}
                                 </div>
                             </div>
 
                             <div>
-                                <label for="energie" class="block text-sm font-medium text-gray-700">Type d'énergie</label>
-                                <select v-model="form.energie" id="energie" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                                <label for="energie" class="block text-sm font-semibold text-gray-900 mb-2">Type d'énergie</label>
+                                <select v-model="form.energie" id="energie" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
                                     <option value="essence">Essence</option>
                                     <option value="diesel">Diesel</option>
                                     <option value="hybride">Hybride</option>
@@ -157,7 +157,7 @@ function deleteKey(id) {
 
                             <div class="flex items-center">
                                 <input v-model="form.en_maintenance" type="checkbox" id="maintenance" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                                <label for="maintenance" class="ml-3 block text-sm font-medium text-gray-700">En maintenance</label>
+                                <label for="maintenance" class="ml-3 block text-sm font-semibold text-gray-900 mb-2">En maintenance</label>
                             </div>
                             <div v-if="form.errors.en_maintenance" class="mt-2 text-sm text-red-600">
                                 {{ form.errors.en_maintenance }}
@@ -178,8 +178,8 @@ function deleteKey(id) {
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Gestion des clés</h2>
                         <form @submit.prevent="submitCle" class="space-y-4 mb-6">
                             <div>
-                                <label for="emplacement_cle" class="block text-sm font-medium text-gray-700">Emplacement de la clé</label>
-                                <input v-model="formCle.emplacement_clef" type="text" id="emplacement_cle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <label for="emplacement_cle" class="block text-sm font-semibold text-gray-900 mb-2">Emplacement de la clé</label>
+                                <input v-model="formCle.emplacement_clef" type="text" id="emplacement_cle" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
                                 <div v-if="formCle.errors.emplacement_clef" class="mt-2 text-sm text-red-600">
                                     {{ formCle.errors.emplacement_clef }}
                                 </div>
@@ -227,16 +227,18 @@ function deleteKey(id) {
                     </h1>
                     <form @submit.prevent="submitSeuil" class="space-y-6">
                         <div>
-                            <label for="km_alert_threshold" class="block text-sm font-medium text-gray-700">Seuil kilométrique</label>
-                            <input v-model.number="formSeuil.km_alert_threshold" type="number" min="0" id="km_alert_threshold" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required/>
+                            <label for="km_alert_threshold" class="block text-sm font-semibold text-gray-900 mb-2">Seuil kilométrique</label>
+                            <input v-model.number="formSeuil.km_alert_threshold" type="number" min="0" id="km_alert_threshold" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required/>
                             <div v-if="formSeuil.errors.km_alert_threshold" class="mt-2 text-sm text-red-600">
                                 {{ formSeuil.errors.km_alert_threshold }}
                             </div>
                         </div>
 
                         <div>
-                            <label for="date_dernier_entretien" class="block text-sm font-medium text-gray-700">Date dernier entretien</label>
-                            <input v-model="formSeuil.date_dernier_entretien" type="date" id="date_dernier_entretien" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            <label for="date_dernier_entretien" class="block text-sm font-semibold text-gray-900 mb-2">Date dernier entretien</label>
+                            <div class="relative">
+                            <input v-model="formSeuil.date_dernier_entretien" type="date" id="date_dernier_entretien" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                            </div>
                             <div v-if="formSeuil.errors.date_dernier_entretien" class="mt-2 text-sm text-red-600">
                                 {{ formSeuil.errors.date_dernier_entretien }}
                             </div>
@@ -283,3 +285,8 @@ function deleteKey(id) {
         </div>
     </AdminLayout>
 </template>
+
+
+
+
+

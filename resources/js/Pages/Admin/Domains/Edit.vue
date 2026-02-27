@@ -25,7 +25,7 @@ const submit = () => {
 
                 <form @submit.prevent="submit" class="space-y-4">
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Domaine</label>
+                        <label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Domaine</label>
                         <input
                             id="name"
                             v-model="form.name"
