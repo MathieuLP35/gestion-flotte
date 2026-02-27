@@ -16,9 +16,6 @@
             </Link>
           </div>
 
-          <div v-if="page.props.flash?.success" class="mx-6 mt-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm">
-            {{ page.props.flash.success }}
-          </div>
 
           <div class="flex flex-col lg:flex-row lg:h-[calc(100vh-200px)] min-h-screen lg:min-h-0">
             <!-- Sidebar avec la liste des véhicules -->
@@ -56,7 +53,12 @@
                     >
                       <div class="flex items-center justify-between">
                         <div class="flex-1">
-                          <p class="font-medium">{{ vehicle.modele }}</p>
+                          <p class="font-medium flex items-center gap-2">
+                            {{ vehicle.modele }}
+                            <span v-if="vehicle.pending_reservations_count > 0" class="flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-full" title="Réservations en attente">
+                              {{ vehicle.pending_reservations_count }}
+                            </span>
+                          </p>
                           <p class="text-xs opacity-75">{{ vehicle.immatriculation }}</p>
                         </div>
                         <div class="ml-2">
@@ -113,6 +115,9 @@
 
             <!-- Zone principale avec le calendrier -->
             <div class="flex-1 overflow-y-auto p-6">
+            <div v-if="page.props.flash?.success" class="p-3 mb-4 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm w-full">
+              {{ page.props.flash.success }}
+            </div>
               <div v-if="!selectedVehicle" class="flex items-center justify-center h-full text-gray-500">
                 <div class="text-center">
                   <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,6 +180,32 @@
                           {{ selectedVehicle.en_maintenance ? 'Oui' : 'Non' }}
                         </span>
                       </span>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <!-- Créneaux en attente sous forme de liste -->
+                <div v-if="pendingReservations.length > 0" class="mb-4">
+                  <h3 class="text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    Réservations en attente
+                    <span class="bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">{{ pendingReservations.length }}</span>
+                  </h3>
+                  <div class="space-y-2 max-h-40 overflow-y-auto pr-2 rounded-lg">
+                    <div v-for="resa in pendingReservations" :key="resa.id" class="p-3 bg-white border border-yellow-300 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div>
+                        <p class="font-medium text-sm text-gray-900">{{ resa.depart }} → {{ resa.destination }}</p>
+                        <p class="text-xs text-gray-600">Du {{ formatDate(resa.date_debut) }} au {{ formatDate(resa.date_fin) }}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Par: <span class="font-medium">{{ resa.driver?.name || 'Inconnu' }}</span> | {{ resa.passengers?.length || 0 }} passager(s)</p>
+                      </div>
+                      <div class="flex gap-2 shrink-0">
+                        <button v-if="page.props.auth.permissions.includes('reservations.validate')" @click="updateStatus(resa.id, 'validé')" class="px-2 py-1 bg-green-100 text-green-700 hover:bg-green-200 text-xs font-semibold rounded outline-none focus:ring-2 focus:ring-green-400 transition">
+                          Valider
+                        </button>
+                        <button v-if="page.props.auth.permissions.includes('reservations.validate')" @click="updateStatus(resa.id, 'annulé')" class="px-2 py-1 bg-red-100 text-red-700 hover:bg-red-200 text-xs font-semibold rounded outline-none focus:ring-2 focus:ring-red-400 transition">
+                          Refuser
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -312,7 +343,9 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
+import useDate from '@/Composables/useDate';
 
+const { formatDate } = useDate();
 const page = usePage();
 const props = defineProps({
   vehicles: Array,
@@ -335,6 +368,10 @@ const filteredVehicles = computed(() => {
     vehicle.immatriculation.toLowerCase().includes(query) ||
     vehicle.emplacement.toLowerCase().includes(query)
   );
+});
+
+const pendingReservations = computed(() => {
+  return props.reservations.filter(r => r.statut === 'en attente');
 });
 
 const selectVehicle = (vehicleId) => {
@@ -360,20 +397,25 @@ const deleteVehicle = (vehicleId) => {
   }
 };
 
-const updateReservationStatus = (status) => {
-  if (!selectedReservation.value) return;
-  
+
+const updateStatus = (resaId, status) => {
   if (confirm(`Êtes-vous sûr de vouloir ${status === 'validé' ? 'valider' : 'annuler'} cette réservation ?`)) {
-    router.put(route('admin.reservations.updateStatus', selectedReservation.value.id), {
+    router.put(route('admin.reservations.updateStatus', resaId), {
       statut: status
     }, {
       preserveScroll: true,
       onSuccess: () => {
-        showModal.value = false;
-        // The inertia response will automatically reload reservations and rerender the calendar
+        if (selectedReservation.value?.id === resaId) {
+          showModal.value = false;
+        }
       }
     });
   }
+};
+
+const updateReservationStatus = (status) => {
+  if (!selectedReservation.value) return;
+  updateStatus(selectedReservation.value.id, status);
 };
 
 const renderCalendar = () => {
