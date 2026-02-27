@@ -40,7 +40,7 @@ const vehiclesMenuActive = computed(() => {
                                 </Link>
                             </div>
 
-                            <div class="hidden items-center space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div class="hidden lg:items-center lg:space-x-6 lg:-my-px lg:ml-8 lg:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')" class="text-gray-600 hover:text-gray-900">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -93,7 +93,7 @@ const vehiclesMenuActive = computed(() => {
                             </div>
                         </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div class="hidden lg:ms-6 lg:flex lg:items-center">
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -140,7 +140,7 @@ const vehiclesMenuActive = computed(() => {
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                        <div class="-me-2 flex items-center lg:hidden">
                             <button
                                 @click="showingNavigationDropdown = !showingNavigationDropdown"
                                 class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
@@ -183,7 +183,7 @@ const vehiclesMenuActive = computed(() => {
                         block: showingNavigationDropdown,
                         hidden: !showingNavigationDropdown,
                     }"
-                    class="sm:hidden"
+                    class="lg:hidden"
                 >
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">

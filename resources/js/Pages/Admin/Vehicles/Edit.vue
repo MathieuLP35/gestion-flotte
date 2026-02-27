@@ -94,9 +94,9 @@ function deleteKey(id) {
 
     <AdminLayout>
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 gap-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 md:p-8">
+                    <div class="p-4 sm:p-6 md:p-8">
                         <h1 class="text-3xl font-bold text-gray-800 mb-6">
                             Modifier le véhicule
                         </h1>
@@ -174,7 +174,7 @@ function deleteKey(id) {
 
                 <div class="overflow-hidden shadow-sm sm:rounded-lg grid grid-cols-1 gap-6">
 
-                    <div class="p-6 md:p-8 bg-white">
+                    <div class="p-4 sm:p-6 md:p-8 bg-white">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Gestion des clés</h2>
                         <form @submit.prevent="submitCle" class="space-y-4 mb-6">
                             <div>
@@ -192,8 +192,8 @@ function deleteKey(id) {
                         </form>
 
                         <div v-if="vehicleRef.keys && vehicleRef.keys.length" class="mt-4 pt-4 border-t border-gray-200">
-                            <div class="overflow-y-auto" :style="{ maxHeight: vehicleRef.keys.length > 4 ? '400px' : 'auto' }">
-                                <table class="w-full text-sm text-left text-gray-500">
+                            <div class="overflow-auto" :style="{ maxHeight: vehicleRef.keys.length > 4 ? '400px' : 'auto' }">
+                                <table class="w-full text-sm text-left text-gray-500 whitespace-nowrap">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 text-center sticky top-0">
                                         <tr>
                                             <th scope="col" class="py-3 px-6">#</th>
@@ -205,9 +205,11 @@ function deleteKey(id) {
                                         <tr v-for="key in vehicleRef.keys" :key="key.id" class="bg-white border-b hover:bg-gray-50 text-center">
                                             <td class="py-4 px-6">Clé {{ key.id }}</td>
                                             <td class="py-4 px-6">{{ key.emplacement_clef || '-' }}</td>
-                                            <td class="py-4 px-6 whitespace-nowrap">
-                                                <Link :href="route('admin.keys.edit', key.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
-                                                <button @click="deleteKey(key.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
+                                            <td class="py-4 px-6">
+                                                <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
+                                                    <Link :href="route('admin.keys.edit', key.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Modifier</Link>
+                                                    <button @click="deleteKey(key.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -218,8 +220,8 @@ function deleteKey(id) {
                     </div>
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 gap-6 mt-6">
-                <div class="p-6 md:p-8 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <div class="p-4 sm:p-6 md:p-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">
                         Ajouter un seuil de maintenance
                     </h1>
@@ -248,11 +250,11 @@ function deleteKey(id) {
                     </form>
                 </div>
 
-                <div class="p-6 md:p-8 bg-white">
+                <div class="p-4 sm:p-6 md:p-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <h2 class="text-3xl font-bold text-gray-800 mb-4">Seuils de maintenance</h2>
                     <div v-if="vehicleRef.maintenances && vehicleRef.maintenances.length">
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-gray-500">
+                            <table class="w-full text-sm text-left text-gray-500 whitespace-nowrap">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 text-center">
                                     <tr>
                                         <th scope="col" class="py-3 px-6">Seuil km</th>
@@ -264,9 +266,11 @@ function deleteKey(id) {
                                     <tr v-for="m in vehicleRef.maintenances" :key="m.id" class="bg-white border-b hover:bg-gray-50 text-center">
                                         <td class="py-4 px-6">{{ m.km_alert_threshold }}</td>
                                         <td class="py-4 px-6">{{ formatDate(m.date_dernier_entretien) }}</td>
-                                        <td class="py-4 px-6 whitespace-nowrap">
-                                            <Link :href="route('admin.maintenances.edit', m.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs mr-2 transition ease-in-out duration-150">Modifier</Link>
-                                            <button @click="deleteMaintenance(m.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
+                                        <td class="py-4 px-6">
+                                            <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
+                                                <Link :href="route('admin.maintenances.edit', m.id)" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Modifier</Link>
+                                                <button @click="deleteMaintenance(m.id)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150">Supprimer</button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
