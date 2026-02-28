@@ -67,12 +67,19 @@ const form = useForm({
 });
 
 const searchCarpooling = () => {
+    form.clearErrors();
+    let hasError = false;
+
     if (!form.departureSelected) {
-        return;
+        form.setError('departure', 'Veuillez choisir une adresse dans la liste suggérée.');
+        hasError = true;
     }
     if (!form.destinationSelected) {
-        return;
+        form.setError('destination', 'Veuillez choisir une adresse dans la liste suggérée.');
+        hasError = true;
     }
+
+    if (hasError) return;
 
     form.post(route('carpooling.search'), {
         preserveState: true,
@@ -91,6 +98,24 @@ const searchCarpooling = () => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto mb-6 bg-white p-6 rounded-lg shadow-sm">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Recherche de Covoiturage</h2>
+                
+                <div v-if="form.errors.departure || form.errors.destination" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Veuillez vérifier votre recherche :</h3>
+                            <ul class="mt-1 list-disc pl-5 text-sm text-red-700">
+                                <li v-if="form.errors.departure">{{ form.errors.departure }} (Départ)</li>
+                                <li v-if="form.errors.destination">{{ form.errors.destination }} (Destination)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <form @submit.prevent="searchCarpooling" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                     <div class="relative">
                         <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
@@ -98,7 +123,7 @@ const searchCarpooling = () => {
                             type="text"
                             id="departure"
                             v-model="form.departure"
-                            @input="fetchSuggestions(form.departure, 'departure')"
+                            @input="form.departureSelected = null; fetchSuggestions(form.departure, 'departure')"
                             placeholder="Ex: Rennes, Bruz, 35000..."
                             class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                             required
@@ -123,9 +148,6 @@ const searchCarpooling = () => {
                                 </svg>
                             </li>
                         </ul>
-                        <div v-if="form.errors.departure" class="mt-2 text-sm text-red-600">
-                            {{ form.errors.departure }}
-                        </div>
                     </div>
                     <div class="relative">
                         <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
@@ -133,7 +155,7 @@ const searchCarpooling = () => {
                             type="text"
                             id="destination"
                             v-model="form.destination"
-                            @input="fetchSuggestions(form.destination, 'destination')"
+                            @input="form.destinationSelected = null; fetchSuggestions(form.destination, 'destination')"
                             placeholder="Ex: Pontivy, Nantes, 56000..."
                             class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                             required
@@ -158,9 +180,6 @@ const searchCarpooling = () => {
                                 </svg>
                             </li>
                         </ul>
-                        <div v-if="form.errors.destination" class="mt-2 text-sm text-red-600">
-                            {{ form.errors.destination }}
-                        </div>
                     </div>
                     <div>
                         <label for="departureDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de départ</label>
