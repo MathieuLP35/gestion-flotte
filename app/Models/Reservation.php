@@ -21,7 +21,7 @@ class Reservation extends Model
 {
     protected $fillable = [
         'vehicle_id', 'user_id', 'depart', 'destination',
-        'date_debut', 'date_fin', 'statut', 'covoiturage',
+        'date_debut', 'date_fin', 'statut', 'covoiturage', 'places_reservees_materiel',
         'depart_latitude', 'depart_longitude', 'destination_latitude', 'destination_longitude',
         'date_retour', 'km_final', 'emplacement_retour', 'etat_vehicule', 'notes_retour',
     ];
@@ -61,7 +61,7 @@ class Reservation extends Model
      */
     public function driver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class , 'user_id');
     }
 
     /**
@@ -85,7 +85,8 @@ class Reservation extends Model
         if ($arrivalDate) {
             $query->where('date_debut', '<=', $arrivalDate)
                 ->where('date_fin', '>=', $departureDate);
-        } else {
+        }
+        else {
             $query->where('date_debut', '>=', $departureDate);
         }
 

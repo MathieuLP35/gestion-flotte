@@ -128,6 +128,9 @@ onUnmounted(() => {
                             <li v-for="p in reservation.passengers.filter(p => p.statut === 'confirme')" :key="p.id" class="text-sm text-gray-700">
                                 {{ p.user.name }} (Passager)
                             </li>
+                            <li v-if="reservation.places_reservees_materiel > 0" class="text-sm text-gray-500 italic mt-2">
+                                + {{ reservation.places_reservees_materiel }} place(s) réservée(s) pour du matériel.
+                            </li>
                         </ul>
                     </div>
                 </div>

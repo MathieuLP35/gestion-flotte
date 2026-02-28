@@ -283,7 +283,10 @@ const searchCarpooling = () => {
 
                                 <div class="mt-4 border-t border-gray-200 pt-4">
                                     <h4 class="text-sm font-medium text-gray-700">
-                                        Passagers ({{ resa.passengers.length }}/{{ resa.vehicle.nbr_places - 1 }})
+                                        Passagers ({{ resa.passengers.length }}/{{ resa.vehicle.nbr_places - 1 - resa.places_reservees_materiel }})
+                                        <span v-if="resa.places_reservees_materiel > 0" class="text-xs text-gray-500 ml-2">
+                                            ({{ resa.places_reservees_materiel }} place(s) bloquée(s) pour matériel)
+                                        </span>
                                     </h4>
                                     <div v-if="resa.passengers.length === 0" class="text-sm text-gray-500 mt-2">
                                         Aucun passager pour ce trajet.

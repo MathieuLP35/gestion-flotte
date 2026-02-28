@@ -146,6 +146,12 @@ onUnmounted(() => {
                                     </div>
                                     <div><strong>Départ:</strong> {{ formatDate(reservation.date_debut) }}</div>
                                     <div><strong>Fin:</strong> {{ formatDate(reservation.date_fin) }}</div>
+                                    <div v-if="reservation.covoiturage">
+                                        <strong>Covoiturage:</strong> Activé
+                                        <div v-if="reservation.places_reservees_materiel > 0" class="text-sm text-gray-500 italic">
+                                            ({{ reservation.places_reservees_materiel }} place(s) bloquée(s) pour du matériel)
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

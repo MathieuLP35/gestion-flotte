@@ -146,10 +146,27 @@
 
                     <div>
                       <label class="inline-flex items-center me-5 cursor-pointer">
-                        <input type="checkbox" v-model="form.is_carpool" id="covoiturage" class="sr-only peer" checked>
+                        <input type="checkbox" v-model="form.is_carpool" id="covoiturage" class="sr-only peer">
                         <div class="relative w-9 h-5 bg-neutral-quaternary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600 dark:peer-checked:bg-green-600"></div>
                         <span class="select-none ms-3 text-sm font-medium text-heading">Je souhaite proposer ce trajet en covoiturage</span>
                       </label>
+                      
+                      <div v-if="form.is_carpool && selectedVehicle" class="mt-4 p-4 border rounded-xl bg-gray-50 border-gray-200 border-dashed">
+                        <label for="places_materiel" class="block text-sm font-semibold text-gray-900 mb-1">
+                          Bloquer des places pour du matériel (Optionnel)
+                        </label>
+                        <p class="text-xs text-gray-500 mb-3">
+                          Ce véhicule a <strong>{{ selectedVehicle.nbr_places }} places</strong>. En vous comptant comme conducteur, il reste <strong>{{ selectedVehicle.nbr_places - 1 }} places réservables</strong>.
+                          Si vous transportez du matériel encombrant, vous pouvez bloquer virtuellement des places pour qu'elles ne soient pas réservées par d'autres passagers.
+                        </p>
+                        <div class="flex items-center">
+                          <input type="number" id="places_materiel" v-model="form.places_reservees_materiel" min="0" :max="selectedVehicle.nbr_places - 1" class="w-24 border-2 border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                          <span class="ml-3 text-sm font-medium text-gray-700">places bloquées</span>
+                        </div>
+                        <div v-if="form.errors.places_reservees_materiel" class="mt-2 text-sm text-red-600">
+                          {{ form.errors.places_reservees_materiel }}
+                        </div>
+                      </div>
                     </div>
 
                     <div class="flex items-center justify-end pt-4 border-t border-gray-200">
@@ -215,7 +232,7 @@
 <script setup>
 import { useForm, usePage, Head, router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import useDate from '@/Composables/useDate';
@@ -242,7 +259,12 @@ const form = useForm({
     date_debut: '',
     date_fin: '',
     is_carpool: false,
+    places_reservees_materiel: 0,
 })
+
+const selectedVehicle = computed(() => {
+    return props.vehicles.find(v => v.id === form.vehicle_id) || null;
+});
 
 // Fonction pour obtenir la suggestion de véhicule
 const fetchVehicleSuggestion = async () => {
