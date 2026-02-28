@@ -61,7 +61,7 @@ class Reservation extends Model
      */
     public function driver(): BelongsTo
     {
-        return $this->belongsTo(User::class , 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -85,8 +85,7 @@ class Reservation extends Model
         if ($arrivalDate) {
             $query->where('date_debut', '<=', $arrivalDate)
                 ->where('date_fin', '>=', $departureDate);
-        }
-        else {
+        } else {
             $query->where('date_debut', '>=', $departureDate);
         }
 
