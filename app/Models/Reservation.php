@@ -32,6 +32,10 @@ class Reservation extends Model
         'date_retour' => 'datetime',
     ];
 
+    protected $appends = [
+        'distance_km', 'co2_saved',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Vehicle, $this>
      */
@@ -106,5 +110,54 @@ class Reservation extends Model
     public function isReturned(): bool
     {
         return $this->date_retour !== null;
+    }
+
+    /**
+     * Calcule la distance en KM du trajet si les coordonnées sont renseignées.
+     */
+    public function getDistanceKmAttribute(): float
+    {
+        if ($this->depart_latitude && $this->destination_latitude) {
+            return Vehicle::calculateDistance(
+                (float) $this->depart_latitude, (float) $this->depart_longitude,
+                (float) $this->destination_latitude, (float) $this->destination_longitude
+            );
+        }
+
+        return 0;
+    }
+
+    /**
+     * Calcule le CO2 économisé en Kg
+     * Compare le fait de faire le trajet avec ce véhicule + passagers vs. si chacun prenait une voiture standard thermique individuelle.
+     */
+    public function getCo2SavedAttribute(): float
+    {
+        $distance = $this->distance_km;
+        if ($distance <= 0) {
+            return 0;
+        }
+
+        // Nombre de personnes dans la voiture (conducteur + passagers confirmés)
+        $passengersLoaded = $this->relationLoaded('passengers') ? $this->passengers->where('statut', 'confirme')->count() : $this->passengers()->where('statut', 'confirme')->count();
+        $peopleCount = 1 + $passengersLoaded;
+
+        // Bilan carbone de base : 130g/km pour une voiture thermique moyenne solo
+        $baselineCo2 = $peopleCount * $distance * 130; // en grammes
+
+        // Bilan carbone réel du véhicule utilisé
+        $vehicleCo2PerKm = 130; // Essence/Diesel par défaut
+        if ($this->relationLoaded('vehicle') && $this->vehicle) {
+            if ($this->vehicle->energie === 'electrique') {
+                $vehicleCo2PerKm = 0; // On considère 0g à l'usage pour simplifier
+            } elseif ($this->vehicle->energie === 'hybride') {
+                $vehicleCo2PerKm = 70;
+            }
+        }
+
+        $actualCo2 = $distance * $vehicleCo2PerKm;
+        $saved = $baselineCo2 - $actualCo2;
+
+        return round(max(0, $saved / 1000), 1); // en kg de CO2
     }
 }

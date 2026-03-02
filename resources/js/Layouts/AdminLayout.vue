@@ -50,6 +50,9 @@ const vehiclesMenuActive = computed(() => {
                                 <NavLink v-if="canViewDashboard" :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
                                     Tableau de bord
                                 </NavLink>
+                                <NavLink v-if="canViewDashboard" :href="route('admin.mobility-report')" :active="route().current('admin.mobility-report')">
+                                    Rapport RSE
+                                </NavLink>
                                 <NavLink v-if="canViewAgences" :href="route('admin.agences.index')" :active="route().current('admin.agences.*')">
                                     Agences
                                 </NavLink>
@@ -191,6 +194,9 @@ const vehiclesMenuActive = computed(() => {
                         </ResponsiveNavLink>
                         <ResponsiveNavLink v-if="canViewDashboard" :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
                             Tableau de bord
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="canViewDashboard" :href="route('admin.mobility-report')" :active="route().current('admin.mobility-report')">
+                            Rapport RSE
                         </ResponsiveNavLink>
                         <ResponsiveNavLink v-if="canViewAgences" :href="route('admin.agences.index')" :active="route().current('admin.agences.*')">
                             Agences

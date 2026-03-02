@@ -71,7 +71,7 @@ class User extends Authenticatable implements MustVerifyEmail
     // Les trajets où cet utilisateur est le CONDUCTEUR
     public function reservationsAsDriver(): HasMany
     {
-        return $this->hasMany(Reservation::class, 'user_id');
+        return $this->hasMany(Reservation::class , 'user_id');
     }
 
     /**
@@ -89,5 +89,53 @@ class User extends Authenticatable implements MustVerifyEmail
     public function messages()
     {
         return $this->hasMany(Message::class);
+    }
+
+    /**
+     * RSE : Total de CO2 économisé par cet utilisateur
+     */
+    public function getTotalCo2SavedAttribute(): float
+    {
+        $driverCo2 = $this->reservationsAsDriver
+            ->where('statut', 'terminé')
+            ->sum('co2_saved');
+
+        $passengerCo2 = $this->reservationsAsPassenger
+            ->where('statut', 'confirme')
+            ->sum(function ($passenger) {
+            if ($passenger->reservation->statut === 'terminé') {
+                $distance = $passenger->reservation->distance_km;
+                $actualCo2 = ($passenger->reservation->vehicle && $passenger->reservation->vehicle->energie === 'electrique') ? 0 : (($passenger->reservation->vehicle && $passenger->reservation->vehicle->energie === 'hybride') ? 70 : 130);
+                $sharedEmissions = ($distance * $actualCo2) / max(1, 1 + $passenger->reservation->passengers->where('statut', 'confirme')->count());
+
+                $saved = ($distance * 130) - $sharedEmissions;
+
+                return max(0, $saved / 1000);
+            }
+
+            return 0;
+        });
+
+        return round($driverCo2 + $passengerCo2, 1);
+    }
+
+    /**
+     * Nombre de covoiturages effectués (comme conducteur avec passagers ou comme passager)
+     */
+    public function getCarpoolsCountAttribute(): int
+    {
+        $asDriver = $this->reservationsAsDriver
+            ->where('statut', 'terminé')
+            ->filter(function ($resa) {
+            return $resa->passengers->where('statut', 'confirme')->count() > 0;
+        })->count();
+
+        $asPassenger = $this->reservationsAsPassenger
+            ->where('statut', 'confirme')
+            ->filter(function ($pass) {
+            return $pass->reservation->statut === 'terminé';
+        })->count();
+
+        return $asDriver + $asPassenger;
     }
 }

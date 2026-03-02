@@ -96,114 +96,117 @@ const searchCarpooling = () => {
 
     <AuthenticatedLayout>
         <div class="py-12">
-            <div class="max-w-7xl mx-auto mb-6 bg-white p-6 rounded-lg shadow-sm">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Recherche de Covoiturage</h2>
-                
-                <div v-if="form.errors.departure || form.errors.destination" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md shadow-sm">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                            </svg>
+            <div class="max-w-7xl mx-auto mb-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Recherche de Covoiturage</h2>
+                    
+                    <div v-if="form.errors.departure || form.errors.destination" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md shadow-sm">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Veuillez vérifier votre recherche :</h3>
+                                <ul class="mt-1 list-disc pl-5 text-sm text-red-700">
+                                    <li v-if="form.errors.departure">{{ form.errors.departure }} (Départ)</li>
+                                    <li v-if="form.errors.destination">{{ form.errors.destination }} (Destination)</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">Veuillez vérifier votre recherche :</h3>
-                            <ul class="mt-1 list-disc pl-5 text-sm text-red-700">
-                                <li v-if="form.errors.departure">{{ form.errors.departure }} (Départ)</li>
-                                <li v-if="form.errors.destination">{{ form.errors.destination }} (Destination)</li>
+                    </div>
+
+                    <form @submit.prevent="searchCarpooling" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                        <div class="relative">
+                            <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
+                            <input
+                                type="text"
+                                id="departure"
+                                v-model="form.departure"
+                                @input="form.departureSelected = null; fetchSuggestions(form.departure, 'departure')"
+                                placeholder="Ex: Rennes, Bruz, 35000..."
+                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                required
+                            />
+                            <div v-if="isLoadingDeparture" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
+                                Recherche en cours...
+                            </div>
+                            <ul v-if="suggestionsDeparture.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
+                                <li
+                                    v-for="suggestion in suggestionsDeparture"
+                                    :key="suggestion.label"
+                                    @click="form.departureSelected = suggestion; form.departure = suggestion.label; suggestionsDeparture = []"
+                                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
+                                >
+                                    <span>{{ suggestion.label }}</span>
+                                    <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    </svg>
+                                </li>
                             </ul>
                         </div>
-                    </div>
+                        <div class="relative">
+                            <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
+                            <input
+                                type="text"
+                                id="destination"
+                                v-model="form.destination"
+                                @input="form.destinationSelected = null; fetchSuggestions(form.destination, 'destination')"
+                                placeholder="Ex: Pontivy, Nantes, 56000..."
+                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                required
+                            />
+                            <div v-if="isLoadingDestination" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
+                                Recherche en cours...
+                            </div>
+                            <ul v-if="suggestionsDestination.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
+                                <li
+                                    v-for="suggestion in suggestionsDestination"
+                                    :key="suggestion.label"
+                                    @click="form.destinationSelected = suggestion; form.destination = suggestion.label; suggestionsDestination = []"
+                                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                >
+                                    <span>{{ suggestion.label }}</span>
+                                    <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    </svg>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <label for="departureDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de départ</label>
+                            <div class="relative">
+                            <input type="date" id="departureDate" v-model="form.departureDate" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
+                            </div>
+                            <div v-if="form.errors.departureDate" class="mt-2 text-sm text-red-600">
+                                {{ form.errors.departureDate }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="arrivalDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de retour</label>
+                            <div class="relative">
+                            <input type="date" id="arrivalDate" v-model="form.arrivalDate" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                            </div>
+                            <div v-if="form.errors.arrivalDate" class="mt-2 text-sm text-red-600">
+                                {{ form.errors.arrivalDate }}
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full px-6 py-3 bg-indigo-600 border border-transparent rounded-xl font-bold text-white uppercase hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition">Rechercher</button>
+                        </div>
+                    </form>
                 </div>
-
-                <form @submit.prevent="searchCarpooling" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-                    <div class="relative">
-                        <label for="departure" class="block text-sm font-semibold text-gray-900 mb-2">Départ</label>
-                        <input
-                            type="text"
-                            id="departure"
-                            v-model="form.departure"
-                            @input="form.departureSelected = null; fetchSuggestions(form.departure, 'departure')"
-                            placeholder="Ex: Rennes, Bruz, 35000..."
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                            required
-                        />
-                        <div v-if="isLoadingDeparture" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
-                            Recherche en cours...
-                        </div>
-                        <ul v-if="suggestionsDeparture.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
-                            <li
-                                v-for="suggestion in suggestionsDeparture"
-                                :key="suggestion.label"
-                                @click="form.departureSelected = suggestion; form.departure = suggestion.label; suggestionsDeparture = []"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
-                            >
-                                <span>{{ suggestion.label }}</span>
-                                <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                </svg>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="relative">
-                        <label for="destination" class="block text-sm font-semibold text-gray-900 mb-2">Destination</label>
-                        <input
-                            type="text"
-                            id="destination"
-                            v-model="form.destination"
-                            @input="form.destinationSelected = null; fetchSuggestions(form.destination, 'destination')"
-                            placeholder="Ex: Pontivy, Nantes, 56000..."
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                            required
-                        />
-                        <div v-if="isLoadingDestination" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md p-2 text-sm text-gray-500">
-                            Recherche en cours...
-                        </div>
-                        <ul v-if="suggestionsDestination.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-md max-h-60 overflow-y-auto z-10">
-                            <li
-                                v-for="suggestion in suggestionsDestination"
-                                :key="suggestion.label"
-                                @click="form.destinationSelected = suggestion; form.destination = suggestion.label; suggestionsDestination = []"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                            >
-                                <span>{{ suggestion.label }}</span>
-                                <svg v-if="suggestion.source === 'nominatim'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.995 1.995 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                </svg>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <label for="departureDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de départ</label>
-                        <div class="relative">
-                        <input type="date" id="departureDate" v-model="form.departureDate" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required />
-                        </div>
-                        <div v-if="form.errors.departureDate" class="mt-2 text-sm text-red-600">
-                            {{ form.errors.departureDate }}
-                        </div>
-                    </div>
-                    <div>
-                        <label for="arrivalDate" class="block text-sm font-semibold text-gray-900 mb-2">Date de retour</label>
-                        <div class="relative">
-                        <input type="date" id="arrivalDate" v-model="form.arrivalDate" class="appearance-none date-input-field bg-white text-gray-700 shadow-sm hover:border-gray-300 w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
-                        </div>
-                        <div v-if="form.errors.arrivalDate" class="mt-2 text-sm text-red-600">
-                            {{ form.errors.arrivalDate }}
-                        </div>
-                    </div>
-                    <div>
-                        <button type="submit" class="w-full px-6 py-3 bg-indigo-600 border border-transparent rounded-xl font-bold text-white uppercase hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition">Rechercher</button>
-                    </div>
-                </form>
             </div>
+
             <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 md:p-8 text-gray-900">
@@ -211,7 +214,7 @@ const searchCarpooling = () => {
                             <h2 class="text-2xl font-bold text-gray-800">
                                 Mes Trajets (Conducteur)
                             </h2>
-                            <Link :href="route('reservations.create')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition ease-in-out duration-150">
+                            <Link :href="route('reservations.create')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition ease-in-out duration-150 text-center">
                                 Nouveau trajet
                             </Link>
                         </div>
@@ -373,7 +376,6 @@ const searchCarpooling = () => {
                         </ul>
                     </div>
                 </div>
-
             </div>
         </div>
     </AuthenticatedLayout>
