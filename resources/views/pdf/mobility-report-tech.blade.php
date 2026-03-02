@@ -164,7 +164,7 @@
     @foreach($reports as $index => $report)
     <div class="{{ !$loop->last ? 'page-break' : '' }}">
         <div class="header">
-            <table>
+            <table role="presentation">
                 <tr>
                     <td style="width: 70%; vertical-align: top;">
                         <h1 class="title">Rapport de Conformité RSE</h1>
@@ -183,28 +183,37 @@
         <div class="section-title">A. Synthèse des Indicateurs Globaux</div>
         <div class="kpi-summary">
             <table>
-                <tr>
-                    <td class="kpi-box" style="border-right: none;">
-                        <p class="kpi-box-title">Volume d'Émissions CO2 Évitées (En KG)</p>
-                        <p class="kpi-box-val">{{ $report['stats']['total_co2_saved'] }}</p>
-                        @if($report['year'] !== 'all')
-                        <p class="kpi-delta {{ $report['stats']['delta_co2'] >= 0 ? 'pos' : 'neg' }}">
-                            {{ $report['stats']['delta_co2'] >= 0 ? '+' : '' }}{{ $report['stats']['delta_co2'] }}% vs
-                            période précédente
-                        </p>
-                        @endif
-                    </td>
-                    <td class="kpi-box">
-                        <p class="kpi-box-title">Activité de Covoiturage (Trajets Validés)</p>
-                        <p class="kpi-box-val">{{ $report['stats']['total_carpools'] }}</p>
-                        @if($report['year'] !== 'all')
-                        <p class="kpi-delta {{ $report['stats']['delta_carpools'] >= 0 ? 'pos' : 'neg' }}">
-                            {{ $report['stats']['delta_carpools'] >= 0 ? '+' : '' }}{{
-                            $report['stats']['delta_carpools'] }}% vs période précédente
-                        </p>
-                        @endif
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th scope="col" style="display:none;">Volume CO2 Évité</th>
+                        <th scope="col" style="display:none;">Activité Covoiturage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="kpi-box" style="border-right: none;">
+                            <p class="kpi-box-title">Volume d'Émissions CO2 Évitées (En KG)</p>
+                            <p class="kpi-box-val">{{ $report['stats']['total_co2_saved'] }}</p>
+                            @if($report['year'] !== 'all')
+                            <p class="kpi-delta {{ $report['stats']['delta_co2'] >= 0 ? 'pos' : 'neg' }}">
+                                {{ $report['stats']['delta_co2'] >= 0 ? '+' : '' }}{{ $report['stats']['delta_co2'] }}%
+                                vs
+                                période précédente
+                            </p>
+                            @endif
+                        </td>
+                        <td class="kpi-box">
+                            <p class="kpi-box-title">Activité de Covoiturage (Trajets Validés)</p>
+                            <p class="kpi-box-val">{{ $report['stats']['total_carpools'] }}</p>
+                            @if($report['year'] !== 'all')
+                            <p class="kpi-delta {{ $report['stats']['delta_carpools'] >= 0 ? 'pos' : 'neg' }}">
+                                {{ $report['stats']['delta_carpools'] >= 0 ? '+' : '' }}{{
+                                $report['stats']['delta_carpools'] }}% vs période précédente
+                            </p>
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 

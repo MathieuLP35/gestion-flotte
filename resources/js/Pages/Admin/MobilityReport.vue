@@ -84,7 +84,9 @@ const chartOptions = {
 </script>
 
 <template>
-    <Head title="Rapport RSE RH" />
+    <Head>
+        <title>Rapport de Mobilité RSE – RH</title>
+    </Head>
 
     <AdminLayout>
         <div class="py-12">

@@ -185,7 +185,7 @@
 
         <!-- HEADER / HERO -->
         <div class="hero">
-            <table>
+            <table role="presentation">
                 <tr>
                     <td class="logo-col">
                         @if($report['logoBase64'])
@@ -208,16 +208,24 @@
         <!-- MAIN CARDS -->
         <div class="content">
             <table class="kpi-container">
-                <tr>
-                    <td class="kpi-card" style="border-bottom: 4px solid #10b981;">
-                        <p class="kpi-value co2">{{ $report['stats']['total_co2_saved'] }}</p>
-                        <p class="kpi-label">KG de CO2 Évités</p>
-                    </td>
-                    <td class="kpi-card" style="border-bottom: 4px solid #6366f1;">
-                        <p class="kpi-value carpool">{{ $report['stats']['total_carpools'] }}</p>
-                        <p class="kpi-label">Trajets Partagés</p>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th scope="col" style="display:none;">Indicateur CO2</th>
+                        <th scope="col" style="display:none;">Indicateur Covoiturage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="kpi-card" style="border-bottom: 4px solid #10b981;">
+                            <p class="kpi-value co2">{{ $report['stats']['total_co2_saved'] }}</p>
+                            <p class="kpi-label">KG de CO2 Évités</p>
+                        </td>
+                        <td class="kpi-card" style="border-bottom: 4px solid #6366f1;">
+                            <p class="kpi-value carpool">{{ $report['stats']['total_carpools'] }}</p>
+                            <p class="kpi-label">Trajets Partagés</p>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
 
             <!-- MESSAGE BOX -->
