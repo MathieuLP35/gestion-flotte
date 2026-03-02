@@ -26,9 +26,9 @@ class MobilityReportController extends Controller
         $periodLabel = 'Toutes périodes';
 
         if ($year !== 'all') {
-            $year = (int)$year;
+            $year = (int) $year;
             if ($month !== 'all') {
-                $month = (int)$month;
+                $month = (int) $month;
                 $startDate = \Carbon\Carbon::createFromDate($year, $month, 1)->startOfMonth();
                 $endDate = $startDate->copy()->endOfMonth();
 
@@ -38,15 +38,14 @@ class MobilityReportController extends Controller
                 // Capitalize first letter of month like "Janvier 2024"
                 \Carbon\Carbon::setLocale('fr');
                 $periodLabel = ucfirst($startDate->translatedFormat('F Y'));
-            }
-            else {
+            } else {
                 $startDate = \Carbon\Carbon::createFromDate($year, 1, 1)->startOfYear();
                 $endDate = $startDate->copy()->endOfYear();
 
                 $prevStartDate = $startDate->copy()->subYear();
                 $prevEndDate = $prevStartDate->copy()->endOfYear();
 
-                $periodLabel = 'Année ' . $year;
+                $periodLabel = 'Année '.$year;
             }
         }
 
@@ -61,16 +60,16 @@ class MobilityReportController extends Controller
         $passengerFilter = function ($q) use ($startDate, $endDate) {
             if ($startDate || $endDate) {
                 $q->whereHas('reservation', function ($rq) use ($startDate, $endDate) {
-                            if ($startDate) {
-                                $rq->whereDate('date_debut', '>=', $startDate);
-                            }
-                            if ($endDate) {
-                                $rq->whereDate('date_debut', '<=', $endDate);
-                            }
-                        }
-                        );
+                    if ($startDate) {
+                        $rq->whereDate('date_debut', '>=', $startDate);
                     }
-                };
+                    if ($endDate) {
+                        $rq->whereDate('date_debut', '<=', $endDate);
+                    }
+                }
+                );
+            }
+        };
 
         // Current period stats
         $users = User::with([
@@ -107,16 +106,16 @@ class MobilityReportController extends Controller
             $prevPassengerFilter = function ($q) use ($prevStartDate, $prevEndDate) {
                 if ($prevStartDate || $prevEndDate) {
                     $q->whereHas('reservation', function ($rq) use ($prevStartDate, $prevEndDate) {
-                                if ($prevStartDate) {
-                                    $rq->whereDate('date_debut', '>=', $prevStartDate);
-                                }
-                                if ($prevEndDate) {
-                                    $rq->whereDate('date_debut', '<=', $prevEndDate);
-                                }
-                            }
-                            );
+                        if ($prevStartDate) {
+                            $rq->whereDate('date_debut', '>=', $prevStartDate);
                         }
-                    };
+                        if ($prevEndDate) {
+                            $rq->whereDate('date_debut', '<=', $prevEndDate);
+                        }
+                    }
+                    );
+                }
+            };
             $prevUsers = User::with([
                 'reservationsAsDriver' => $prevDriverFilter, 'reservationsAsDriver.vehicle', 'reservationsAsDriver.passengers',
                 'reservationsAsPassenger' => $prevPassengerFilter, 'reservationsAsPassenger.reservation.vehicle', 'reservationsAsPassenger.reservation.passengers',
@@ -146,7 +145,7 @@ class MobilityReportController extends Controller
 
         $logoBase64 = '';
         if (file_exists(public_path('images/logo.png'))) {
-            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('images/logo.png')));
+            $logoBase64 = 'data:image/png;base64,'.base64_encode(file_get_contents(public_path('images/logo.png')));
         }
 
         return [
@@ -171,7 +170,7 @@ class MobilityReportController extends Controller
         if (is_string($periodsInput)) {
             $periodsInput = json_decode($periodsInput, true);
         }
-        if (empty($periodsInput) || !is_array($periodsInput)) {
+        if (empty($periodsInput) || ! is_array($periodsInput)) {
             $periodsInput = [['year' => now()->year, 'month' => 'all']];
         }
 
@@ -191,7 +190,7 @@ class MobilityReportController extends Controller
         if (is_string($periodsInput)) {
             $periodsInput = json_decode($periodsInput, true);
         }
-        if (empty($periodsInput) || !is_array($periodsInput)) {
+        if (empty($periodsInput) || ! is_array($periodsInput)) {
             $periodsInput = [['year' => now()->year, 'month' => 'all']];
         }
 
@@ -204,6 +203,6 @@ class MobilityReportController extends Controller
 
         $pdf = Pdf::loadView($view, ['reports' => $reports]);
 
-        return $pdf->download('rapport-mobilite-' . $type . '-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('rapport-mobilite-'.$type.'-'.now()->format('Y-m-d').'.pdf');
     }
 }
