@@ -50,6 +50,8 @@ class HandleInertiaRequests extends Middleware
 
             // Traductions chargées à la demande via GET /api/translations?keys=... (useTranslations)
             'translations' => [],
+
+            'appVersion' => config('app.version', 'v0.1.0-alpha'),
         ];
     }
 }

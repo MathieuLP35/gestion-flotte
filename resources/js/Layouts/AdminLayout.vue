@@ -267,19 +267,24 @@ const vehiclesMenuActive = computed(() => {
                         <div class="text-sm text-gray-500">
                             © 2025 SparkOtto. Tous droits réservés.
                         </div>
-                        <div class="space-x-4">
-                            <Link
-                                href="/terms"
-                                class="text-sm text-gray-500 hover:text-gray-700"
-                            >
-                                Conditions d'utilisation
-                            </Link>
-                            <Link
-                                href="/privacy"
-                                class="text-sm text-gray-500 hover:text-gray-700"
-                            >
-                                Politique de confidentialité
-                            </Link>
+                        <div class="flex items-center gap-6">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-medium bg-gray-100 text-gray-500 border border-gray-200">
+                                v{{ page.props.appVersion }}
+                            </span>
+                            <div class="space-x-4">
+                                <Link
+                                    href="/terms"
+                                    class="text-sm text-gray-500 hover:text-gray-700"
+                                >
+                                    Conditions d'utilisation
+                                </Link>
+                                <Link
+                                    href="/privacy"
+                                    class="text-sm text-gray-500 hover:text-gray-700"
+                                >
+                                    Politique de confidentialité
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
