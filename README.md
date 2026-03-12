@@ -54,7 +54,7 @@ Assurez-vous d'avoir installé sur votre machine :
 ### Étape 2 : Récupération du projet
 Clonez le dépôt depuis GitHub et placez-vous dans le dossier :
 ```bash
-git clone [https://github.com/votre-nom/sparkotto.git](https://github.com/votre-nom/sparkotto.git)
+git clone https://github.com/votre-nom/sparkotto.git
 cd sparkotto
 ```
 
