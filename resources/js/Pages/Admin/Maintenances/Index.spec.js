@@ -11,41 +11,40 @@ describe('Admin/Maintenances/Index', () => {
     global.confirm = vi.fn();
   });
 
-  it('renders title and link to create', () => {
-    vi.mocked(usePage).mockReturnValue({ props: { maintenances: [] } });
+  it('renders title', () => {
+    vi.mocked(usePage).mockReturnValue({ props: { vehicles: [] } });
 
     const wrapper = mount(MaintenancesIndex, {
-      global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
+      global: { stubs: { AdminLayout: stubLayout, Head: true } },
     });
-    expect(wrapper.text()).toContain('Seuils de maintenance');
-    expect(wrapper.text()).toContain('Ajouter seuil');
+    expect(wrapper.text()).toContain('État du Parc (Maintenance)');
   });
 
-  it('renders maintenances in table', () => {
+  it('renders vehicles in table', () => {
     vi.mocked(usePage).mockReturnValue({
       props: {
-        maintenances: [
-          { id: 1, km_alert_threshold: 15000, date_dernier_entretien: '2024-01-10', vehicle: { modele: 'Clio', immatriculation: 'AB-123' } },
+        vehicles: [
+          { id: 1, modele: 'Clio', immatriculation: 'AB-123', agence: 'Nice', kilometrage: 12000, km_until_next: 3000, date_next: '2025-01-01', status: 'warning' },
         ],
       },
     });
 
     const wrapper = mount(MaintenancesIndex, {
-      global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
+      global: { stubs: { AdminLayout: stubLayout, Head: true } },
     });
-    expect(wrapper.text()).toContain('Clio');
-    expect(wrapper.text()).toContain('AB-123');
-    expect(wrapper.text()).toContain('15000');
-    expect(wrapper.text()).toContain('Modifier');
-    expect(wrapper.text()).toContain('Supprimer');
+    expect(wrapper.text()).toContain('Clio (AB-123)');
+    expect(wrapper.text()).toContain('Nice');
+    expect(wrapper.text()).toContain('Dans 3000 km');
+    expect(wrapper.text()).toContain('À prévoir');
+    expect(wrapper.text()).toContain("Gérer l'historique");
   });
 
-  it('shows Aucun seuil when empty', () => {
-    vi.mocked(usePage).mockReturnValue({ props: { maintenances: [] } });
+  it('shows Aucun véhicule when empty', () => {
+    vi.mocked(usePage).mockReturnValue({ props: { vehicles: [] } });
 
     const wrapper = mount(MaintenancesIndex, {
-      global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
+      global: { stubs: { AdminLayout: stubLayout, Head: true } },
     });
-    expect(wrapper.text()).toContain('Aucun seuil de maintenance trouvé');
+    expect(wrapper.text()).toContain('Aucun véhicule disponible.');
   });
 });

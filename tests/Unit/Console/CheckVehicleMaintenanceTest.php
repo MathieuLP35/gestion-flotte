@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Agence;
-use App\Models\Maintenance;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
@@ -11,13 +10,13 @@ beforeEach(function (): void {
     Config::set('app.admin_email', 'admin@test.com');
 });
 
-it('envoie un mail d\'alerte quand km_initial >= km_alert_threshold', function (): void {
+it('envoie un mail d\'alerte quand statuts warning ou overdue', function (): void {
     $agence = Agence::factory()->create();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'C', 'immatriculation' => 'AB-CMD',
-        'km_initial' => 20000, 'emplacement' => 'X', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
+        'kilometrage' => 20000, 'last_service_km' => 0, 'service_interval_km' => 20000,
+        'km_initial' => 0, 'emplacement' => 'X', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
     ]);
-    Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 15000, 'date_dernier_entretien' => null]);
 
     $this->artisan('check:maintenance')
         ->expectsOutput('Vérification des entretiens terminée.')
@@ -26,13 +25,13 @@ it('envoie un mail d\'alerte quand km_initial >= km_alert_threshold', function (
     Mail::assertQueued(\App\Mail\MaintenanceAlert::class);
 });
 
-it('n\'envoie pas de mail si km_initial < km_alert_threshold', function (): void {
+it('n\'envoie pas de mail si statut est OK', function (): void {
     $agence = Agence::factory()->create();
     $v = Vehicle::create([
         'agence_id' => $agence->id, 'modele' => 'C', 'immatriculation' => 'AB-CMD2',
+        'kilometrage' => 5000, 'last_service_km' => 0, 'service_interval_km' => 20000,
         'km_initial' => 5000, 'emplacement' => 'X', 'nbr_places' => 5, 'energie' => 'essence', 'en_maintenance' => false,
     ]);
-    Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 15000, 'date_dernier_entretien' => null]);
 
     $this->artisan('check:maintenance')->assertSuccessful();
 

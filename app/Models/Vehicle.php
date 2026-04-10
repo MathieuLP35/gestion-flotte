@@ -12,15 +12,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $agence_id
  * @property string $modele
  * @property string $immatriculation
- * @property Agence $agence
+ * @property Agence|null $agence
  * @property Collection<int, Maintenance> $maintenances
  * @property Collection<int, VehicleKey> $keys
  * @property Collection<int, Reservation> $reservations
  */
 class Vehicle extends Model
 {
+    protected $with = ['latestRevision'];
+
     protected $fillable = [
-        'agence_id', 'modele', 'immatriculation', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie',
+        'agence_id', 'modele', 'immatriculation', 'kilometrage', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie',
+        'purchase_price', 'purchase_date', 'insurance_monthly', 'maintenance_monthly', 'last_service_km', 'service_interval_km', 'service_interval_months',
     ];
 
     /**
@@ -130,5 +133,60 @@ class Vehicle extends Model
         }
 
         return $vehicles->first();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<Maintenance, $this>
+     */
+    public function latestRevision(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Maintenance::class)->where('type', 'revision')->latest('date');
+    }
+
+    public function getMaintenanceStatusAttribute(): string
+    {
+        $lastRevision = $this->latestRevision;
+
+        $currentKm = $this->kilometrage ?? 0;
+        $intervalKm = $this->service_interval_km ?? 20000;
+        $intervalMonths = $this->service_interval_months ?? 12;
+
+        $lastKm = $lastRevision ? $lastRevision->kilometrage : ($this->km_initial ?? 0);
+        $lastDate = $lastRevision ? \Carbon\Carbon::parse($lastRevision->date) : \Carbon\Carbon::parse($this->purchase_date ?? $this->created_at);
+
+        $nextServiceKm = $lastKm + $intervalKm;
+        $nextServiceDate = $lastDate->copy()->addMonths($intervalMonths);
+
+        if ($currentKm >= $nextServiceKm || now() >= $nextServiceDate) {
+            return 'overdue';
+        }
+
+        if ($currentKm >= $nextServiceKm - 2000 || now() >= $nextServiceDate->copy()->subMonth()) {
+            return 'warning';
+        }
+
+        return 'ok';
+    }
+
+    public function getKmUntilNextServiceAttribute(): int
+    {
+        $lastRevision = $this->latestRevision;
+
+        $intervalKm = $this->service_interval_km ?? 20000;
+        $lastKm = $lastRevision ? $lastRevision->kilometrage : ($this->km_initial ?? 0);
+        $nextServiceKm = $lastKm + $intervalKm;
+
+        return max(0, $nextServiceKm - ($this->kilometrage ?? 0));
+    }
+
+    public function getNextServiceDateAttribute(): ?string
+    {
+        $lastRevision = $this->latestRevision;
+
+        $intervalMonths = $this->service_interval_months ?? 12;
+        $lastDate = $lastRevision ? \Carbon\Carbon::parse($lastRevision->date) : \Carbon\Carbon::parse($this->purchase_date ?? $this->created_at);
+        $nextServiceDate = $lastDate->copy()->addMonths($intervalMonths);
+
+        return $nextServiceDate->format('Y-m-d');
     }
 }

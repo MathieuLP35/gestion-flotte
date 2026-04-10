@@ -9,7 +9,7 @@ describe('Admin/Maintenances/Edit', () => {
   it('renders title and form', () => {
     vi.mocked(usePage).mockReturnValue({
       props: {
-        maintenance: { id: 1, vehicle_id: 1, km_alert_threshold: 10000, date_dernier_entretien: '2024-01-15' },
+        maintenance: { id: 1, vehicle_id: 1, kilometrage: 10000, date: '2024-01-15', type: 'revision' },
         vehicles: [{ id: 1, modele: 'Clio', immatriculation: 'AB-123' }],
       },
     });
@@ -17,10 +17,10 @@ describe('Admin/Maintenances/Edit', () => {
     const wrapper = mount(MaintenancesEdit, {
       global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
     });
-    expect(wrapper.text()).toContain('Modifier le seuil de maintenance');
+    expect(wrapper.text()).toContain("Modifier l'intervention (Maintenance)");
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.find('select#vehicle').exists()).toBe(true);
-    expect(wrapper.find('input#km_alert_threshold').exists()).toBe(true);
+    expect(wrapper.find('input#kilometrage').exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').text()).toContain('Mettre à jour');
   });
 });

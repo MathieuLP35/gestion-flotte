@@ -15,13 +15,11 @@ class CheckVehicleMaintenance extends Command
 
     public function handle(): void
     {
-        $vehicles = Vehicle::with('maintenances')->get();
+        $vehicles = Vehicle::all();
 
         foreach ($vehicles as $vehicle) {
-            foreach ($vehicle->maintenances as $maintenance) {
-                if ($vehicle->km_initial >= $maintenance->km_alert_threshold) {
-                    Mail::to(config('app.admin_email'))->send(new MaintenanceAlert($vehicle, $maintenance));
-                }
+            if ($vehicle->maintenance_status === 'overdue' || $vehicle->maintenance_status === 'warning') {
+                Mail::to(config('app.admin_email'))->queue(new MaintenanceAlert($vehicle));
             }
         }
 

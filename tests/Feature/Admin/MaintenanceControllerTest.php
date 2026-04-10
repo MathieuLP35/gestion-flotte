@@ -23,17 +23,20 @@ function maintenanceAdminAndVehicle(): array
     return [$user, $v];
 }
 
-it('ajoute un seuil de maintenance', function (): void {
+it('ajoute une révision', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
 
     $response = $this->actingAs($user)->post(route('admin.maintenances.store'), [
         'vehicle_id' => $v->id,
-        'km_alert_threshold' => 15000,
-        'date_dernier_entretien' => '2024-01-15',
+        'date' => '2026-01-01',
+        'type' => 'revision',
+        'kilometrage' => 15000,
+        'cost' => 250,
+        'notes' => 'RAS',
     ]);
 
     $response->assertRedirect();
-    $this->assertDatabaseHas('maintenances', ['vehicle_id' => $v->id, 'km_alert_threshold' => 15000]);
+    $this->assertDatabaseHas('maintenances', ['vehicle_id' => $v->id, 'kilometrage' => 15000]);
 });
 
 it('refuse d\'ajouter une maintenance pour un véhicule d\'une autre agence', function (): void {
@@ -46,8 +49,9 @@ it('refuse d\'ajouter une maintenance pour un véhicule d\'une autre agence', fu
 
     $response = $this->actingAs($user)->post(route('admin.maintenances.store'), [
         'vehicle_id' => $vAutre->id,
-        'km_alert_threshold' => 10000,
-        'date_dernier_entretien' => null,
+        'date' => '2026-01-01',
+        'type' => 'revision',
+        'kilometrage' => 15000,
     ]);
 
     $response->assertForbidden();
@@ -55,32 +59,33 @@ it('refuse d\'ajouter une maintenance pour un véhicule d\'une autre agence', fu
 
 it('affiche le formulaire d\'édition d\'une maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
-    $m = Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 10000, 'date_dernier_entretien' => '2024-01-01']);
+    $m = Maintenance::create(['vehicle_id' => $v->id, 'kilometrage' => 10000, 'type' => 'revision', 'date' => '2024-01-01']);
 
     $response = $this->actingAs($user)->get(route('admin.maintenances.edit', $m));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page->component('Admin/Maintenances/Edit')->has('maintenance')->has('vehicles'));
+    $response->assertInertia(fn ($page) => $page->component('Admin/Maintenances/Edit')->has('maintenance'));
 });
 
 it('met à jour une maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
-    $m = Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 10000, 'date_dernier_entretien' => null]);
+    $m = Maintenance::create(['vehicle_id' => $v->id, 'kilometrage' => 10000, 'type' => 'revision', 'date' => '2024-01-01']);
 
     $response = $this->actingAs($user)->put(route('admin.maintenances.update', $m), [
         'vehicle_id' => $v->id,
-        'km_alert_threshold' => 20000,
-        'date_dernier_entretien' => '2024-06-01',
+        'date' => '2024-06-01',
+        'kilometrage' => 20000,
+        'type' => 'revision',
     ]);
 
-    $response->assertRedirect(route('admin.vehicles.edit', $v->id));
+    $response->assertRedirect(route('admin.maintenances.show', $v->id));
     $m->refresh();
-    expect($m->km_alert_threshold)->toBe(20000);
+    expect($m->kilometrage)->toBe(20000);
 });
 
 it('supprime une maintenance', function (): void {
     [$user, $v] = maintenanceAdminAndVehicle();
-    $m = Maintenance::create(['vehicle_id' => $v->id, 'km_alert_threshold' => 10000, 'date_dernier_entretien' => null]);
+    $m = Maintenance::create(['vehicle_id' => $v->id, 'kilometrage' => 10000, 'type' => 'revision', 'date' => '2024-01-01']);
 
     $response = $this->actingAs($user)->delete(route('admin.maintenances.destroy', $m));
 

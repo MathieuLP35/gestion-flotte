@@ -4,8 +4,6 @@ import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import useAdminPermissions from '@/Composables/useAdminPermissions';
 
 const showingNavigationDropdown = ref(false);
@@ -23,272 +21,282 @@ const {
 
 const vehiclesMenuActive = computed(() => {
     const url = page.url || '';
-    return /^\/admin\/vehicles(\/|$)/.test(url) || /\/admin\/settings\/vehicle-suggestion/.test(url);
+    return /^\/admin\/vehicles(\/|$)/.test(url) || /\/admin\/settings\/vehicle-suggestion/.test(url) || /^\/admin\/maintenances(\/|$)/.test(url);
 });
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen flex flex-col bg-gray-50">
-            <nav class="bg-white border-b border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between">
-                        <div class="flex">
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('admin.dashboard')">
-                                    <ApplicationLogo class="block py-2 w-[5rem] h-[5.5rem] fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <div class="hidden lg:items-center lg:space-x-6 lg:-my-px lg:ml-8 lg:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')" class="text-gray-600 hover:text-gray-900">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                                    </svg>
-                                    Utilisateur
-                                </NavLink>
-                                <NavLink v-if="canViewDashboard" :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
-                                    Tableau de bord
-                                </NavLink>
-                                <NavLink v-if="canViewDashboard" :href="route('admin.mobility-report')" :active="route().current('admin.mobility-report')">
-                                    Rapport RSE
-                                </NavLink>
-                                <NavLink v-if="canViewAgences" :href="route('admin.agences.index')" :active="route().current('admin.agences.*')">
-                                    Agences
-                                </NavLink>
-                                <NavLink v-if="canViewRoles" :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
-                                    Rôles
-                                </NavLink>
-                                <div v-if="showVehiclesMenu" class="inline-flex items-center">
-                                    <Dropdown align="left" width="48">
-                                        <template #trigger>
-                                            <button
-                                                type="button"
-                                                :class="vehiclesMenuActive
-                                                    ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out'
-                                                    : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out'"
-                                            >
-                                                Véhicules
-                                                <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </template>
-                                        <template #content>
-                                            <DropdownLink v-if="canViewVehicles" :href="route('admin.vehicles.availability')">
-                                                Gestion
-                                            </DropdownLink>
-                                            <DropdownLink
-                                                v-if="canViewVehicleSuggestion"
-                                                :href="route('admin.settings.vehicleSuggestion.edit')"
-                                            >
-                                                Suggestion véhicule
-                                            </DropdownLink>
-                                        </template>
-                                    </Dropdown>
-                                </div>
-                                <NavLink v-if="canViewUsers" :href="route('admin.users.index')" :active="route().current('admin.users.*')">
-                                    Utilisateurs
-                                </NavLink>
-                                <NavLink v-if="canViewDomains" :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
-                                    Domaines
-                                </NavLink>
-                            </div>
+    <div class="h-screen bg-gray-50 flex flex-col overflow-hidden">
+        <div class="flex flex-col lg:flex-row flex-1 min-h-0 relative overflow-hidden">
+            <!-- Sidebar (Desktop) -->
+            <aside 
+                class="hidden lg:flex w-72 bg-slate-900 border-r border-slate-800 flex-col h-full z-50 transition-all duration-300 shadow-xl"
+            >
+                <!-- Logo Section -->
+                <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                    <Link :href="route('admin.dashboard')" class="flex items-center gap-3">
+                        <ApplicationLogo class="w-10 h-10 fill-current text-indigo-400" />
+                        <div>
+                            <span class="text-white font-bold text-lg block leading-tight">SparkOtto</span>
+                            <span class="text-slate-500 text-xs font-medium uppercase tracking-wider">Administration</span>
                         </div>
+                    </Link>
+                </div>
 
-                        <div class="hidden lg:ms-6 lg:flex lg:items-center">
-                            <!-- Settings Dropdown -->
-                            <div class="relative ms-3">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
-                                                    class="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="route('profile.edit')"
-                                        >
-                                            Profil
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Déconnexion
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center lg:hidden">
-                            <button
-                                @click="showingNavigationDropdown = !showingNavigationDropdown"
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                <!-- Main Navigation -->
+                <nav class="flex-1 overflow-y-auto p-4 space-y-6">
+                    <!-- Section DASHBOARDS -->
+                    <div>
+                        <h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Statistiques</h3>
+                        <div class="space-y-1">
+                            <Link 
+                                v-if="canViewDashboard"
+                                :href="route('admin.dashboard')" 
+                                :class="route().current('admin.dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
                             >
-                                <svg
-                                    class="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex': !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex': showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
+                                <span class="text-lg opacity-80 group-hover:opacity-100">📊</span>
+                                Tableau de bord
+                            </Link>
+                            <Link 
+                                v-if="canViewDashboard"
+                                :href="route('admin.mobility-report')" 
+                                :class="route().current('admin.mobility-report') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">🌿</span>
+                                Rapport RSE
+                            </Link>
                         </div>
+                    </div>
+
+                    <!-- Section FLOTTE -->
+                    <div v-if="showVehiclesMenu || canViewAgences">
+                        <h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Gestion Flotte</h3>
+                        <div class="space-y-1">
+                            <Link 
+                                v-if="canViewVehicles"
+                                :href="route('admin.vehicles.availability')" 
+                                :class="route().current('admin.vehicles.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">🚗</span>
+                                Véhicules
+                            </Link>
+
+                            <Link 
+                                v-if="canViewAgences"
+                                :href="route('admin.agences.index')" 
+                                :class="route().current('admin.agences.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">📍</span>
+                                Agences
+                            </Link>
+                            
+                            <Link 
+                                v-if="canViewVehicleSuggestion"
+                                :href="route('admin.settings.vehicleSuggestion.edit')" 
+                                :class="route().current('admin.settings.vehicleSuggestion.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">✨</span>
+                                Suggestion
+                            </Link>
+
+                            <Link 
+                                v-if="canViewVehicles"
+                                :href="route('admin.maintenances.index')" 
+                                :class="route().current('admin.maintenances.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">🔧</span>
+                                Entretien
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- Section ORGANISATION -->
+                    <div v-if="canViewUsers || canViewRoles || canViewDomains">
+                        <h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Utilisateurs & Accès</h3>
+                        <div class="space-y-1">
+                            <Link 
+                                v-if="canViewUsers"
+                                :href="route('admin.users.index')" 
+                                :class="route().current('admin.users.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">👥</span>
+                                Utilisateurs
+                            </Link>
+                            
+                            <Link 
+                                v-if="canViewRoles"
+                                :href="route('admin.roles.index')" 
+                                :class="route().current('admin.roles.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">🛡️</span>
+                                Rôles & Droits
+                            </Link>
+                            
+                            <Link 
+                                v-if="canViewDomains"
+                                :href="route('admin.domains.index')" 
+                                :class="route().current('admin.domains.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group"
+                            >
+                                <span class="text-lg opacity-80 group-hover:opacity-100">🌐</span>
+                                Domaines
+                            </Link>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Sidebar Footer -->
+                <div class="p-4 bg-slate-950 border-t border-slate-800 space-y-3">
+                    <Link 
+                        :href="route('dashboard')"
+                        class="flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg transition-all border border-slate-700 shadow-sm"
+                    >
+                        <span>🚀</span>
+                        VUE CONDUCTEUR
+                    </Link>
+                </div>
+            </aside>
+
+            <!-- Mobile Navbar Header -->
+            <nav class="lg:hidden bg-slate-900 border-b border-slate-800 p-4 shrink-0 z-50 flex items-center justify-between">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <button 
+                        @click="showingNavigationDropdown = !showingNavigationDropdown" 
+                        class="p-1 -ml-1 text-slate-400 hover:text-white transition-colors"
+                    >
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path :class="{ hidden: showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{ hidden: !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div class="text-sm font-bold text-white truncate max-w-[180px]">
+                        <slot name="header">SparkOtto</slot>
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="lg:hidden"
-                >
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Utilisateur
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="canViewDashboard" :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
-                            Tableau de bord
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="canViewDashboard" :href="route('admin.mobility-report')" :active="route().current('admin.mobility-report')">
-                            Rapport RSE
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="canViewAgences" :href="route('admin.agences.index')" :active="route().current('admin.agences.*')">
-                            Agences
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="canViewRoles" :href="route('admin.roles.index')" :active="route().current('admin.roles.*')">
-                            Rôles
-                        </ResponsiveNavLink>
-                        <div v-if="showVehiclesMenu" class="pt-1">
-                            <div class="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking">Véhicules</div>
-                            <ResponsiveNavLink v-if="canViewVehicles" :href="route('admin.vehicles.availability')" :active="route().current('admin.vehicles.availability') || route().current('admin.vehicles.create') || route().current('admin.vehicles.edit') || route().current('admin.vehicles.calendar')">
-                                Véhicules
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                v-if="canViewVehicleSuggestion"
-                                :href="route('admin.settings.vehicleSuggestion.edit')"
-                                :active="route().current('admin.settings.vehicleSuggestion.*')"
-                            >
-                                Suggestion véhicule
-                            </ResponsiveNavLink>
-                        </div>
-                        <ResponsiveNavLink v-if="canViewUsers" :href="route('admin.users.index')" :active="route().current('admin.users.*')">
-                            Utilisateurs
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="canViewDomains" :href="route('admin.domains.index')" :active="route().current('admin.domains.*')">
-                            Domaines
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="border-t border-gray-200 pb-1 pt-4">
-                        <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profil
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
-                            >
-                                Déconnexion
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-3">
+                    <Link :href="route('dashboard')" class="text-indigo-400">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center font-bold text-indigo-500 border border-indigo-500/20 text-xs">⚡</div>
+                    </Link>
                 </div>
             </nav>
 
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
-            <main>
-                <slot />
-            </main>
-            <footer class="bg-white border-t border-gray-200 mt-auto">
-                <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-                    <div class="flex justify-between items-center">
-                        <div class="text-sm text-gray-500">
-                            © 2025 SparkOtto. Tous droits réservés.
+            <!-- Responsive Sidebar (Mobile Drawer) -->
+            <transition
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="-translate-x-full"
+                enter-to-class="translate-x-0"
+                leave-active-class="transition duration-200 ease-in"
+                leave-from-class="translate-x-0"
+                leave-to-class="-translate-x-full"
+            >
+                <div v-if="showingNavigationDropdown" class="lg:hidden fixed inset-0 z-[55] flex">
+                    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showingNavigationDropdown = false"></div>
+                    <aside class="relative flex flex-col w-72 bg-slate-900 h-full shadow-2xl border-r border-slate-800">
+                        <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                            <Link :href="route('admin.dashboard')" class="flex items-center gap-2">
+                                <ApplicationLogo class="w-8 h-8 fill-current text-indigo-400" />
+                                <span class="text-white font-bold">SparkOtto</span>
+                            </Link>
+                            <button @click="showingNavigationDropdown = false" class="text-slate-400 hover:text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
                         </div>
-                        <div class="flex items-center gap-6">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-medium bg-gray-100 text-gray-500 border border-gray-200">
-                                v{{ page.props.appVersion }}
-                            </span>
-                            <div class="space-x-4">
-                                <Link
-                                    href="/terms"
-                                    class="text-sm text-gray-500 hover:text-gray-700"
-                                >
-                                    Conditions d'utilisation
-                                </Link>
-                                <Link
-                                    href="/privacy"
-                                    class="text-sm text-gray-500 hover:text-gray-700"
-                                >
-                                    Politique de confidentialité
-                                </Link>
+                        
+                        <nav class="flex-1 overflow-y-auto p-4 space-y-6">
+                            <!-- Stats -->
+                            <div>
+                                <h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Statistiques</h3>
+                                <div class="space-y-1">
+                                    <Link v-if="canViewDashboard" :href="route('admin.dashboard')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">📊 Dashboard</Link>
+                                    <Link v-if="canViewDashboard" :href="route('admin.mobility-report')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">🌿 Rapport RSE</Link>
+                                </div>
                             </div>
+                            <!-- Flotte -->
+                            <div v-if="showVehiclesMenu || canViewAgences">
+                                <h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Gestion Flotte</h3>
+                                <div class="space-y-1">
+                                    <Link v-if="canViewVehicles" :href="route('admin.vehicles.availability')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">🚗 Véhicules</Link>
+                                    <Link v-if="canViewVehicles" :href="route('admin.maintenances.index')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">🔧 Entretien</Link>
+                                    <Link v-if="canViewAgences" :href="route('admin.agences.index')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">📍 Agences</Link>
+                                    <Link v-if="canViewVehicleSuggestion" :href="route('admin.settings.vehicleSuggestion.edit')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">✨ Suggestion</Link>
+                                </div>
+                            </div>
+                            <!-- Admin -->
+                            <div v-if="canViewUsers || canViewRoles || canViewDomains">
+                                <h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Utilisateurs</h3>
+                                <div class="space-y-1">
+                                    <Link v-if="canViewUsers" :href="route('admin.users.index')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">👥 Utilisateurs</Link>
+                                    <Link v-if="canViewRoles" :href="route('admin.roles.index')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">🛡️ Rôles</Link>
+                                    <Link v-if="canViewDomains" :href="route('admin.domains.index')" class="flex items-center gap-3 px-3 py-2 text-slate-300 text-sm hover:text-white hover:bg-slate-800 rounded-lg">🌐 Domaines</Link>
+                                </div>
+                            </div>
+                        </nav>
+
+                        <div class="p-4 bg-slate-950 border-t border-slate-800 space-y-2">
+                            <Link :href="route('dashboard')" class="flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800 text-slate-200 text-xs font-bold rounded-lg border border-slate-700">🚀 VUE CONDUCTEUR</Link>
+                        </div>
+                    </aside>
+                </div>
+            </transition>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 flex flex-col min-w-0 bg-gray-50 h-full overflow-hidden">
+                <!-- Top Header Bar (Desktop Only) -->
+                <header class="hidden lg:flex h-16 bg-white border-b border-gray-200 px-4 lg:px-8 items-center justify-between shrink-0">
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-800 leading-tight">
+                            <slot name="header" />
+                        </h2>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="hidden sm:flex flex-col text-right" v-if="$page.props.auth && $page.props.auth.user">
+                             <span class="text-sm font-bold text-gray-900 leading-none">{{ $page.props.auth.user.name }}</span>
+                             <span class="text-[10px] text-gray-500 font-medium uppercase tracking-tighter mt-1">Administrateur</span>
+                        </div>
+
+                        <Dropdown align="right" width="48" v-if="$page.props.auth && $page.props.auth.user">
+                            <template #trigger>
+                                <button class="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm hover:bg-indigo-100 transition-colors">
+                                    {{ $page.props.auth.user.name.charAt(0) }}
+                                </button>
+                            </template>
+                            <template #content>
+                                <DropdownLink :href="route('profile.edit')">Profil</DropdownLink>
+                                <DropdownLink :href="route('logout')" method="post" as="button">Déconnexion</DropdownLink>
+                            </template>
+                        </Dropdown>
+                    </div>
+                </header>
+
+                <!-- Page Content -->
+                <main class="flex-1 overflow-y-auto p-4 lg:p-8 relative">
+                    <div class="max-w-7xl mx-auto">
+                        <slot />
+                    </div>
+                </main>
+
+                <!-- Footer -->
+                <footer class="bg-white border-t border-gray-200 py-4 px-4 lg:px-8 shrink-0">
+                    <div class="flex justify-between items-center text-[10px] text-gray-400 font-medium tracking-tight">
+                        <span>© 2025 SPARKOTTO FLEET MANAGEMENT</span>
+                        <div class="flex gap-4">
+                            <Link href="/terms" class="hover:text-gray-600 transition-colors">CONDITIONS</Link>
+                            <Link href="/privacy" class="hover:text-gray-600 transition-colors">PRIVACY</Link>
+                            <span v-if="page.props.appVersion" class="bg-gray-100 text-gray-500 px-1.5 rounded">v{{ page.props.appVersion }}</span>
                         </div>
                     </div>
-                </div>
-            </footer>
+                </footer>
+            </div>
         </div>
     </div>
 </template>

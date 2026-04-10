@@ -14,12 +14,13 @@ describe('Admin/Maintenances/Create', () => {
     const wrapper = mount(MaintenancesCreate, {
       global: { stubs: { AuthenticatedLayout: stubLayout, Head: true } },
     });
-    expect(wrapper.text()).toContain('Ajouter un seuil de maintenance');
+    expect(wrapper.text()).toContain('Enregistrer une intervention (Maintenance)');
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.find('select#vehicle').exists()).toBe(true);
-    expect(wrapper.find('input#km_alert_threshold').exists()).toBe(true);
-    expect(wrapper.find('input#date_dernier_entretien').exists()).toBe(true);
-    expect(wrapper.find('button[type="submit"]').text()).toContain('Ajouter');
+    expect(wrapper.find('input#date').exists()).toBe(true);
+    expect(wrapper.find('input#kilometrage').exists()).toBe(true);
+    expect(wrapper.find('select#type').exists()).toBe(true);
+    expect(wrapper.find('button[type="submit"]').text()).toContain('Enregistrer');
   });
 
   it('shows vehicle options', () => {

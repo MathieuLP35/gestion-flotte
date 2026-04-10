@@ -16,7 +16,10 @@ describe('Admin/Vehicles/Edit', () => {
     energie: 'essence',
     en_maintenance: 0,
     keys: [{ id: 1, emplacement_clef: 'Boîte 1' }],
-    maintenances: [{ id: 1, km_alert_threshold: 20000, date_dernier_entretien: '2024-01-10' }],
+    kilometrage: 12000,
+    last_service_km: 0,
+    service_interval_km: 20000,
+    service_interval_months: 12,
   };
 
   it('renders title and vehicle form', () => {
@@ -37,7 +40,7 @@ describe('Admin/Vehicles/Edit', () => {
       global: { stubs: { AdminLayout: stubLayout, Head: true, Link: true } },
     });
     expect(wrapper.text()).toContain('Gestion des clés');
-    expect(wrapper.text()).toContain('Seuils de maintenance');
+    expect(wrapper.text()).toContain('Historique d\'entretien');
     expect(wrapper.text()).toContain('Boîte 1');
   });
 });

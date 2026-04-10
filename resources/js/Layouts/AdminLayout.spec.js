@@ -86,6 +86,6 @@ describe('AdminLayout', () => {
     });
     expect(wrapper.find('a[href="/terms"]').exists()).toBe(true);
     expect(wrapper.find('a[href="/privacy"]').exists()).toBe(true);
-    expect(wrapper.text()).toContain('© 2025 SparkOtto. Tous droits réservés.');
+    expect(wrapper.text()).toContain('© 2025 SPARKOTTO FLEET MANAGEMENT');
   });
 });

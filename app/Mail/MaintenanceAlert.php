@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\Maintenance;
 use App\Models\Vehicle;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,8 +13,7 @@ class MaintenanceAlert extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(
-        public Vehicle $vehicle,
-        public Maintenance $maintenance
+        public Vehicle $vehicle
     ) {}
 
     /**
