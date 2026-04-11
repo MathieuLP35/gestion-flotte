@@ -119,7 +119,7 @@ const chartOptions = {
                                     </button>
                                     <button @click="exportReport('technical')" class="block w-full text-left px-4 py-3 text-sm leading-5 text-gray-700 hover:bg-indigo-50 focus:outline-none focus:bg-indigo-50 transition duration-150 ease-in-out font-medium">
                                         <div class="flex items-center">
-                                            <span class="text-indigo-500 mr-2">📊</span>
+                                            <span class="text-indigo-500 mr-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></span>
                                             <span>Technique</span>
                                         </div>
                                     </button>

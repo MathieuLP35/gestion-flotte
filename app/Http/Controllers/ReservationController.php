@@ -247,16 +247,19 @@ class ReservationController extends Controller
             'destination' => 'required|string|max:255',
         ]);
 
-        $dateDebut = Carbon::parse((string) $request->date_debut);
+        $startDate = \Carbon\Carbon::parse((string) $request->date_debut)->toDateString();
+        $endDate = $request->filled('date_fin') ? \Carbon\Carbon::parse((string) $request->date_fin)->toDateString() : $startDate;
+
         $departure = strtolower(trim((string) $request->departure));
         $destination = strtolower(trim((string) $request->destination));
 
         $reservations = Reservation::with(['driver', 'vehicle', 'passengers'])
             ->where('statut', 'validé')
-            ->whereRaw('LOWER(destination) = ?', [$destination])
-            ->whereRaw('LOWER(depart) = ?', [$departure])
-            ->whereDate('date_debut', $dateDebut->toDateString())
-            ->where('date_fin', '>=', $dateDebut)
+            ->where('covoiturage', true)
+            ->whereRaw('LOWER(destination) LIKE ?', ['%' . $destination . '%'])
+            ->whereRaw('LOWER(depart) LIKE ?', ['%' . $departure . '%'])
+            ->whereDate('date_debut', '<=', $endDate)
+            ->whereDate('date_fin', '>=', $startDate)
             ->where('user_id', '!=', Auth::id())
             ->get();
 

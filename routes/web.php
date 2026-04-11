@@ -120,6 +120,9 @@ Route::middleware(['auth', 'verified', 'admin'])
         // /admin/settings/vehicle-suggestion
         Route::get('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'edit'])->name('settings.vehicleSuggestion.edit');
         Route::put('settings/vehicle-suggestion', [App\Http\Controllers\Admin\VehicleSuggestionSettingController::class, 'update'])->name('settings.vehicleSuggestion.update');
+
+        // Global Search API
+        Route::get('/api/search', [App\Http\Controllers\Admin\SearchController::class, 'search'])->name('api.search');
     });
 
 require __DIR__.'/auth.php';
