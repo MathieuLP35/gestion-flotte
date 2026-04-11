@@ -76,8 +76,8 @@ onUnmounted(() => {
                 
                 <div class="mb-8 flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Détail du trajet</h1>
-                        <p class="mt-2 text-sm text-gray-600">Consultez les informations et échangez avec les passagers.</p>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ $t('res.show_title') }}</h1>
+                        <p class="mt-2 text-sm text-gray-600">{{ $t('res.show_subtitle') }}</p>
                     </div>
                 </div>
 
@@ -101,13 +101,13 @@ onUnmounted(() => {
                             
                             <div class="p-6 space-y-4">
                                 <div>
-                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Dates</p>
-                                    <p class="text-sm font-medium text-gray-900">Aller : {{ formatDate(reservation.date_debut) }}</p>
-                                    <p class="text-sm font-medium text-gray-900">Retour : {{ formatDate(reservation.date_fin) }}</p>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{{ $t('res.dates') }}</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ $t('res.departure_date') }} {{ formatDate(reservation.date_debut) }}</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ $t('res.return_date') }} {{ formatDate(reservation.date_fin) }}</p>
                                 </div>
 
                                 <div class="pt-4 border-t border-gray-100">
-                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Conducteur</p>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{{ $t('res.driver') }}</p>
                                     <div class="flex items-center space-x-3 mt-2">
                                         <div class="h-10 w-10 flex-shrink-0 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center font-bold text-sm">
                                             {{ reservation.driver.name.charAt(0).toUpperCase() }}
@@ -117,7 +117,7 @@ onUnmounted(() => {
                                 </div>
 
                                 <div class="pt-4 border-t border-gray-100">
-                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Véhicule</p>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{{ $t('res.vehicle') }}</p>
                                     <div class="flex items-center justify-between">
                                         <p class="text-sm font-bold text-gray-900">{{ reservation.vehicle.modele }}</p>
                                         <span v-if="reservation.vehicle.energie === 'electrique' || reservation.vehicle.energie === 'hybride'"
@@ -127,7 +127,7 @@ onUnmounted(() => {
                                                 'bg-emerald-100 text-emerald-800': reservation.vehicle.energie === 'hybride'
                                               }">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
-                                            {{ reservation.vehicle.energie === 'electrique' ? 'Électrique' : 'Hybride' }}
+                                            {{ reservation.vehicle.energie === 'electrique' ? $t('vehicle.electric') : $t('vehicle.hybrid') }}
                                         </span>
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@ onUnmounted(() => {
                         <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                             <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center">
                                 <svg class="h-5 w-5 mr-2 text-sparkotto-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                                Passagers
+                                {{ $t('res.passengers') }}
                             </h3>
                             <ul class="space-y-3">
                                 <li v-for="p in reservation.passengers.filter(p => p.statut === 'confirme')" :key="p.id" class="flex items-center">
@@ -148,11 +148,11 @@ onUnmounted(() => {
                                     <span class="text-sm font-medium text-gray-800">{{ p.user.name }}</span>
                                 </li>
                                 <li v-if="reservation.passengers.filter(p => p.statut === 'confirme').length === 0" class="text-sm text-gray-500 italic">
-                                    Aucun passager.
+                                    {{ $t('res.no_passengers') }}
                                 </li>
                                 <li v-if="reservation.places_reservees_materiel > 0" class="flex items-center pt-3 border-t border-gray-50 mt-3">
                                     <svg class="h-5 w-5 mr-3 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                                    <span class="text-sm text-gray-600">+ {{ reservation.places_reservees_materiel }} places (Matériel)</span>
+                                    <span class="text-sm text-gray-600">+ {{ reservation.places_reservees_materiel }} {{ $t('res.seats') }} ({{ $t('admin.fleet') }})</span>
                                 </li>
                             </ul>
                         </div>
@@ -164,14 +164,14 @@ onUnmounted(() => {
                             <div class="bg-gray-50 p-6 border-b border-gray-100">
                                 <h2 class="text-xl font-bold text-gray-900 flex items-center">
                                     <svg class="h-5 w-5 mr-2 text-sparkotto-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                                    Messagerie du Trajet
+                                    {{ $t('res.messaging') }}
                                 </h2>
                             </div>
 
                             <div id="chat-container" class="flex-1 min-h-[400px] max-h-[600px] overflow-y-auto p-6 space-y-6 bg-white">
                                 <div v-if="messages.length === 0" class="h-full flex flex-col items-center justify-center text-gray-500">
                                     <svg class="h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                                    <span>Aucun message. Démarrez la conversation !</span>
+                                    <span>{{ $t('res.no_messages') }}</span>
                                 </div>
 
                                 <div v-for="message in messages" :key="message.id">
@@ -198,7 +198,7 @@ onUnmounted(() => {
                                 <input
                                     type="text"
                                     v-model="newMessage"
-                                    placeholder="Écrivez votre message..."
+                                    :placeholder="$t('res.message_placeholder')"
                                     class="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple shadow-sm transition"
                                 />
                                 <button type="submit" class="p-3 bg-sparkotto-purple hover:bg-sparkotto-purple-hover text-white rounded-xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-sparkotto-purple focus:ring-offset-2 flex-shrink-0">

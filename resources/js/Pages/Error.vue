@@ -37,26 +37,26 @@
         Erreur {{ status }}
       </h1>
       <h2 class="text-2xl font-bold text-gray-800 mb-4">
-        {{ title }}
+        {{ $t(titleKey) }}
       </h2>
       <p class="text-base text-gray-500 mb-10 max-w-md mx-auto leading-relaxed">
-        {{ description }}
+        {{ $t(descKey) }}
       </p>
 
       <!-- Actions -->
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <button v-if="canGoBack" @click="goBack" class="w-full sm:w-auto inline-flex justify-center px-6 py-3.5 border border-gray-200 shadow-sm text-sm font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sparkotto-purple transition-all duration-200">
-          Retour en arrière
+          {{ $t('error.go_back') }}
         </button>
         <Link href="/" class="w-full sm:w-auto inline-flex justify-center px-6 py-3.5 border border-transparent shadow-soft text-sm font-bold rounded-xl text-white bg-sparkotto-purple hover:bg-sparkotto-purple-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sparkotto-purple transition-transform duration-200 hover:-translate-y-0.5">
-          Aller à l'accueil
+          {{ $t('error.go_home') }}
         </Link>
       </div>
     </div>
 
     <!-- Footer -->
     <div class="mt-8 text-center text-sm font-medium text-gray-400">
-      © {{ new Date().getFullYear() }} SparkOtto. Tous droits réservés.
+      © {{ new Date().getFullYear() }} SparkOtto. {{ $t('nav.copyright') }}
     </div>
   </div>
 </template>
@@ -73,23 +73,22 @@ const props = defineProps({
   }
 })
 
-const title = computed(() => {
-  return {
-    503: 'Service indisponible',
-    500: 'Erreur Serveur',
-    404: 'Page Non Trouvée',
-    403: 'Accès Refusé',
-  }[props.status] || 'Une erreur est survenue'
-})
+const titles = computed(() => ({
+    503: 'error.503_title',
+    500: 'error.500_title',
+    404: 'error.404_title',
+    403: 'error.403_title',
+}))
 
-const description = computed(() => {
-  return {
-    503: 'Désolé, nous sommes actuellement en maintenance. Veuillez réessayer plus tard.',
-    500: 'Oups ! Quelque chose a mal tourné sur nos serveurs. L\'équipe a été alertée.',
-    404: 'Désolé, la page que vous recherchez semble introuvable ou a été déplacée.',
-    403: 'Désolé, vous n\'avez pas les permissions nécessaires pour accéder à cette fonctionnalité.',
-  }[props.status] || 'Nous ne parvenons pas à compléter votre requête pour le moment.'
-})
+const descriptions = computed(() => ({
+    503: 'error.503_desc',
+    500: 'error.500_desc',
+    404: 'error.404_desc',
+    403: 'error.403_desc',
+}))
+
+const titleKey = computed(() => titles.value[props.status] || 'error.generic_title')
+const descKey = computed(() => descriptions.value[props.status] || 'error.generic_desc')
 
 const iconBgClass = computed(() => {
   return {

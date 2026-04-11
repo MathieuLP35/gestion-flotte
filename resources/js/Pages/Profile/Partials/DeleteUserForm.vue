@@ -42,28 +42,26 @@ const closeModal = () => {
     <section class="space-y-6">
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Suppression de compte
+                {{ $t('profile.delete_account_title') }}
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Une fois votre compte supprimé, toutes ses ressources et données
-                seront définitivement supprimées.
+                {{ $t('profile.delete_account_desc') }}
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">Supprimer</DangerButton>
+        <DangerButton @click="confirmUserDeletion">{{ $t('profile.delete_btn') }}</DangerButton>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
                 <h2
                     class="text-lg font-medium text-gray-900"
                 >
-                    Êtes-vous sûr de vouloir supprimer votre compte ?
+                    {{ $t('profile.delete_confirm_title') }}
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    Saisissez votre mot de passe pour confirmer que vous
-                    souhaitez supprimer définitivement votre compte.
+                    {{ $t('profile.delete_confirm_desc') }}
                 </p>
 
                 <div class="mt-6">
@@ -79,7 +77,7 @@ const closeModal = () => {
                         v-model="form.password"
                         type="password"
                         class="mt-1 block w-3/4"
-                        placeholder="Mot de passe"
+                        :placeholder="$t('auth.password')"
                         @keyup.enter="deleteUser"
                     />
 
@@ -88,7 +86,7 @@ const closeModal = () => {
 
                 <div class="mt-6 flex justify-end">
                     <SecondaryButton @click="closeModal">
-                        Annuler
+                        {{ $t('action.cancel') }}
                     </SecondaryButton>
 
                     <DangerButton
@@ -97,7 +95,7 @@ const closeModal = () => {
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
-                        Supprimer le compte
+                        {{ $t('profile.delete_account_btn') }}
                     </DangerButton>
                 </div>
             </div>

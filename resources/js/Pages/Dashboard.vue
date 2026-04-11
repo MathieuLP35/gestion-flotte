@@ -4,6 +4,7 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import useGeocoding from '@/Composables/useGeocoding';
 import useDate from '@/Composables/useDate';
 import useReservation from '@/Composables/useReservation';
+import { getCurrentInstance } from 'vue';
 
 const props = defineProps({
     reservationsAsDriver: Array,
@@ -11,6 +12,24 @@ const props = defineProps({
 });
 
 const { formatDate } = useDate();
+
+// Traduction des statuts (valeurs venant de la BDD)
+const { proxy } = getCurrentInstance();
+const statusLabel = (statut) => {
+    const t = proxy.$t.bind(proxy);
+    const map = {
+        'en attente': t('status.en_attente'),
+        'validé': t('status.valide'),
+        'en cours': t('status.en_cours'),
+        'à retourner': t('status.a_retourner'),
+        'annulé': t('status.annule'),
+        'terminé': t('status.termine'),
+        'confirme': t('status.confirme'),
+        'en_attente': t('status.en_attente_psg'),
+        'refuse': t('status.refuse'),
+    };
+    return map[statut] ?? statut;
+};
 const { cancelPassenger, deleteReservation } = useReservation();
 const { suggestionsDeparture, suggestionsDestination, isLoadingDeparture, isLoadingDestination, fetchSuggestions } = useGeocoding();
 
@@ -81,7 +100,7 @@ const searchCarpooling = () => {
 </script>
 
 <template>
-    <Head title="Espace Collaborateur" />
+    <Head :title="$t('dashboard.title')" />
 
     <AuthenticatedLayout>
         <div class="py-10 bg-gray-50 min-h-screen">
@@ -91,15 +110,15 @@ const searchCarpooling = () => {
                 <div class="bg-white p-8 rounded-2xl shadow-soft border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
                         <div>
-                            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Où allez-vous ?</h1>
-                            <p class="mt-2 text-sm text-gray-600">Recherchez un covoiturage pour vos déplacements professionnels.</p>
+                            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ $t('dashboard.search_heading') }}</h1>
+                            <p class="mt-2 text-sm text-gray-600">{{ $t('dashboard.search_desc') }}</p>
                         </div>
                         <div class="mt-4 md:mt-0">
                             <Link :href="route('reservations.create')" class="inline-flex items-center justify-center px-5 py-3 bg-sparkotto-purple hover:bg-sparkotto-purple-hover text-white text-sm font-semibold rounded-xl shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sparkotto-purple focus:ring-offset-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                 </svg>
-                                Proposer un trajet
+                                {{ $t('dashboard.propose_trip') }}
                             </Link>
                         </div>
                     </div>
@@ -112,7 +131,7 @@ const searchCarpooling = () => {
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800">Précision requise :</h3>
+                                <h3 class="text-sm font-medium text-red-800">{{ $t('dashboard.precision_required') }}</h3>
                                 <ul class="mt-1 list-disc pl-5 text-sm text-red-700">
                                     <li v-if="form.errors.departure">{{ form.errors.departure }}</li>
                                     <li v-if="form.errors.destination">{{ form.errors.destination }}</li>
@@ -124,7 +143,7 @@ const searchCarpooling = () => {
                     <!-- Moteur de réservation type "Trainline/Uber" -->
                     <form @submit.prevent="searchCarpooling" class="flex flex-col lg:flex-row gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100">
                         <div class="relative w-full lg:w-1/3">
-                            <label for="departure" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Départ</label>
+                            <label for="departure" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.departure') }}</label>
                             <input
                                 type="text"
                                 id="departure"
@@ -147,7 +166,7 @@ const searchCarpooling = () => {
                         </div>
 
                         <div class="relative w-full lg:w-1/3">
-                            <label for="destination" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Destination</label>
+                            <label for="destination" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.destination') }}</label>
                             <input
                                 type="text"
                                 id="destination"
@@ -170,18 +189,18 @@ const searchCarpooling = () => {
                         </div>
 
                         <div class="w-full lg:w-1/6">
-                            <label for="departureDate" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Aller</label>
+                            <label for="departureDate" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('dashboard.aller') }}</label>
                             <input type="date" id="departureDate" v-model="form.departureDate" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition" required />
                         </div>
                         
                         <div class="w-full lg:w-1/6">
-                            <label for="arrivalDate" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Retour (Optionnel)</label>
+                            <label for="arrivalDate" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('dashboard.retour_optional') }}</label>
                             <input type="date" id="arrivalDate" v-model="form.arrivalDate" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition" />
                         </div>
 
                         <div class="w-full lg:w-auto mt-4 lg:mt-0">
                             <button type="submit" class="w-full lg:w-auto h-[46px] px-8 bg-gray-900 border border-transparent rounded-lg font-bold text-white hover:bg-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all">
-                                Rechercher
+                                {{ $t('dashboard.search_btn') }}
                             </button>
                         </div>
                     </form>
@@ -197,11 +216,11 @@ const searchCarpooling = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-sparkotto-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
                         </svg>
-                        Mes trajets programmés
+                        {{ $t('dashboard.driver_section') }}
                     </h2>
 
                     <div v-if="reservationsAsDriver.length === 0" class="bg-white border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center text-gray-500">
-                        Vous n'avez aucun trajet planifié en tant que conducteur.
+                        {{ $t('dashboard.no_driver_trips') }}
                     </div>
 
                     <div v-else class="space-y-4">
@@ -220,14 +239,14 @@ const searchCarpooling = () => {
                                             'bg-gray-100 text-gray-700 ring-1 ring-inset ring-gray-600/20': resa.statut === 'terminé',
                                             'bg-gray-100 text-gray-600': !['en attente', 'validé', 'en cours', 'à retourner', 'annulé', 'terminé'].includes(resa.statut)
                                             }">
-                                        {{ resa.statut }}
+                                        {{ statusLabel(resa.statut) }}
                                     </span>
                                     
                                     <div class="flex space-x-1">
-                                        <Link :href="route('reservations.edit', resa.id)" class="text-gray-400 hover:text-sparkotto-purple transition" title="Éditer">
+                                        <Link :href="route('reservations.edit', resa.id)" class="text-gray-400 hover:text-sparkotto-purple transition" :title="$t('action.edit')">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
                                         </Link>
-                                        <button @click="deleteReservation(resa.id)" class="text-gray-400 hover:text-red-600 transition" title="Annuler">
+                                        <button @click="deleteReservation(resa.id)" class="text-gray-400 hover:text-red-600 transition" :title="$t('dashboard.cancel_tooltip')">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 01-7.5 0" /></svg>
                                         </button>
                                     </div>
@@ -241,11 +260,11 @@ const searchCarpooling = () => {
                                     <div class="mt-2 text-sm text-gray-600 space-y-1">
                                         <div class="flex items-center">
                                             <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            Départ : <span class="font-medium text-gray-900 ml-1">{{ formatDate(resa.date_debut) }}</span>
+                                            {{ $t('dashboard.trip_departure') }} <span class="font-medium text-gray-900 ml-1">{{ formatDate(resa.date_debut) }}</span>
                                         </div>
                                         <div class="flex items-center">
                                             <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                            Retour : <span class="font-medium text-gray-900 ml-1">{{ formatDate(resa.date_fin) }}</span>
+                                            {{ $t('dashboard.trip_return') }} <span class="font-medium text-gray-900 ml-1">{{ formatDate(resa.date_fin) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -274,14 +293,14 @@ const searchCarpooling = () => {
                                     @click="startTrip(resa.id)"
                                     class="inline-flex items-center px-4 py-2 bg-sparkotto-purple text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-sparkotto-purple-hover focus:outline-none transition-colors"
                                 >
-                                    Démarrer le trajet
+                                    {{ $t('dashboard.start_trip') }}
                                 </button>
                                 <button
                                     v-if="(resa.statut === 'en cours' || resa.statut === 'à retourner') && !resa.date_retour"
                                     @click="handleReturnVehicle(resa)"
                                     class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none transition-colors"
                                 >
-                                    Restituer le véhicule
+                                    {{ $t('dashboard.return_vehicle') }}
                                 </button>
                             </div>
                         </div>
@@ -294,11 +313,11 @@ const searchCarpooling = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-sparkotto-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        Mes accompagnements
+                        {{ $t('dashboard.passenger_section') }}
                     </h2>
 
                     <div v-if="reservationsAsPassenger.length === 0" class="bg-white border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center text-gray-500">
-                        Vous n'êtes inscrit sur aucun trajet en tant que passager.
+                        {{ $t('dashboard.no_passenger_trips') }}
                     </div>
 
                     <div v-else class="space-y-4">
@@ -314,10 +333,10 @@ const searchCarpooling = () => {
                                             'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20': pass.statut === 'en_attente',
                                             'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20': pass.statut === 'refuse'
                                             }">
-                                        {{ pass.statut }}
+                                        {{ statusLabel(pass.statut) }}
                                     </span>
                                 </div>
-                                <p class="text-sm text-gray-600 mb-3">Conducteur : <span class="font-medium text-gray-900">{{ pass.reservation.driver.name }}</span></p>
+                                <p class="text-sm text-gray-600 mb-3">{{ $t('dashboard.driver_label') }} <span class="font-medium text-gray-900">{{ pass.reservation.driver.name }}</span></p>
                                 
                                 <div class="mt-2 text-sm text-gray-600 flex flex-wrap gap-4">
                                     <div class="flex items-center">
@@ -328,7 +347,7 @@ const searchCarpooling = () => {
                             </Link>
                             <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 text-right">
                                 <button @click.prevent="cancelPassenger(pass.id)" class="text-sm font-semibold text-red-600 hover:text-red-800 transition">
-                                    Annuler ma place
+                                    {{ $t('dashboard.cancel_seat') }}
                                 </button>
                             </div>
                         </div>

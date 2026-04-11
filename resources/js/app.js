@@ -17,6 +17,21 @@ createInertiaApp({
         ),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
+            .mixin({
+                methods: {
+                    $t(key, replace = {}) {
+                        // Récupère les traductions injectées
+                        var translations = this.$page.props.translations || {};
+                        var translation = translations[key] !== undefined ? translations[key] : key;
+
+                        Object.keys(replace).forEach(function (k) {
+                            translation = translation.replace(':' + k, replace[k]);
+                        });
+
+                        return translation;
+                    }
+                }
+            })
             .use(plugin)
             .use(ZiggyVue)
             .mount(el);

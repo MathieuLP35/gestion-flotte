@@ -145,44 +145,44 @@ const doughnutOptions = {
 </script>
 
 <template>
-    <Head title="Tableau de bord administration" />
+    <Head :title="$t('admin.dashboard_title')" />
 
     <div class="py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <!-- En-tête -->
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-                <p v-if="agence?.nom" class="mt-1 text-sm text-gray-500">Agence : {{ agence.nom }}</p>
-                <p v-else class="mt-1 text-sm text-gray-500">Vue globale</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ $t('nav.dashboard') }}</h1>
+                <p v-if="agence?.nom" class="mt-1 text-sm text-gray-500">{{ $t('admin.agency_label') }} {{ agence.nom }}</p>
+                <p v-else class="mt-1 text-sm text-gray-500">{{ $t('admin.view_global') }}</p>
             </div>
 
             <!-- KPI -->
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-8">
                 <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Utilisateurs</p>
+                    <p class="text-sm font-medium text-gray-500">{{ $t('admin.users') }}</p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">{{ stats?.users_count ?? 0 }}</p>
-                    <Link :href="route('admin.users.index')" class="mt-2 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">Voir</Link>
+                    <Link :href="route('admin.users.index')" class="mt-2 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">{{ $t('action.view') }}</Link>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Véhicules</p>
+                    <p class="text-sm font-medium text-gray-500">{{ $t('admin.vehicles') }}</p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">{{ stats?.vehicles_count ?? 0 }}</p>
-                    <Link :href="route('admin.vehicles.availability')" class="mt-2 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">Voir</Link>
+                    <Link :href="route('admin.vehicles.availability')" class="mt-2 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">{{ $t('action.view') }}</Link>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Réservations</p>
+                    <p class="text-sm font-medium text-gray-500">{{ $t('admin.reservations') }}</p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">{{ stats?.reservations_count ?? 0 }}</p>
                 </div>
                 <div v-if="!agence" class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Agences</p>
+                    <p class="text-sm font-medium text-gray-500">{{ $t('admin.agences') }}</p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">{{ stats?.agences_count ?? 0 }}</p>
-                    <Link :href="route('admin.agences.index')" class="mt-2 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">Voir</Link>
+                    <Link :href="route('admin.agences.index')" class="mt-2 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">{{ $t('action.view') }}</Link>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm" :class="{ 'border-amber-300 bg-amber-50/50': (stats?.vehicles_in_maintenance_count ?? 0) > 0 }">
-                    <p class="text-sm font-medium text-gray-500">En maintenance</p>
+                    <p class="text-sm font-medium text-gray-500">{{ $t('admin.maintenance') }}</p>
                     <p class="mt-1 text-2xl font-bold" :class="(stats?.vehicles_in_maintenance_count ?? 0) > 0 ? 'text-amber-700' : 'text-gray-900'">{{ stats?.vehicles_in_maintenance_count ?? 0 }}</p>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm" :class="{ 'border-amber-300 bg-amber-50/50': (stats?.reservations_en_attente_count ?? 0) > 0 }">
-                    <p class="text-sm font-medium text-gray-500">En attente</p>
+                    <p class="text-sm font-medium text-gray-500">{{ $t('admin.pending') }}</p>
                     <p class="mt-1 text-2xl font-bold" :class="(stats?.reservations_en_attente_count ?? 0) > 0 ? 'text-amber-700' : 'text-gray-900'">{{ stats?.reservations_en_attente_count ?? 0 }}</p>
                 </div>
             </div>
@@ -190,13 +190,13 @@ const doughnutOptions = {
             <!-- Graphiques : 30 jours + Doughnut -->
             <div class="grid gap-6 lg:grid-cols-3 mb-8">
                 <div class="lg:col-span-2 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-gray-900 mb-4">Réservations sur 30 jours</h2>
+                    <h2 class="text-base font-semibold text-gray-900 mb-4">{{ $t('admin.chart_30j') }}</h2>
                     <div class="h-[260px]">
                         <Line :data="chart30jData" :options="lineOptions" />
                     </div>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-gray-900 mb-4">Répartition par statut</h2>
+                    <h2 class="text-base font-semibold text-gray-900 mb-4">{{ $t('admin.chart_status') }}</h2>
                     <div class="h-[260px]">
                         <Doughnut :data="chartDoughnutData" :options="doughnutOptions" />
                     </div>
@@ -206,7 +206,7 @@ const doughnutOptions = {
             <!-- 12 mois + Carte -->
             <div class="grid gap-6 lg:grid-cols-2 mb-8">
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-gray-900 mb-4">Réservations sur 12 mois</h2>
+                    <h2 class="text-base font-semibold text-gray-900 mb-4">{{ $t('admin.chart_12m') }}</h2>
                     <div class="h-[260px]">
                         <Bar :data="chart12mData" :options="barOptions" />
                     </div>
@@ -217,7 +217,7 @@ const doughnutOptions = {
             <!-- Résumé mois + Réservations par statut (pastilles) -->
             <div class="grid gap-6 lg:grid-cols-2 mb-8">
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-gray-900">Réservations ce mois</h2>
+                    <h2 class="text-base font-semibold text-gray-900">{{ $t('admin.month_summary') }}</h2>
                     <div class="mt-3 flex items-baseline gap-3">
                         <span class="text-3xl font-bold text-gray-900">{{ stats?.reservations_ce_mois ?? 0 }}</span>
                         <span v-if="stats?.reservations_mois_precedent != null" class="text-sm" :class="evolution >= 0 ? 'text-emerald-600' : 'text-red-600'">
@@ -227,7 +227,7 @@ const doughnutOptions = {
                     <p class="mt-1 text-xs text-gray-500">Mois dernier : {{ stats?.reservations_mois_precedent ?? 0 }}</p>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-gray-900">Réservations par statut</h2>
+                    <h2 class="text-base font-semibold text-gray-900">{{ $t('admin.by_status') }}</h2>
                     <div class="mt-3 flex flex-wrap gap-2">
                         <span
                             v-for="(n, statut) in (stats?.by_status || {})"
@@ -246,8 +246,8 @@ const doughnutOptions = {
             <div class="grid gap-6 lg:grid-cols-3">
                 <div class="lg:col-span-2 rounded-xl border border-gray-200 bg-white shadow-sm">
                     <div class="border-b border-gray-200 px-5 py-4 flex justify-between items-center">
-                        <h2 class="text-base font-semibold text-gray-900">Dernières réservations</h2>
-                        <Link :href="route('dashboard')" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Voir tout</Link>
+                        <h2 class="text-base font-semibold text-gray-900">{{ $t('admin.recent_res') }}</h2>
+                        <Link :href="route('dashboard')" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">{{ $t('action.view_all') }}</Link>
                     </div>
                     <div class="divide-y divide-gray-100">
                         <template v-if="recent_reservations?.length">
@@ -272,15 +272,15 @@ const doughnutOptions = {
                     </div>
                 </div>
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-gray-900">Accès rapides</h2>
+                    <h2 class="text-base font-semibold text-gray-900">{{ $t('admin.quick_access') }}</h2>
                     <nav class="mt-4 space-y-2">
-                        <Link v-if="canViewVehicles" :href="route('admin.vehicles.availability')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Véhicules</Link>
-                        <Link v-if="canViewUsers" :href="route('admin.users.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Utilisateurs</Link>
-                        <Link v-if="canViewAgences && !agence" :href="route('admin.agences.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Agences</Link>
-                        <Link v-if="canViewRoles" :href="route('admin.roles.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Rôles</Link>
-                        <Link v-if="canViewDomains" :href="route('admin.domains.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Domaines</Link>
-                        <Link v-if="canViewVehicleSuggestion" :href="route('admin.settings.vehicleSuggestion.edit')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Suggestion véhicule</Link>
-                        <Link :href="route('dashboard')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Réservations (espace utilisateur)</Link>
+                        <Link v-if="canViewVehicles" :href="route('admin.vehicles.availability')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('admin.vehicles') }}</Link>
+                        <Link v-if="canViewUsers" :href="route('admin.users.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('admin.users') }}</Link>
+                        <Link v-if="canViewAgences && !agence" :href="route('admin.agences.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('admin.agences') }}</Link>
+                        <Link v-if="canViewRoles" :href="route('admin.roles.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('admin.roles') }}</Link>
+                        <Link v-if="canViewDomains" :href="route('admin.domains.index')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('admin.domains') }}</Link>
+                        <Link v-if="canViewVehicleSuggestion" :href="route('admin.settings.vehicleSuggestion.edit')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('admin.suggestion') }}</Link>
+                        <Link :href="route('dashboard')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ $t('dashboard.title') }}</Link>
                     </nav>
                 </div>
             </div>

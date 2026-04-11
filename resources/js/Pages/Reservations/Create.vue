@@ -1,12 +1,12 @@
 <template>
-    <Head title="Nouveau trajet" />
+    <Head :title="$t('res.create_title')" />
 
     <AuthenticatedLayout>
       <div class="py-10 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Réserver un véhicule</h1>
-                <p class="mt-2 text-sm text-gray-600">Planifiez votre déplacement ou rejoignez un trajet existant.</p>
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ $t('res.create_title') }}</h1>
+                <p class="mt-2 text-sm text-gray-600">{{ $t('res.create_subtitle') }}</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -16,11 +16,11 @@
                   <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-8">
                       <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4 mb-6 flex items-center">
                           <span class="bg-sparkotto-purple text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-3">1</span>
-                          Saisissez votre trajet
+                          {{ $t('res.enter_trip') }}
                       </h2>
 
                       <div v-if="form.errors.departure || form.errors.destination" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-lg text-sm text-red-700">
-                          <strong>Vérifiez votre recherche :</strong>
+                          <strong>{{ $t('res.check_search') }}</strong>
                           <ul class="list-disc pl-5 mt-1">
                               <li v-if="form.errors.departure">{{ form.errors.departure }}</li>
                               <li v-if="form.errors.destination">{{ form.errors.destination }}</li>
@@ -31,7 +31,7 @@
                           <!-- Lieux -->
                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <div class="relative">
-                                  <label for="departure" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Départ</label>
+                                  <label for="departure" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.departure') }}</label>
                                   <input
                                       type="text"
                                       id="departure"
@@ -41,7 +41,7 @@
                                       class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:bg-white focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition"
                                       required
                                   />
-                                  <div v-if="isLoadingDeparture" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-md p-2 text-xs text-gray-500 mt-1">Recherche...</div>
+                                  <div v-if="isLoadingDeparture" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-md p-2 text-xs text-gray-500 mt-1">{{ $t('search.placeholder') }}</div>
                                   <ul v-if="suggestionsDeparture.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20 mt-1">
                                       <li v-for="suggestion in suggestionsDeparture" :key="suggestion.label" @click="form.departureSelected = suggestion; form.departure = suggestion.label; suggestionsDeparture = []" class="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm truncate border-b border-gray-50 last:border-0">
                                           {{ suggestion.label }}
@@ -50,7 +50,7 @@
                               </div>
 
                               <div class="relative">
-                                  <label for="destination" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Destination</label>
+                                  <label for="destination" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.destination') }}</label>
                                   <input
                                       type="text"
                                       id="destination"
@@ -60,7 +60,7 @@
                                       class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:bg-white focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition"
                                       required
                                   />
-                                  <div v-if="isLoadingDestination" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-md p-2 text-xs text-gray-500 mt-1">Recherche...</div>
+                                  <div v-if="isLoadingDestination" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-md p-2 text-xs text-gray-500 mt-1">{{ $t('search.placeholder') }}</div>
                                   <ul v-if="suggestionsDestination.length > 0" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20 mt-1">
                                       <li v-for="suggestion in suggestionsDestination" :key="suggestion.label" @click="form.destinationSelected = suggestion; form.destination = suggestion.label; suggestionsDestination = []" class="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm truncate border-b border-gray-50 last:border-0">
                                           {{ suggestion.label }}
@@ -72,12 +72,12 @@
                           <!-- Dates -->
                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <div>
-                                  <label for="date_debut" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Date de début</label>
+                                  <label for="date_debut" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.date_start') }}</label>
                                   <input type="datetime-local" v-model="form.date_debut" id="date_debut" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:bg-white focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition" required />
                                   <p v-if="form.errors.date_debut" class="mt-1 text-xs text-red-600">{{ form.errors.date_debut }}</p>
                               </div>
                               <div>
-                                  <label for="date_fin" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Date de fin</label>
+                                  <label for="date_fin" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.date_end') }}</label>
                                   <input type="datetime-local" v-model="form.date_fin" id="date_fin" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:bg-white focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition" required />
                                   <p v-if="form.errors.date_fin" class="mt-1 text-xs text-red-600">{{ form.errors.date_fin }}</p>
                               </div>
@@ -87,22 +87,22 @@
                           <div class="pt-4">
                               <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4 mb-6 flex items-center">
                                   <span class="bg-sparkotto-purple text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-3">2</span>
-                                  Votre Véhicule
+                                  {{ $t('res.your_vehicle') }}
                               </h2>
                               
                               <div v-if="suggestedVehicleInfo && Object.keys(suggestedVehicleInfo).length !== 0" class="mb-4 bg-green-50 border border-green-200 rounded-xl p-4 flex items-start">
                                   <svg class="h-6 w-6 text-green-600 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                   <div>
-                                      <p class="text-sm font-bold text-green-900">Véhicule idéal suggéré ({{ Math.round(calculatedDistance) }} km)</p>
-                                      <p class="text-xs text-green-800 mt-1">{{ suggestedVehicleInfo.modele }} ({{ suggestedVehicleInfo.energie }}) - {{ suggestedVehicleInfo.nbr_places }} places</p>
+                                      <p class="text-sm font-bold text-green-900">{{ $t('res.vehicle_suggested') }} ({{ Math.round(calculatedDistance) }} km)</p>
+                                      <p class="text-xs text-green-800 mt-1">{{ suggestedVehicleInfo.modele }} ({{ suggestedVehicleInfo.energie }}) - {{ suggestedVehicleInfo.nbr_places }} {{ $t('res.seats') }}</p>
                                   </div>
                               </div>
 
-                              <label for="vehicle" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Choix du véhicule</label>
+                              <label for="vehicle" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">{{ $t('res.vehicle_select') }}</label>
                               <select v-model="form.vehicle_id" id="vehicle" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:bg-white focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition" required>
-                                  <option value="" disabled>Sélectionnez un véhicule</option>
+                                  <option value="" disabled>{{ $t('res.vehicle_select') }}</option>
                                   <option v-for="v in vehicles" :key="v.id" :value="v.id">
-                                      {{ v.modele }} ({{ v.immatriculation }}) - {{ v.energie || 'essence' }} - {{ v.nbr_places }} places
+                                      {{ v.modele }} ({{ v.immatriculation }}) - {{ v.energie || 'essence' }} - {{ v.nbr_places }} {{ $t('res.seats') }}
                                   </option>
                               </select>
                               <p v-if="form.errors.vehicle_id" class="mt-1 text-xs text-red-600">{{ form.errors.vehicle_id }}</p>
@@ -116,15 +116,15 @@
                                       <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors duration-200" :class="{'bg-sparkotto-purple': form.is_carpool}"></div>
                                       <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition transform duration-200" :class="{'translate-x-4': form.is_carpool}"></div>
                                   </div>
-                                  <div class="ml-3 text-sm font-bold text-gray-900">Proposer en covoiturage (Recommandé)</div>
+                                  <div class="ml-3 text-sm font-bold text-gray-900">{{ $t('res.carpool_offer') }}</div>
                               </label>
 
                               <div v-if="form.is_carpool && selectedVehicle" class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                                  <label for="places_materiel" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Places bloquées (Matériel)</label>
-                                  <p class="text-xs text-gray-500 mb-3">Si vous transportez du matériel encombrant, réduisez le nombre de places disponibles ({{ selectedVehicle.nbr_places - 1 }} max hors conducteur).</p>
+                                  <label for="places_materiel" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">{{ $t('res.seats_blocked') }}</label>
+                                  <p class="text-xs text-gray-500 mb-3">{{ $t('res.seats_blocked_desc') }} ({{ selectedVehicle.nbr_places - 1 }} {{ $t('res.seats_blocked_max') }}).</p>
                                   <div class="flex items-center max-w-xs">
                                       <input type="number" id="places_materiel" v-model="form.places_reservees_materiel" min="0" :max="selectedVehicle.nbr_places - 1" class="w-full bg-white border border-gray-200 rounded-l-lg px-4 py-2 text-gray-900 focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple transition" />
-                                      <span class="bg-gray-100 border border-l-0 border-gray-200 rounded-r-lg px-4 py-2 text-sm text-gray-600">places</span>
+                                      <span class="bg-gray-100 border border-l-0 border-gray-200 rounded-r-lg px-4 py-2 text-sm text-gray-600">{{ $t('res.seats') }}</span>
                                   </div>
                               </div>
                           </div>
@@ -132,7 +132,7 @@
                           <div class="pt-6 flex justify-end">
                               <button type="submit" :disabled="form.processing" class="w-full md:w-auto px-8 py-3 bg-sparkotto-purple hover:bg-sparkotto-purple-hover text-white text-sm font-bold rounded-xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-sparkotto-purple focus:ring-offset-2 flex items-center justify-center">
                                   <svg v-if="form.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                  {{ form.processing ? 'Enregistrement...' : 'Confirmer la réservation' }}
+                                  {{ form.processing ? $t('res.saving') : $t('res.confirm_btn') }}
                               </button>
                           </div>
                       </form>
@@ -142,29 +142,29 @@
               <!-- Colonne Latérale (Covoiturages correspondants) -->
               <div class="lg:col-span-2 space-y-6">
                   <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6 sticky top-6">
-                      <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Alternatives trouvées</h2>
+                      <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">{{ $t('res.alternatives_title') }}</h2>
                       
                       <div v-if="isLoadingCarpools" class="text-center py-4 text-sm text-gray-500">
-                          Recherche en cours...
+                          {{ $t('res.searching') }}
                       </div>
                       
                       <div v-else-if="matchingCarpools.length === 0" class="text-center py-8">
                           <svg class="h-10 w-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                          <p class="text-sm text-gray-500">Aucun covoiturage existant n'a été trouvé pour ces critères. Vous pouvez réserver votre véhicule.</p>
+                          <p class="text-sm text-gray-500">{{ $t('res.no_carpool') }}</p>
                       </div>
 
                       <div v-else class="space-y-4 max-h-[600px] overflow-y-auto pr-1">
                           <div v-for="resa in matchingCarpools" :key="resa.id" class="bg-gray-50 rounded-xl border border-gray-200 p-4 transition hover:border-sparkotto-purple">
                               <h3 class="font-bold text-gray-900 text-sm mb-1">{{ resa.depart }} → {{ resa.destination }}</h3>
-                              <p class="text-xs text-gray-600 mb-2 font-medium">Par {{ resa.driver.name }}</p>
+                              <p class="text-xs text-gray-600 mb-2 font-medium">{{ $t('res.by') }} {{ resa.driver.name }}</p>
                               
                               <div class="flex items-center text-xs text-gray-600 mb-1">
                                   <svg class="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                  Aller: {{ formatDate(resa.date_debut) }}
+                                  {{ $t('res.go') }} {{ formatDate(resa.date_debut) }}
                               </div>
                               
                               <button @click="joinCarpool(resa.id)" class="mt-3 w-full px-4 py-2 bg-white border border-gray-300 hover:border-sparkotto-purple hover:text-sparkotto-purple font-bold text-gray-700 text-xs rounded-lg shadow-sm transition">
-                                  Rejoindre ce trajet
+                                  {{ $t('res.join_trip') }}
                               </button>
                           </div>
                       </div>

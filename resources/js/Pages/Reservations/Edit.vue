@@ -120,7 +120,7 @@ onUnmounted(() => {
                 
                 <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Gérer le trajet</h1>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ $t('res.edit_title') }}</h1>
                         <p class="mt-2 text-sm text-gray-600 truncate">{{ reservation.depart }} → {{ reservation.destination }}</p>
                     </div>
                 </div>
@@ -131,10 +131,10 @@ onUnmounted(() => {
                     <div class="lg:col-span-1 space-y-6">
                         <!-- Résumé -->
                         <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-                            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Détails de la réservation</h2>
+                            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">{{ $t('res.edit_details') }}</h2>
                             <div class="space-y-4">
                                 <div>
-                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Véhicule</span>
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">{{ $t('res.vehicle') }}</span>
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm font-bold text-gray-900">{{ reservation.vehicle.modele }}</span>
                                         <span v-if="reservation.vehicle.energie === 'electrique' || reservation.vehicle.energie === 'hybride'"
@@ -144,22 +144,22 @@ onUnmounted(() => {
                                                 'bg-emerald-100 text-emerald-800': reservation.vehicle.energie === 'hybride'
                                               }">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
-                                            {{ reservation.vehicle.energie === 'electrique' ? 'Électrique' : 'Hybride' }}
+                                            {{ reservation.vehicle.energie === 'electrique' ? $t('vehicle.electric') : $t('vehicle.hybrid') }}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="pt-3 border-t border-gray-100">
-                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Dates</span>
-                                    <p class="text-sm text-gray-900">Départ: <span class="font-medium">{{ formatDate(reservation.date_debut) }}</span></p>
-                                    <p class="text-sm text-gray-900">Fin: <span class="font-medium">{{ formatDate(reservation.date_fin) }}</span></p>
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">{{ $t('res.dates') }}</span>
+                                    <p class="text-sm text-gray-900">{{ $t('res.departure') }}: <span class="font-medium">{{ formatDate(reservation.date_debut) }}</span></p>
+                                    <p class="text-sm text-gray-900">{{ $t('res.end_label') }} <span class="font-medium">{{ formatDate(reservation.date_fin) }}</span></p>
                                 </div>
                                 <div v-if="reservation.covoiturage" class="pt-3 border-t border-gray-100">
                                     <span class="inline-flex items-center gap-1 text-xs font-bold text-sparkotto-purple uppercase tracking-wider mb-1">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                                        Covoiturage Ouvert
+                                        {{ $t('res.carpool_open') }}
                                     </span>
                                     <p v-if="reservation.places_reservees_materiel > 0" class="text-xs text-gray-500 italic mt-1">
-                                        {{ reservation.places_reservees_materiel }} place(s) bloquée(s) pour matériel.
+                                        {{ $t('res.seats_blocked_for_material', { count: reservation.places_reservees_materiel }) }}
                                     </p>
                                 </div>
                             </div>
@@ -170,7 +170,7 @@ onUnmounted(() => {
                             <div class="bg-gray-50 border-b border-gray-100 p-4">
                                 <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wide flex items-center">
                                     <svg class="h-4 w-4 mr-2 text-sparkotto-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c-1.105 0-2-.895-2-2m2 2c1.105 0 2-.895 2-2m-2 2V5m0 0C7.895 5 7 5.895 7 7m0 0A2 2 0 105 7m2 0C7 8.105 7.895 9 9 9m-2 0V3m0 0A2 2 0 103 3m2 0C5 1.895 5.895 1 7 1" /></svg>
-                                    Itinéraire
+                                    {{ $t('res.itinerary') }}
                                 </h2>
                             </div>
                             <div class="flex-grow relative bg-gray-100">
@@ -189,11 +189,11 @@ onUnmounted(() => {
                         <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                             <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
                                 <svg class="h-6 w-6 mr-2 text-sparkotto-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                Passagers
+                                {{ $t('res.passengers') }}
                             </h2>
                             
                             <div v-if="reservation.passengers.length === 0" class="text-center bg-gray-50 rounded-xl p-8 border border-dashed border-gray-200">
-                                <span class="text-sm text-gray-500">Aucune demande de passager pour l'instant.</span>
+                                <span class="text-sm text-gray-500">{{ $t('res.no_passenger_requests') }}</span>
                             </div>
                             
                             <div v-else class="space-y-3">
@@ -215,11 +215,11 @@ onUnmounted(() => {
                                     </div>
                                     <div class="flex flex-wrap gap-2">
                                         <template v-if="p.statut === 'en_attente'">
-                                            <button @click="updatePassengerStatus(p.id, 'confirme')" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg shadow-sm transition">Accepter</button>
-                                            <button @click="updatePassengerStatus(p.id, 'refuse')" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-bold rounded-lg shadow-sm transition">Refuser</button>
+                                            <button @click="updatePassengerStatus(p.id, 'confirme')" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg shadow-sm transition">{{ $t('res.accept') }}</button>
+                                            <button @click="updatePassengerStatus(p.id, 'refuse')" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-bold rounded-lg shadow-sm transition">{{ $t('res.decline') }}</button>
                                         </template>
-                                        <button v-if="p.statut === 'confirme'" @click="removePassenger(p.id)" class="px-4 py-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold rounded-lg transition">Retirer</button>
-                                        <button v-if="p.statut === 'refuse'" @click="updatePassengerStatus(p.id, 'confirme')" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-bold rounded-lg shadow-sm transition">Réévaluer</button>
+                                        <button v-if="p.statut === 'confirme'" @click="removePassenger(p.id)" class="px-4 py-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold rounded-lg transition">{{ $t('res.remove') }}</button>
+                                        <button v-if="p.statut === 'refuse'" @click="updatePassengerStatus(p.id, 'confirme')" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-bold rounded-lg shadow-sm transition">{{ $t('res.reevaluate') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -235,7 +235,7 @@ onUnmounted(() => {
                             </div>
 
                             <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
-                                <div v-if="messages.length === 0" class="h-full flex items-center justify-center text-sm text-gray-400">Aucun message échangé.</div>
+                                <div v-if="messages.length === 0" class="h-full flex items-center justify-center text-sm text-gray-400">{{ $t('res.no_messages_short') }}</div>
                                 <div v-for="message in messages" :key="message.id">
                                     <div v-if="message.user.id !== authUser.id" class="flex justify-start">
                                         <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-2 max-w-xs">
@@ -259,7 +259,7 @@ onUnmounted(() => {
                                     class="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-sparkotto-purple focus:border-sparkotto-purple shadow-sm transition"
                                 />
                                 <button type="submit" class="px-4 py-2 bg-sparkotto-purple hover:bg-sparkotto-purple-hover text-white text-sm font-bold rounded-xl shadow-sm transition-colors focus:outline-none">
-                                    Envoyer
+                                    {{ $t('res.send') }}
                                 </button>
                             </form>
                         </div>

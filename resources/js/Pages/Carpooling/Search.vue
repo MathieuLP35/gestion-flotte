@@ -22,7 +22,7 @@ const joinCarpool = (reservationId) => {
 
 </script>
 <template>
-    <Head title="Covoiturages trouvés" />
+    <Head :title="$t('carpool.found_title')" />
 
     <AuthenticatedLayout>
         <div class="py-10 bg-gray-50 min-h-screen">
@@ -30,8 +30,8 @@ const joinCarpool = (reservationId) => {
                 
                 <div class="mb-10 lg:flex lg:items-center lg:justify-between">
                     <div>
-                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Covoiturages trouvés</h1>
-                        <p class="mt-2 text-sm text-gray-600">Consultez les trajets disponibles correspondants à votre recherche.</p>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ $t('carpool.found_title') }}</h1>
+                        <p class="mt-2 text-sm text-gray-600">{{ $t('carpool.found_subtitle') }}</p>
                     </div>
                 </div>
 
@@ -39,8 +39,8 @@ const joinCarpool = (reservationId) => {
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h3 class="text-lg font-medium text-gray-900">Aucun covoiturage disponible</h3>
-                    <p class="mt-1">Modifiez vos critères de recherche depuis votre tableau de bord.</p>
+                    <h3 class="text-lg font-medium text-gray-900">{{ $t('carpool.none_title') }}</h3>
+                    <p class="mt-1">{{ $t('carpool.none_hint') }}</p>
                 </div>
 
                 <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,7 +54,7 @@ const joinCarpool = (reservationId) => {
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ carpooling.driver.name }}</p>
-                                        <p class="text-xs text-gray-500">Conducteur</p>
+                                        <p class="text-xs text-gray-500">{{ $t('carpool.driver_label') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -67,11 +67,11 @@ const joinCarpool = (reservationId) => {
                                 <div class="mt-3 space-y-2">
                                     <div class="flex items-center text-sm text-gray-600">
                                         <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        <span>Départ : <span class="font-medium text-gray-900">{{ formatDate(carpooling.date_debut) }}</span></span>
+                                        <span>{{ $t('carpool.departure_label') }} <span class="font-medium text-gray-900">{{ formatDate(carpooling.date_debut) }}</span></span>
                                     </div>
                                     <div class="flex items-center text-sm text-gray-600">
                                         <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                        <span>Retour : <span class="font-medium text-gray-900">{{ formatDate(carpooling.date_fin) }}</span></span>
+                                        <span>{{ $t('carpool.return_label') }} <span class="font-medium text-gray-900">{{ formatDate(carpooling.date_fin) }}</span></span>
                                     </div>
                                 </div>
                             </div>
@@ -91,12 +91,12 @@ const joinCarpool = (reservationId) => {
                                         'bg-green-100 text-green-800': carpooling.vehicle.energie === 'electrique',
                                         'bg-emerald-100 text-emerald-800': carpooling.vehicle.energie === 'hybride'
                                         }"
-                                        title="Trajet écologique">
+                                        :title="$t('carpool.eco_trip')">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                                     </svg>
-                                    <span v-if="carpooling.vehicle.energie === 'electrique'">Électrique</span>
-                                    <span v-else>Hybride</span>
+                                    <span v-if="carpooling.vehicle.energie === 'electrique'">{{ $t('vehicle.electric') }}</span>
+                                    <span v-else>{{ $t('vehicle.hybrid') }}</span>
                                 </span>
                             </div>
                         </div>
@@ -104,7 +104,7 @@ const joinCarpool = (reservationId) => {
                         <!-- Action de rejoindre -->
                         <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 justify-center flex">
                             <button @click="joinCarpool(carpooling.id)" class="w-full justify-center inline-flex items-center px-4 py-2 bg-sparkotto-purple text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-sparkotto-purple-hover focus:outline-none transition-colors">
-                                Demander à rejoindre
+                                {{ $t('carpool.join_btn') }}
                             </button>
                         </div>
                     </div>

@@ -48,8 +48,12 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
 
-            // Traductions chargées à la demande via GET /api/translations?keys=... (useTranslations)
-            'translations' => [],
+            'locale' => fn () => app()->getLocale(),
+
+            'translations' => function () {
+                $path = resource_path('lang/' . app()->getLocale() . '.json');
+                return file_exists($path) ? json_decode(file_get_contents($path), true) : [];
+            },
 
             'appVersion' => config('app.version', 'v0.1.0-alpha'),
         ];

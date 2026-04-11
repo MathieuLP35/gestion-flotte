@@ -160,7 +160,7 @@ onMounted(() => {
                 <span v-if="routeDistance && routeTime" class="flex items-center justify-center gap-2">
                     <span class="flex items-center"><svg class="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h2m10 0a2 2 0 10-4 0m4 0a2 2 0 11-4 0m-10 0a2 2 0 10-4 0m4 0a2 2 0 11-4 0m8-8H4"/></svg> {{ routeDistance }}</span><span class="text-gray-300 mx-1">•</span><span class="flex items-center"><svg class="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> {{ routeTime }}</span>
                 </span>
-                <span v-else class="text-gray-400 italic font-normal">Calcul itinéraire...</span>
+                <span v-else class="text-gray-400 italic font-normal">{{ $t('map.calculating') }}</span>
             </div>
             
             <button 
@@ -171,7 +171,7 @@ onMounted(() => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span>Ouvrir dans le GPS</span>
+                <span>{{ $t('map.open_gps') }}</span>
             </button>
         </div>
     </div>

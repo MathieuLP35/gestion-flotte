@@ -26,12 +26,11 @@ const form = useForm({
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Informations du profil
+                {{ $t('profile.update_info_title') }}
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Mettez à jour les informations de votre profil et votre adresse
-                e-mail.
+                {{ $t('profile.update_info_desc') }}
             </p>
         </header>
 
@@ -72,14 +71,14 @@ const form = useForm({
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
                 <p class="mt-2 text-sm text-gray-800">
-                    Votre adresse courriel n'est pas vérifiée.
+                    {{ $t('profile.email_unverified') }}
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
                         class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Cliquez ici pour renvoyer l'e-mail de vérification.
+                        {{ $t('profile.resend_verification') }}
                     </Link>
                 </p>
 
@@ -87,12 +86,12 @@ const form = useForm({
                     v-show="status === 'verification-link-sent'"
                     class="mt-2 text-sm font-medium text-green-600"
                 >
-                    Un nouveau lien de vérification a été envoyé à votre adresse électronique.
+                    {{ $t('profile.verification_sent') }}
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Sauvegarder</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">{{ $t('profile.save_btn') }}</PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -104,7 +103,7 @@ const form = useForm({
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Enregistré.
+                        {{ $t('profile.saved') }}
                     </p>
                 </Transition>
             </div>

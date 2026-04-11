@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('/language', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');
+
 Route::get('/api/translations', [TranslationController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('api.translations');
