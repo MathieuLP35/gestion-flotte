@@ -41,11 +41,11 @@ class KeyController extends Controller
 
         $vehicle = Vehicle::find($validated['vehicle_id']);
 
-        if (! $vehicle) {
+        if (!$vehicle) {
             return redirect()->back()->with('error', 'Véhicule non trouvé.');
         }
 
-        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -73,7 +73,7 @@ class KeyController extends Controller
     {
         $key->load('vehicle');
 
-        if (! Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -87,7 +87,7 @@ class KeyController extends Controller
      */
     public function update(Request $request, VehicleKey $key): RedirectResponse
     {
-        if (! Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -110,7 +110,7 @@ class KeyController extends Controller
     {
         $key->load('vehicle');
 
-        if (! Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $key->vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 

@@ -20,8 +20,8 @@ Route::get('/', function () {
     ]);
 })->middleware('guest');
 
-Route::get('/terms', fn () => Inertia::render('Terms'))->name('terms');
-Route::get('/privacy', fn () => Inertia::render('Privacy'))->name('privacy');
+Route::get('/terms', fn() => Inertia::render('Terms'))->name('terms');
+Route::get('/privacy', fn() => Inertia::render('Privacy'))->name('privacy');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -127,4 +127,4 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('/api/search', [App\Http\Controllers\Admin\SearchController::class, 'search'])->name('api.search');
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

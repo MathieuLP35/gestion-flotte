@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -22,8 +23,22 @@ class Vehicle extends Model
     protected $with = ['latestRevision'];
 
     protected $fillable = [
-        'agence_id', 'modele', 'immatriculation', 'kilometrage', 'km_initial', 'emplacement', 'nbr_places', 'en_maintenance', 'energie',
-        'purchase_price', 'purchase_date', 'insurance_monthly', 'maintenance_monthly', 'last_service_km', 'service_interval_km', 'service_interval_months',
+        'agence_id',
+        'modele',
+        'immatriculation',
+        'kilometrage',
+        'km_initial',
+        'emplacement',
+        'nbr_places',
+        'en_maintenance',
+        'energie',
+        'purchase_price',
+        'purchase_date',
+        'insurance_monthly',
+        'maintenance_monthly',
+        'last_service_km',
+        'service_interval_km',
+        'service_interval_months',
     ];
 
     /**
@@ -51,6 +66,14 @@ class Vehicle extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<VehicleCost, $this>
+     */
+    public function costs(): HasMany
+    {
+        return $this->hasMany(VehicleCost::class);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<Reservation, $this>
      */
     public function reservations(): HasMany
@@ -75,8 +98,8 @@ class Vehicle extends Model
         $dLon = deg2rad($lon2 - $lon1);
 
         $a = sin($dLat / 2) * sin($dLat / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon / 2) * sin($dLon / 2);
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 

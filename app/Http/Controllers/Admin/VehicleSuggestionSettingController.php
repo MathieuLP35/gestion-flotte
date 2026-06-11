@@ -45,9 +45,9 @@ class VehicleSuggestionSettingController extends Controller
         $valid = $request->validate([
             'petit_trajet_seuil_km' => 'required|integer|min:1|max:2000',
             'priorite_petit_trajet' => 'required|array|min:1',
-            'priorite_petit_trajet.*' => 'string|in:'.implode(',', VehicleSuggestionSetting::ENERGIES),
+            'priorite_petit_trajet.*' => 'string|in:' . implode(',', VehicleSuggestionSetting::ENERGIES),
             'priorite_long_trajet' => 'required|array|min:1',
-            'priorite_long_trajet.*' => 'string|in:'.implode(',', VehicleSuggestionSetting::ENERGIES),
+            'priorite_long_trajet.*' => 'string|in:' . implode(',', VehicleSuggestionSetting::ENERGIES),
         ]);
 
         $s = VehicleSuggestionSetting::get();

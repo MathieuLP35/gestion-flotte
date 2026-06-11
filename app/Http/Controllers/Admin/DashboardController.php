@@ -26,7 +26,7 @@ class DashboardController extends Controller
         if ($hasGlobalView) {
             // Vision globale : aucun filtre agence
         } elseif ($agenceId !== null) {
-            $baseReservations->whereHas('vehicle', fn ($q) => $q->where('agence_id', $agenceId));
+            $baseReservations->whereHas('vehicle', fn($q) => $q->where('agence_id', $agenceId));
             $baseVehicles->where('agence_id', $agenceId);
             $baseUsers->where('agence_id', $agenceId);
         } else {

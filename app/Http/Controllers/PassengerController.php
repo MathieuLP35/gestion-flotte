@@ -29,7 +29,7 @@ class PassengerController extends Controller
             return back()->with('error', 'Vous êtes le conducteur de ce trajet.');
         }
 
-        if (! $reservation->covoiturage) {
+        if (!$reservation->covoiturage) {
             return back()->with('error', 'Ce trajet n\'accepte pas les passagers.');
         }
 

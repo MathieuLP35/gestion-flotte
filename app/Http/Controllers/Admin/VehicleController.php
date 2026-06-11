@@ -34,7 +34,7 @@ class VehicleController extends Controller
     {
         $this->authorize('vehicles.view');
 
-        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -47,7 +47,7 @@ class VehicleController extends Controller
     {
         $this->authorize('vehicles.view');
 
-        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -67,12 +67,14 @@ class VehicleController extends Controller
         $this->authorize('vehicles.view');
 
         $query = Vehicle::query()
-            ->withCount(['reservations as pending_reservations_count' => function ($q) {
-                $q->where('statut', 'en attente');
-            }])
+            ->withCount([
+                'reservations as pending_reservations_count' => function ($q) {
+                    $q->where('statut', 'en attente');
+                }
+            ])
             ->orderBy('modele', 'asc');
 
-        if (! Auth::user()?->can('agences.view_all')) {
+        if (!Auth::user()?->can('agences.view_all')) {
             $query->where('agence_id', Auth::user()?->agence_id);
         }
         $vehicles = $query->get();
@@ -81,7 +83,7 @@ class VehicleController extends Controller
         $selectedVehicle = null;
         $reservations = collect();
 
-        if (! $selectedVehicleId && $vehicles->isNotEmpty()) {
+        if (!$selectedVehicleId && $vehicles->isNotEmpty()) {
             $selectedVehicleId = $vehicles->first()->id;
         }
 
@@ -137,7 +139,7 @@ class VehicleController extends Controller
     {
         $this->authorize('vehicles.edit');
 
-        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -152,13 +154,13 @@ class VehicleController extends Controller
     {
         $this->authorize('vehicles.edit');
 
-        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
         $validated = $request->validate([
             'modele' => 'required|string|max:255',
-            'immatriculation' => 'required|string|unique:vehicles,immatriculation,'.$vehicle->id,
+            'immatriculation' => 'required|string|unique:vehicles,immatriculation,' . $vehicle->id,
             'km_initial' => 'required|integer|min:0',
             'emplacement' => 'required|string|max:255',
             'nbr_places' => 'required|integer|min:1',
@@ -177,7 +179,7 @@ class VehicleController extends Controller
     {
         $this->authorize('vehicles.delete');
 
-        if (! Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $vehicle->agence_id !== Auth::user()?->agence_id) {
             abort(403);
         }
 

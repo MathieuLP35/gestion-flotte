@@ -22,7 +22,7 @@ class RoleController extends Controller
         $roles = Role::with('permissions')->get();
 
         return inertia('Admin/Roles/Index', [
-            'roles' => $roles->map(fn (Role $r) => (new RoleResource($r))->resolve())->values()->all(),
+            'roles' => $roles->map(fn(Role $r) => (new RoleResource($r))->resolve())->values()->all(),
         ]);
     }
 
@@ -65,7 +65,7 @@ class RoleController extends Controller
         $this->authorize('roles.edit');
 
         $request->validate([
-            'name' => 'required|string|unique:roles,name,'.$role->id,
+            'name' => 'required|string|unique:roles,name,' . $role->id,
             'permissions' => 'array',
         ]);
 

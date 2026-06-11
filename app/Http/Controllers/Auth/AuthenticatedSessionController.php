@@ -34,8 +34,8 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $email = $request->input('email');
-        $attemptsKey = 'login_attempts_'.$email;
-        $lockKey = 'login_locked_'.$email;
+        $attemptsKey = 'login_attempts_' . $email;
+        $lockKey = 'login_locked_' . $email;
 
         // Vérifier si le compte est verrouillé
         if (Cache::has($lockKey)) {
@@ -59,7 +59,7 @@ class AuthenticatedSessionController extends Controller
 
             // Tenter l’authentification de l’utilisateur
             $credentials = $request->only('email', 'password');
-            if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            if (!Auth::attempt($credentials, $request->boolean('remember'))) {
                 throw ValidationException::withMessages([
                     'email' => ['Les identifiants fournis sont incorrects.'],
                 ]);

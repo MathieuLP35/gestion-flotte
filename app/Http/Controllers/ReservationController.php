@@ -154,10 +154,11 @@ class ReservationController extends Controller
             ->where(function ($query) use ($request): void {
                 $query->whereBetween('date_debut', [$request->date_debut, $request->date_fin])
                     ->orWhereBetween('date_fin', [$request->date_debut, $request->date_fin])
-                    ->orWhere(function ($q) use ($request): void {
-                        $q->where('date_debut', '<=', $request->date_debut)
-                            ->where('date_fin', '>=', $request->date_fin);
-                    }
+                    ->orWhere(
+                        function ($q) use ($request): void {
+                            $q->where('date_debut', '<=', $request->date_debut)
+                                ->where('date_fin', '>=', $request->date_fin);
+                        }
                     );
             })->exists();
 
@@ -264,7 +265,7 @@ class ReservationController extends Controller
             ->get();
 
         $availableCarpools = $reservations->filter(function (Reservation $reservation): bool {
-            if (! $reservation->vehicle || ! $reservation->vehicle->nbr_places) {
+            if (!$reservation->vehicle || !$reservation->vehicle->nbr_places) {
                 return false;
             }
             $currentOccupants = $reservation->passengers->where('statut', 'confirme')->count() + 1 + $reservation->places_reservees_materiel;
@@ -289,7 +290,7 @@ class ReservationController extends Controller
             abort(403);
         }
 
-        if (! in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
+        if (!in_array($reservation->statut, ['validé', 'en cours', 'à retourner'])) {
             return redirect()->route('reservations.show', $reservation)->with('error', 'Statut invalide');
         }
 
@@ -304,14 +305,14 @@ class ReservationController extends Controller
     {
         $this->authorize('update', $reservation);
 
-        if (! $reservation->vehicle) {
+        if (!$reservation->vehicle) {
             abort(404);
         }
 
         $vehicleKmInitial = $reservation->vehicle->km_initial;
 
         $request->validate([
-            'km_final' => 'required|integer|min:'.$vehicleKmInitial,
+            'km_final' => 'required|integer|min:' . $vehicleKmInitial,
             'emplacement_retour' => 'required|string|max:255',
             'etat_vehicule' => 'required|in:excellent,bon,moyen,mauvais',
             'notes_retour' => 'nullable|string|max:1000',

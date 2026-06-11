@@ -20,10 +20,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Reservation extends Model
 {
     protected $fillable = [
-        'vehicle_id', 'user_id', 'depart', 'destination',
-        'date_debut', 'date_fin', 'statut', 'covoiturage', 'places_reservees_materiel',
-        'depart_latitude', 'depart_longitude', 'destination_latitude', 'destination_longitude',
-        'date_retour', 'km_final', 'emplacement_retour', 'etat_vehicule', 'notes_retour',
+        'vehicle_id',
+        'user_id',
+        'depart',
+        'destination',
+        'date_debut',
+        'date_fin',
+        'statut',
+        'covoiturage',
+        'places_reservees_materiel',
+        'depart_latitude',
+        'depart_longitude',
+        'destination_latitude',
+        'destination_longitude',
+        'date_retour',
+        'km_final',
+        'emplacement_retour',
+        'etat_vehicule',
+        'notes_retour',
     ];
 
     protected $casts = [
@@ -33,7 +47,8 @@ class Reservation extends Model
     ];
 
     protected $appends = [
-        'distance_km', 'co2_saved',
+        'distance_km',
+        'co2_saved',
     ];
 
     /**
@@ -121,8 +136,10 @@ class Reservation extends Model
     {
         if ($this->depart_latitude && $this->destination_latitude) {
             return Vehicle::calculateDistance(
-                (float) $this->depart_latitude, (float) $this->depart_longitude,
-                (float) $this->destination_latitude, (float) $this->destination_longitude
+                (float) $this->depart_latitude,
+                (float) $this->depart_longitude,
+                (float) $this->destination_latitude,
+                (float) $this->destination_longitude
             );
         }
 

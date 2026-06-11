@@ -57,7 +57,7 @@ class SearchController extends Controller
         // Recherche Maintenances
         $maintenances = Maintenance::with('vehicle')
             ->where('type', 'like', "%{$q}%")
-            ->orWhereHas('vehicle', function($query) use ($q) {
+            ->orWhereHas('vehicle', function ($query) use ($q) {
                 $query->where('immatriculation', 'like', "%{$q}%");
             })
             ->take(5)

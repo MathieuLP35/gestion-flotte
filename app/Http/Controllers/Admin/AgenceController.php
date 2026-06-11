@@ -20,7 +20,7 @@ class AgenceController extends Controller
         $this->authorize('agences.view');
 
         $agences = Agence::withCount(['vehicles', 'users'])
-            ->when(! Auth::user()?->can('agences.view_all'), fn ($q) => $q->where('id', Auth::user()?->agence_id))
+            ->when(!Auth::user()?->can('agences.view_all'), fn($q) => $q->where('id', Auth::user()?->agence_id))
             ->orderBy('nom')
             ->get();
 
@@ -52,7 +52,7 @@ class AgenceController extends Controller
     public function edit(Agence $agence): Response
     {
         $this->authorize('agences.view');
-        if (! Auth::user()?->can('agences.view_all') && $agence->id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $agence->id !== Auth::user()?->agence_id) {
             abort(403);
         }
 
@@ -64,7 +64,7 @@ class AgenceController extends Controller
     public function update(Request $request, Agence $agence): RedirectResponse
     {
         $this->authorize('agences.view');
-        if (! Auth::user()?->can('agences.view_all') && $agence->id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $agence->id !== Auth::user()?->agence_id) {
             abort(403);
         }
         $request->validate([
@@ -80,7 +80,7 @@ class AgenceController extends Controller
     public function destroy(Agence $agence): RedirectResponse
     {
         $this->authorize('agences.view');
-        if (! Auth::user()?->can('agences.view_all') && $agence->id !== Auth::user()?->agence_id) {
+        if (!Auth::user()?->can('agences.view_all') && $agence->id !== Auth::user()?->agence_id) {
             abort(403);
         }
         if ($agence->vehicles()->exists()) {

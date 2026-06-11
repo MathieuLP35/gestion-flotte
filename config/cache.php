@@ -114,4 +114,16 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-cache-'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Restrict Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | By default, Laravel 13 restricts unserializing arbitrary PHP classes in
+    | the cache store. You can specify class allow-lists or set it to false.
+    |
+    */
+
+    'serializable_classes' => false,
+
 ];
